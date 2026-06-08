@@ -1,0 +1,22 @@
+image: node:20
+
+stages:
+  - deploy
+
+deploy_to_server:
+  stage: deploy
+  script:
+    - echo "Deploying to server..."
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - eval $(ssh-agent -s)
+    - ssh-add ~/.ssh/id_rsa
+    - ssh -o StrictHostKeyChecking=no root@92.242.187.113 'echo "SSH connection established"'
+    - scp -r dist/* root@92.242.187.113:/home/adamzone/htdocs/adamzone.com
+    - ssh root@92.242.187.113 'cd /home/adamzone/htdocs/adamzone.com && echo "Deployment complete!"'
+  only:
+    - main
+  environment:
+    name: production
+    url: https://adamzone.com
