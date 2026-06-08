@@ -1,4 +1,3 @@
-// ProductsGrid.tsx
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -15,7 +14,7 @@ interface Product {
   image_url: string | null;
   badge: string | null;
   instant_delivery: boolean | null;
-  available?: boolean | number | null; // backend may return boolean or 0/1
+  available?: boolean | number | null;
   image?: string;
 }
 
@@ -24,20 +23,12 @@ interface ProductsGridProps {
   subtitle?: string;
 }
 
-const categoryLabels: Record<string, string> = {
-  games: "ألعاب",
-  subscriptions: "اشتراكات",
-  cards: "بطاقات",
-};
-
 function isAvailable(v: Product["available"]) {
-  // supports: true/false, 1/0, "1"/"0"
   if (v === true) return true;
   if (v === false) return false;
   if (typeof v === "number") return v === 1;
   if (typeof v === "string")
     return v === "1" || (v as string)?.toLowerCase() === "true";
-  // if API doesn't send available, treat as available
   return true;
 }
 
@@ -53,17 +44,13 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
     const fetch = async () => {
       try {
         setLoading(true);
-
         const res = await getAllProducts(token);
         const list = (res.data?.result ?? res.data ?? []) as Product[];
-
-        // keep same old behavior: only available=true
         const filtered = Array.isArray(list)
           ? list.filter((p) => isAvailable(p.available))
           : [];
-
         if (mounted) setProducts(filtered);
-      } catch (e) {
+      } catch {
         if (mounted) setProducts([]);
       } finally {
         if (mounted) setLoading(false);
@@ -78,23 +65,19 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
 
   return (
     <section className="py-8">
-      <div className="mb-6 flex items-end justify-between">
-        <div>
-          <h2 className="font-orbitron text-xl font-bold text-foreground">
-            {title}
-          </h2>
-          {subtitle ? (
-            <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
-          ) : null}
-        </div>
+      <div className="mb-5">
+        <h2 className="text-xl font-bold text-foreground">{title}</h2>
+        {subtitle && (
+          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+        )}
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-[220px] rounded-xl border border-border bg-card/60 animate-pulse"
+              className="aspect-square animate-pulse rounded-2xl bg-secondary"
             />
           ))}
         </div>
@@ -103,21 +86,19 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
           لا توجد منتجات حالياً
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {products.slice(0, 20).map((product, i) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+          {products.slice(0, 12).map((product, i) => (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ delay: i * 0.04 }}
               viewport={{ once: true }}
             >
               <Link to={`/product/${product.id}`}>
                 <ProductCard
                   name={product.name}
-                  category={
-                    categoryLabels[product.category] || product.category
-                  }
+                  category={product.category}
                   price={product.price}
                   originalPrice={product.original_price ?? undefined}
                   image={product.image || "/placeholder.svg"}

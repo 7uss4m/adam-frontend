@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import getAds from "../api/getAds"; // ✅ adjust path
-import type { Ad } from "../types/types"; // ✅ adjust path
+import { Link } from "react-router-dom";
+import getAds from "../api/getAds";
+import type { Ad } from "../types/types";
 
 function toExternalUrl(raw?: string) {
   if (!raw) return "#";
   const s = raw.trim();
-
   if (/^(mailto:|tel:)/i.test(s)) return s;
   if (/^(javascript:|data:|vbscript:)/i.test(s)) return "#";
   if (/^https?:\/\//i.test(s)) return s;
-
   return `https://${s.replace(/^\/+/, "")}`;
 }
 
@@ -27,7 +25,6 @@ type Slide = {
 const HeroBanner = () => {
   const [current, setCurrent] = useState(0);
 
-  // ✅ fetch from backend
   const adsQuery = useQuery({
     queryKey: ["ads", "hero-banner"],
     queryFn: async () => {
@@ -37,7 +34,6 @@ const HeroBanner = () => {
     refetchOnWindowFocus: false,
   });
 
-  // ✅ map backend -> slides (keep same visual structure)
   const slides: Slide[] = useMemo(() => {
     const ads = adsQuery.data || [];
     return ads
@@ -45,20 +41,16 @@ const HeroBanner = () => {
       .map((ad) => ({
         id: ad.id,
         image: String(ad.image),
-        // you used description as banner text in layout before
         title: String(ad.description || ""),
-        subtitle: "", // if you have another field, put it here
-        // you used title as external url before
+        subtitle: "",
         href: toExternalUrl(String(ad.title || "")),
       }));
   }, [adsQuery.data]);
 
-  // reset when data arrives/changes
   useEffect(() => {
     setCurrent(0);
   }, [slides.length]);
 
-  // autoplay
   useEffect(() => {
     if (slides.length <= 1) return;
     const timer = setInterval(() => {
@@ -67,29 +59,23 @@ const HeroBanner = () => {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  const go = (dir: number) => {
-    if (!slides.length) return;
-    setCurrent((prev) => (prev + dir + slides.length) % slides.length);
-  };
-
   if (adsQuery.isLoading) {
-    // optional skeleton
     return (
-      <div className="relative h-[300px] overflow-hidden rounded-2xl bg-secondary/40 sm:h-[400px] lg:h-[480px]" />
+      <div className="relative h-[220px] overflow-hidden rounded-2xl bg-secondary/40 sm:h-[320px] lg:h-[420px]" />
     );
   }
 
   if (!slides.length) return null;
 
   return (
-    <div className="relative h-[300px] overflow-hidden rounded-2xl sm:h-[400px] lg:h-[480px]">
+    <div className="relative h-[220px] overflow-hidden rounded-2xl sm:h-[320px] lg:h-[420px]">
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
           className="absolute inset-0"
         >
           <img
@@ -98,7 +84,6 @@ const HeroBanner = () => {
             className="h-full w-full object-cover"
           />
 
-          {/* click-through to backend url (if exists) */}
           {slides[current].href && slides[current].href !== "#" ? (
             <a
               href={slides[current].href}
@@ -109,63 +94,47 @@ const HeroBanner = () => {
             />
           ) : null}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-center">
-            <motion.h2
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="font-orbitron text-2xl font-black text-foreground text-glow sm:text-4xl lg:text-5xl"
-            >
-              {slides[current].title}
-            </motion.h2>
-
-            {slides[current].subtitle ? (
-              <motion.p
+          <div className="absolute inset-0 flex flex-col items-start justify-end p-6 sm:p-10">
+            {slides[current].title && (
+              <motion.h2
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="mt-3 max-w-lg text-sm text-muted-foreground sm:text-base"
+                transition={{ delay: 0.2 }}
+                className="max-w-md text-lg font-bold text-white sm:text-2xl lg:text-3xl"
               >
-                {slides[current].subtitle}
-              </motion.p>
-            ) : null}
+                {slides[current].title}
+              </motion.h2>
+            )}
+
+            <motion.div
+              initial={{ y: 15, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Link
+                to="/add-balance"
+                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground transition-transform hover:scale-105"
+              >
+                ادفع الآن
+              </Link>
+            </motion.div>
           </div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Nav arrows */}
-      {slides.length > 1 && (
-        <>
-          <button
-            onClick={() => go(-1)}
-            className="absolute z-30 right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/60 p-2 backdrop-blur-sm transition hover:bg-primary/20"
-            aria-label="Prev"
-          >
-            <ChevronRight className="h-5 w-5 text-foreground" />
-          </button>
-          <button
-            onClick={() => go(1)}
-            className="absolute z-30 left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/60 p-2 backdrop-blur-sm transition hover:bg-primary/20"
-            aria-label="Next"
-          >
-            <ChevronLeft className="h-5 w-5 text-foreground" />
-          </button>
-        </>
-      )}
-
       {/* Dots */}
       {slides.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2">
           {slides.map((_, i) => (
             <button
               key={slides[i].id}
               onClick={() => setCurrent(i)}
               className={`h-2 rounded-full transition-all ${
                 i === current
-                  ? "w-8 bg-primary glow-primary"
-                  : "w-2 bg-muted-foreground/40"
+                  ? "w-8 bg-primary"
+                  : "w-2 bg-white/40"
               }`}
               aria-label={`Go to slide ${i + 1}`}
             />

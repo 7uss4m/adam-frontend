@@ -292,205 +292,56 @@ export default function Header() {
 
   return (
     <>
-      {/* ✅ SAME NAVBAR WRAPPER STYLES */}
-      <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b-2 border-primary bg-background">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
-          {/* LEFT: Brand */}
-          <Link to="/" className="flex items-center gap-2">
+          {/* LEFT: Profile icon */}
+          {isAuthed ? (
+            <button
+              type="button"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-1 text-foreground"
+              aria-label="Profile"
+            >
+              <FaRegUser className="h-6 w-6" />
+            </button>
+          ) : (
+            <Link to="/login" className="p-1 text-foreground" aria-label="Login">
+              <FaRegUser className="h-6 w-6" />
+            </Link>
+          )}
+
+          {/* CENTER: Logo */}
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2">
             <img
               src={logo}
               alt="AdamZone"
-              className="h-10 rounded-lg object-contain"
+              className="h-8 object-contain"
             />
           </Link>
 
-          {/* CENTER: Desktop links (same style as Navbar file) */}
-          <div className="hidden items-center gap-8 md:flex">
-            {desktopLinks.map((link) => {
-              const active = link.match
-                ? link.match(pathname)
-                : pathname === link.to;
-              return (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={`text-sm font-semibold transition-colors ${
-                    active
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-primary"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-
-            {isAuthed && getUserQuery.data?.client
-              ? [1].map(() => {
-                  const active = pathname === "/api";
-                  return (
-                    <Link
-                      key={"/api"}
-                      to={"/api"}
-                      className={`text-sm font-semibold transition-colors ${
-                        active
-                          ? "text-primary"
-                          : "text-muted-foreground hover:text-primary"
-                      }`}
-                    >
-                      API
-                    </Link>
-                  );
-                })
-              : null}
-          </div>
-
-          {/* RIGHT: Actions (same style as Navbar file) */}
-          {isPending ? (
-            <div className="flex items-center gap-3">
-              {/* Balance skeleton */}
-              <Skeleton className="h-8 w-28 rounded-lg" />
-
-              {/* Username */}
-              <Skeleton className="hidden md:block h-4 w-24" />
-
-              {/* Badge */}
-              <Skeleton className="hidden md:block h-6 w-6 rounded-full" />
-
-              {/* Currency selector */}
-              <Skeleton className="hidden md:block h-8 w-24 rounded-lg" />
-
-              {/* Edit */}
-              <Skeleton className="hidden md:block h-9 w-9 rounded-lg" />
-
-              {/* Add balance */}
-              <Skeleton className="hidden md:block h-9 w-9 rounded-lg" />
-
-              {/* Language */}
-              <Skeleton className="h-9 w-9 rounded-lg" />
-
-              {/* Logout */}
-              <Skeleton className="h-9 w-9 rounded-lg" />
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              {isAuthed ? (
-                <>
-                  {/* Balance pill */}
-                  <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5">
-                    <Wallet className="h-4 w-4 text-primary" />
-                    <span className="font-orbitron text-sm font-bold text-primary">
-                      {currency === "syrian"
-                        ? `${getUserQuery.data.balance.toFixed(0)} SYP`
-                        : `$${getUserQuery.data.balance.toFixed(2)}`}
-                    </span>
-                  </div>
-
-                  <span className="hidden text-xs text-muted-foreground md:block">
-                    {getUserQuery.data.user_name}
-                  </span>
-
-                  <Link to="/badge" className="hidden md:inline-flex">
-                    <IoDiamond
-                      className="h-6 w-6"
-                      style={{ color: levelColor }}
-                    />
-                  </Link>
-
-                  <div className="hidden md:flex items-center gap-2 rounded-lg border border-border bg-secondary px-2 py-1.5">
-                    <span className="text-xs text-muted-foreground">
-                      {t("currency")}
-                    </span>
-                    <select
-                      value={currency}
-                      onChange={(e) =>
-                        handleCurrencyChange(
-                          e.target.value as "syrian" | "dollar"
-                        )
-                      }
-                      className="bg-transparent text-xs text-foreground outline-none"
-                    >
-                      <option value="syrian">{t("syrian_pound")}</option>
-                      <option value="dollar">{t("usd_dollar")}</option>
-                    </select>
-                  </div>
-
-                  <button
-                    onClick={() => setEditUser(true)}
-                    className="hidden md:inline-flex rounded-lg bg-secondary p-2 text-secondary-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-                  >
-                    <BiEdit className="h-5 w-5" />
-                  </button>
-
-                  <Link
-                    to="/add-balance"
-                    className="hidden md:inline-flex rounded-lg bg-secondary p-2 text-secondary-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-                  >
-                    <PlusCircle className="h-5 w-5" />
-                  </Link>
-
-                  <button
-                    onClick={() =>
-                      i18n.changeLanguage(i18n.language === "ar" ? "en" : "ar")
-                    }
-                    className="rounded-lg bg-secondary p-2 text-secondary-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-                  >
-                    <BsTranslate className="h-5 w-5" />
-                  </button>
-
-                  <button
-                    onClick={handleLogout}
-                    className="rounded-lg bg-secondary p-2 text-secondary-foreground transition-colors hover:bg-destructive/20 hover:text-destructive"
-                  >
-                    <LogOut className="h-5 w-5" />
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="hidden md:flex items-center gap-3">
-                    <GoogleOAuth />
-                  </div>
-
-                  <Link
-                    to="/login"
-                    className="rounded-lg gradient-primary px-4 py-2 text-sm font-bold text-primary-foreground"
-                  >
-                    {t("login") || "تسجيل الدخول"}
-                  </Link>
-
-                  <button
-                    onClick={() =>
-                      i18n.changeLanguage(i18n.language === "ar" ? "en" : "ar")
-                    }
-                    className="rounded-lg bg-secondary p-2 text-secondary-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-                  >
-                    <BsTranslate className="h-5 w-5" />
-                  </button>
-                </>
-              )}
-
-              <button
-                className="rounded-lg bg-secondary p-2 text-secondary-foreground md:hidden"
-                onClick={() => setMobileOpen(!mobileOpen)}
-              >
-                {mobileOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-          )}
+          {/* RIGHT: Menu */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-1 text-foreground"
+            aria-label="Menu"
+          >
+            {mobileOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
         </div>
 
-        {/* ✅ SAME MOBILE DROPDOWN STYLE/ANIMATION */}
+        {/* Mobile / Desktop dropdown menu */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden border-t border-border md:hidden"
+              className="overflow-hidden border-t border-border"
               dir={i18n.language === "ar" ? "rtl" : "ltr"}
             >
               <div className="flex flex-col gap-2 px-4 py-4">
@@ -540,8 +391,6 @@ export default function Header() {
                           <option value="dollar">{t("usd_dollar")}</option>
                         </select>
                       </div>
-
-                      {/* <MainModeToggle /> */}
                     </div>
 
                     <div className="mt-3 grid grid-cols-2 gap-2">
