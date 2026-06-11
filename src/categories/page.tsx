@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import getCategories from "../api/getCategories";
 import type { Category } from "../types/types";
 import logo from "../assets/logo.webp";
@@ -56,17 +56,15 @@ function CategoryCard({ cat, index }: { cat: Category; index: number }) {
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.95 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ delay: index * 0.05, duration: 0.5 }}
+        transition={{ delay: index * 0.03, duration: 0.4 }}
         viewport={{ once: true }}
         whileHover={{ y: -6, scale: 1.03 }}
-        className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${gradient} backdrop-blur-sm transition-all duration-400 shadow-lg ${glow} hover:shadow-xl ${border} cursor-pointer`}
+        className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${gradient} backdrop-blur-sm transition-all duration-300 shadow-lg ${glow} hover:shadow-xl ${border} cursor-pointer`}
       >
-        {/* Background shimmer effect */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none overflow-hidden rounded-2xl">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
         </div>
 
-        {/* Image */}
         <div className="relative aspect-square overflow-hidden">
           <img
             src={imgSrc}
@@ -75,19 +73,14 @@ function CategoryCard({ cat, index }: { cat: Category; index: number }) {
             loading="lazy"
             onError={() => setImgSrc(logo)}
           />
-          {/* Image overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-          {/* Arrow icon top right */}
           <motion.div
-            initial={{ opacity: 0, x: 10 }}
             className="absolute top-3 right-3 p-1.5 rounded-full bg-white/10 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           >
             <ArrowLeft className="w-4 h-4 text-white rotate-180" />
           </motion.div>
         </div>
 
-        {/* Label */}
         <div className="px-3 py-3">
           <p className="text-sm font-bold text-white line-clamp-1 text-center tracking-wide drop-shadow">
             {cat.name}
@@ -98,9 +91,11 @@ function CategoryCard({ cat, index }: { cat: Category; index: number }) {
   );
 }
 
-const CategorySection = () => {
+export default function CategoriesPage() {
+  const [search, setSearch] = useState("");
+
   const categoriesQuery = useQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories", "all"],
     queryFn: async () => {
       const res = await getCategories();
       return (res.data?.result ?? res.data) as Category[];
@@ -108,71 +103,72 @@ const CategorySection = () => {
     refetchOnWindowFocus: false,
   });
 
-  const allCategories = useMemo(() => {
+  const categories = useMemo(() => {
     const list = categoriesQuery.data || [];
     return list
       .filter((c) => c?.available !== false)
-      .sort((a, b) => safeOrder(a.order) - safeOrder(b.order));
-  }, [categoriesQuery.data]);
-
-  const categories = allCategories.slice(0, 15);
+      .sort((a, b) => safeOrder(a.order) - safeOrder(b.order))
+      .filter((c) => !search.trim() || c.name.includes(search.trim()));
+  }, [categoriesQuery.data, search]);
 
   return (
     <section className="py-10">
-      {/* Section Header */}
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        className="flex items-center justify-between mb-7"
-      >
-        <div className="flex items-center gap-3">
+      <div className="container max-w-[100%] md:max-w-[90%] lg:max-w-[80%] px-4">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-3 mb-6"
+        >
+          <Link to="/" className="p-2 rounded-full bg-secondary hover:bg-secondary/80 transition-colors">
+            <ArrowLeft className="w-4 h-4 rotate-180" />
+          </Link>
           <div className="w-1 h-7 rounded-full bg-gradient-to-b from-primary to-accent" />
-          <h2 className="text-xl font-black text-foreground tracking-tight">الأقسام</h2>
-          {allCategories.length > 0 && (
+          <h1 className="text-2xl font-black text-foreground">كل الأقسام</h1>
+          {categories.length > 0 && (
             <span className="text-xs font-bold text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">
-              {allCategories.length}
+              {categories.length}
             </span>
           )}
-        </div>
-        {allCategories.length > 15 && (
-          <Link to="/categories">
-            <motion.div
-              whileHover={{ x: -4 }}
-              className="text-sm text-primary font-semibold flex items-center gap-1"
-            >
-              <span>عرض الكل</span>
-              <ArrowLeft className="w-4 h-4" />
-            </motion.div>
-          </Link>
-        )}
-      </motion.div>
+        </motion.div>
 
-      {/* Grid */}
-      {categoriesQuery.isLoading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="overflow-hidden rounded-2xl bg-secondary/50">
-              <div className="aspect-square animate-pulse bg-secondary" />
-              <div className="px-3 py-3">
-                <div className="h-3 w-3/4 mx-auto rounded animate-pulse bg-secondary" />
+        {/* Search */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="relative mb-8"
+        >
+          <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="ابحث عن قسم..."
+            className="w-full rounded-xl border border-primary/20 bg-secondary/40 backdrop-blur-sm px-4 py-3 pr-11 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20 transition-all"
+          />
+        </motion.div>
+
+        {/* Grid */}
+        {categoriesQuery.isLoading ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="overflow-hidden rounded-2xl border border-white/5">
+                <div className="aspect-square animate-pulse bg-secondary" />
+                <div className="px-3 py-3">
+                  <div className="h-3 w-2/3 mx-auto rounded animate-pulse bg-secondary" />
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : categories.length ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {categories.map((cat, i) => (
-            <CategoryCard key={cat.id} cat={cat} index={i} />
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-border bg-secondary/30 p-8 text-center text-sm text-muted-foreground">
-          لا يوجد أقسام حالياً
-        </div>
-      )}
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+            {categories.map((cat, i) => (
+              <CategoryCard key={cat.id} cat={cat} index={i} />
+            ))}
+          </div>
+        )}
+      </div>
     </section>
   );
-};
-
-export default CategorySection;
+}

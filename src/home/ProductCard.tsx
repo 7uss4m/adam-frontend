@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Star, Zap } from "lucide-react";
+import logo from "../assets/logo.webp";
 
 interface ProductCardProps {
   name: string;
@@ -18,7 +19,8 @@ const ProductCard = ({
   badge,
   instant,
 }: ProductCardProps) => {
-  const [imgSrc, setImgSrc] = useState(image || "/placeholder.svg");
+  const [imgSrc, setImgSrc] = useState(image || logo);
+
 
   return (
     <motion.div

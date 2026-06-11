@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import logo from "../assets/logo.webp";
 
 import type { Category, Product } from "../types/types";
 
@@ -95,10 +96,11 @@ export default function SubCategoryPage() {
                   >
                     {/* full image */}
                     <img
-                      src={category.image}
+                      src={category.image || logo}
                       alt={category.name}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).src = logo; }}
                     />
 
                     {/* gradient overlay */}
@@ -143,10 +145,11 @@ export default function SubCategoryPage() {
                   >
                     {/* full image */}
                     <img
-                      src={product.image}
+                      src={product.image || logo}
                       alt={product.name}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).src = logo; }}
                     />
 
                     {/* gradient overlay */}

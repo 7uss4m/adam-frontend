@@ -13,6 +13,7 @@ import getProducts from "../api/getProducts";
 import getDollar from "../api/getDollar";
 
 import type { Category, Product } from "../types/types";
+import logo from "../assets/logo.webp";
 
 import Spinner from "../components/Spinner";
 import { Input } from "../components/ui/input";
@@ -140,10 +141,11 @@ export default function Products() {
                   )}
                 >
                   <img
-                    src={category.image}
+                    src={category.image || logo}
                     alt={category.name}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).src = logo; }}
                   />
 
                   {/* gradient overlay */}
@@ -187,10 +189,11 @@ export default function Products() {
                     )}
                   >
                     <img
-                      src={product.image}
+                      src={product.image || logo}
                       alt={product.name}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).src = logo; }}
                     />
 
                     {/* gradient overlay */}

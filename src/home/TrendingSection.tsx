@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import logo from "../assets/logo.webp";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
@@ -86,15 +87,14 @@ export default function TrendingSection() {
                     className="block h-full overflow-hidden rounded-2xl border border-white/5 bg-card transition-transform hover:scale-105"
                   >
                     <div className="aspect-square w-full bg-secondary">
-                      {product.image ? (
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          draggable={false}
-                        />
-                      ) : null}
+                      <img
+                        src={product.image || logo}
+                        alt={product.name}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        draggable={false}
+                        onError={(e) => { (e.target as HTMLImageElement).src = logo; }}
+                      />
                     </div>
                     <div className="p-3">
                       <p className="line-clamp-1 text-sm font-bold text-foreground">

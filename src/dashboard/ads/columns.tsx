@@ -1,32 +1,27 @@
-
 import { ColumnDef } from "@tanstack/react-table"
 import { Ad } from "../../types/types"
 
-
-
+const isAr = () => localStorage.getItem("lng") !== "en";
 
 export const columns: ColumnDef<Ad>[] = [
-
-
   {
     accessorKey: "id",
-    header: localStorage.getItem("lng") == "en" ? "ID" : "المعرف",
+    header: () => isAr() ? "#" : "#",
   },
   {
     accessorKey: "title",
-    header: localStorage.getItem("lng") == "en" ? "Link" : "الرابط",
+    header: () => isAr() ? "العنوان" : "Title",
   },
   {
     accessorKey: "description",
-    header: localStorage.getItem("lng") == "en" ? "Description" : "الوصف",
+    header: () => isAr() ? "الوصف" : "Description",
   },
   {
     accessorKey: "image",
-    header: localStorage.getItem("lng") == "en" ? "Image" : "الصورة",
+    header: () => isAr() ? "الصورة" : "Image",
   },
   {
     accessorKey: "active",
-    header: localStorage.getItem("lng") == "en" ? "Active" : "فعال",
+    header: () => isAr() ? "الحالة" : "Status",
   },
-
 ]

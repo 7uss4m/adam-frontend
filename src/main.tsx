@@ -1,5 +1,26 @@
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import axios from "axios";
+
+// Fix old image URLs from old server
+const OLD_DOMAIN = "https://omc.weisro.com/omcard";
+const NEW_DOMAIN = "https://adam.ak-store.digital/adam";
+
+function fixUrls(obj: unknown): unknown {
+  if (typeof obj === "string") return obj.replace(OLD_DOMAIN, NEW_DOMAIN);
+  if (Array.isArray(obj)) return obj.map(fixUrls);
+  if (obj && typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj as Record<string, unknown>).map(([k, v]) => [k, fixUrls(v)])
+    );
+  }
+  return obj;
+}
+
+axios.interceptors.response.use((response) => {
+  response.data = fixUrls(response.data);
+  return response;
+});
 import Page from "./home/page";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -47,6 +68,7 @@ import ChargePage from "./add-balance/charge-page/page";
 import DashboardInfo from "./dashboard/info/page";
 import Products from "./products/page";
 import Purchase from "./purchase/page";
+import CategoriesPage from "./categories/page";
 import LoginPage from "./login/page";
 import RegisterPage from "./register/page";
 import VerifyEmailPage from "./verify/page";
@@ -109,6 +131,10 @@ const router = createBrowserRouter([
       {
         path: "about-us",
         element: <AboutPage />,
+      },
+      {
+        path: "categories",
+        element: <CategoriesPage />,
       },
       {
         path: "notifications",
