@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import getCategories from "../api/getCategories";
 import type { Category } from "../types/types";
 import logo from "../assets/logo.webp";
@@ -12,86 +12,38 @@ function safeOrder(v: unknown) {
   return Number.isFinite(n) ? n : 999999;
 }
 
-const CARD_GRADIENTS = [
-  "from-violet-500/20 via-purple-500/10 to-transparent",
-  "from-cyan-500/20 via-blue-500/10 to-transparent",
-  "from-rose-500/20 via-pink-500/10 to-transparent",
-  "from-amber-500/20 via-orange-500/10 to-transparent",
-  "from-emerald-500/20 via-teal-500/10 to-transparent",
-  "from-sky-500/20 via-indigo-500/10 to-transparent",
-  "from-fuchsia-500/20 via-pink-500/10 to-transparent",
-  "from-lime-500/20 via-green-500/10 to-transparent",
-];
-
-const GLOW_COLORS = [
-  "group-hover:shadow-violet-500/30",
-  "group-hover:shadow-cyan-500/30",
-  "group-hover:shadow-rose-500/30",
-  "group-hover:shadow-amber-500/30",
-  "group-hover:shadow-emerald-500/30",
-  "group-hover:shadow-sky-500/30",
-  "group-hover:shadow-fuchsia-500/30",
-  "group-hover:shadow-lime-500/30",
-];
-
-const BORDER_COLORS = [
-  "group-hover:border-violet-500/60",
-  "group-hover:border-cyan-500/60",
-  "group-hover:border-rose-500/60",
-  "group-hover:border-amber-500/60",
-  "group-hover:border-emerald-500/60",
-  "group-hover:border-sky-500/60",
-  "group-hover:border-fuchsia-500/60",
-  "group-hover:border-lime-500/60",
-];
-
 function CategoryCard({ cat, index }: { cat: Category; index: number }) {
-  const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-  const glow = GLOW_COLORS[index % GLOW_COLORS.length];
-  const border = BORDER_COLORS[index % BORDER_COLORS.length];
   const [imgSrc, setImgSrc] = useState(cat.image || logo);
 
   return (
     <Link to={`/categories/${cat.id}/subs`}>
       <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ delay: index * 0.05, duration: 0.5 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05, duration: 0.4 }}
         viewport={{ once: true }}
-        whileHover={{ y: -6, scale: 1.03 }}
-        className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${gradient} backdrop-blur-sm transition-all duration-400 shadow-lg ${glow} hover:shadow-xl ${border} cursor-pointer`}
+        whileHover={{ y: -4, scale: 1.03 }}
+        className="group relative overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628] hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300 cursor-pointer"
       >
-        {/* Background shimmer effect */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        {/* Shimmer */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
         </div>
 
         {/* Image */}
-        <div className="relative aspect-square overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden bg-[#0d1b2e] flex items-center justify-center p-4">
           <img
             src={imgSrc}
             alt={cat.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+            className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
             onError={() => setImgSrc(logo)}
           />
-          {/* Image overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-          {/* Arrow icon top right */}
-          <motion.div
-            initial={{ opacity: 0, x: 10 }}
-            className="absolute top-3 right-3 p-1.5 rounded-full bg-white/10 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          >
-            <ArrowLeft className="w-4 h-4 text-white rotate-180" />
-          </motion.div>
         </div>
 
         {/* Label */}
-        <div className="px-3 py-3">
-          <p className="text-sm font-bold text-white line-clamp-1 text-center tracking-wide drop-shadow">
-            {cat.name}
-          </p>
+        <div className="px-3 py-3 text-center border-t border-[#1a2a44]">
+          <p className="text-sm font-bold text-white line-clamp-1">{cat.name}</p>
         </div>
       </motion.div>
     </Link>
@@ -118,28 +70,23 @@ const CategorySection = () => {
   const categories = allCategories.slice(0, 15);
 
   return (
-    <section className="py-10">
-      {/* Section Header */}
+    <section className="py-8">
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        className="flex items-center justify-between mb-7"
+        className="flex items-center justify-between mb-6"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-1 h-7 rounded-full bg-gradient-to-b from-primary to-accent" />
-          <h2 className="text-xl font-black text-foreground tracking-tight">الأقسام</h2>
-          {allCategories.length > 0 && (
-            <span className="text-xs font-bold text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">
-              {allCategories.length}
-            </span>
-          )}
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-cyan-400" />
+          <h2 className="text-lg font-black text-white">الأقسام الرئيسية</h2>
         </div>
         {allCategories.length > 15 && (
           <Link to="/categories">
             <motion.div
               whileHover={{ x: -4 }}
-              className="text-sm text-primary font-semibold flex items-center gap-1"
+              className="text-sm text-cyan-400 font-semibold flex items-center gap-1 hover:text-cyan-300 transition-colors"
             >
               <span>عرض الكل</span>
               <ArrowLeft className="w-4 h-4" />
@@ -150,12 +97,12 @@ const CategorySection = () => {
 
       {/* Grid */}
       {categoriesQuery.isLoading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="overflow-hidden rounded-2xl bg-secondary/50">
-              <div className="aspect-square animate-pulse bg-secondary" />
-              <div className="px-3 py-3">
-                <div className="h-3 w-3/4 mx-auto rounded animate-pulse bg-secondary" />
+            <div key={i} className="overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628]">
+              <div className="aspect-[16/10] animate-pulse bg-[#0d1b2e]" />
+              <div className="px-3 py-3 border-t border-[#1a2a44]">
+                <div className="h-3 w-3/4 mx-auto rounded animate-pulse bg-[#1a2a44]" />
               </div>
             </div>
           ))}
@@ -167,7 +114,7 @@ const CategorySection = () => {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-border bg-secondary/30 p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-8 text-center text-sm text-gray-500">
           لا يوجد أقسام حالياً
         </div>
       )}

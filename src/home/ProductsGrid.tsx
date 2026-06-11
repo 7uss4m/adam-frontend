@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import logo from "../assets/logo.webp";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Crown, Sparkles } from "lucide-react";
+import { Crown, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "./ProductCard";
 import getAllProducts from "../api/getAllProducts";
+import useEmblaCarousel from "embla-carousel-react";
 
 interface Product {
   id: string;
@@ -39,6 +41,16 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
 
   const token = useMemo(() => localStorage.getItem("token") || "", []);
 
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    dragFree: true,
+    containScroll: "trimSnaps",
+    align: "start",
+    direction: "rtl",
+  });
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
   useEffect(() => {
     let mounted = true;
 
@@ -65,78 +77,101 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
   }, [token]);
 
   return (
-    <section className="py-10">
-      {/* Featured Header */}
+    <section className="py-8">
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="relative mb-8 flex items-center justify-between"
+        className="flex items-center justify-between mb-6"
       >
-        <div className="flex items-center gap-3">
-          {/* Glowing crown icon */}
-          <motion.div
-            animate={{ rotate: [-5, 5, -5] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="p-2 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 shadow-lg shadow-yellow-500/40"
-          >
-            <Crown className="w-5 h-5 text-white fill-white" />
-          </motion.div>
-
-          <div>
-            <h2 className="text-xl font-black bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 bg-clip-text text-transparent">
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
-            )}
-          </div>
-
-          <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
+        <div className="flex items-center gap-2">
+          <Crown className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+          <h2 className="text-lg font-black text-white">{title}</h2>
+          {subtitle && (
+            <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>
+          )}
         </div>
 
-        {/* Decorative line */}
-        <div className="flex-1 mx-4 h-px bg-gradient-to-r from-yellow-500/40 via-amber-300/20 to-transparent" />
+        <Link to="/categories">
+          <motion.div
+            whileHover={{ x: -4 }}
+            className="text-sm text-cyan-400 font-semibold flex items-center gap-1 hover:text-cyan-300 transition-colors"
+          >
+            <span>عرض الكل</span>
+            <ArrowLeft className="w-4 h-4" />
+          </motion.div>
+        </Link>
       </motion.div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="overflow-hidden rounded-2xl border border-yellow-500/10">
-              <div className="aspect-square animate-pulse bg-secondary" />
-              <div className="px-3 py-3">
-                <div className="h-3 w-2/3 mx-auto rounded animate-pulse bg-secondary" />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628]">
+              <div className="aspect-[4/3] animate-pulse bg-[#0d1b2e]" />
+              <div className="p-3.5 space-y-2.5">
+                <div className="h-3 w-2/3 mx-auto rounded animate-pulse bg-[#1a2a44]" />
+                <div className="h-3 w-1/2 mx-auto rounded animate-pulse bg-[#1a2a44]" />
+                <div className="h-8 w-full rounded-xl animate-pulse bg-[#1a2a44]" />
               </div>
             </div>
           ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-10 text-center text-sm text-gray-500">
           لا توجد منتجات حالياً
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {products.slice(0, 12).map((product, i) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              viewport={{ once: true }}
-            >
-              <Link to={`/product/${product.id}`}>
-                <ProductCard
-                  name={product.name}
-                  category={product.category}
-                  price={product.price}
-                  originalPrice={product.original_price ?? undefined}
-                  image={product.image || "/placeholder.svg"}
-                  badge={product.badge ?? undefined}
-                  instant={product.instant_delivery ?? false}
-                />
-              </Link>
-            </motion.div>
-          ))}
+        <div className="relative group/carousel">
+          {/* Carousel */}
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex gap-4">
+              {products.slice(0, 12).map((product, i) => (
+                <div
+                  key={product.id}
+                  className="shrink-0 basis-[48%] sm:basis-[32%] lg:basis-[24%] xl:basis-[16.5%]"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04 }}
+                    viewport={{ once: true }}
+                  >
+                    <Link to={`/product/${product.id}`}>
+                      <ProductCard
+                        name={product.name}
+                        category={product.category}
+                        price={product.price}
+                        originalPrice={product.original_price ?? undefined}
+                        image={product.image || logo}
+                        badge={product.badge ?? undefined}
+                        instant={product.instant_delivery ?? false}
+                        index={i}
+                      />
+                    </Link>
+                  </motion.div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation arrows */}
+          <button
+            type="button"
+            title="السابق"
+            onClick={scrollPrev}
+            className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 p-2 rounded-full bg-[#0a1628]/90 border border-[#1a2a44] text-white hover:border-cyan-500/50 hover:bg-[#0a1628] transition-all opacity-0 group-hover/carousel:opacity-100"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            title="التالي"
+            onClick={scrollNext}
+            className="absolute left-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 p-2 rounded-full bg-[#0a1628]/90 border border-[#1a2a44] text-white hover:border-cyan-500/50 hover:bg-[#0a1628] transition-all opacity-0 group-hover/carousel:opacity-100"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
         </div>
       )}
     </section>

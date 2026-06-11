@@ -7,7 +7,14 @@ const OLD_DOMAIN = "https://omc.weisro.com/omcard";
 const NEW_DOMAIN = "https://adam.ak-store.digital/adam";
 
 function fixUrls(obj: unknown): unknown {
-  if (typeof obj === "string") return obj.replace(OLD_DOMAIN, NEW_DOMAIN);
+  if (typeof obj === "string") {
+    let s = obj.replace(OLD_DOMAIN, NEW_DOMAIN);
+    // Fix relative paths like "public/image-xxx.webp" → full URL
+    if (s && !s.startsWith("http") && (s.startsWith("public/") || s.startsWith("uploads/"))) {
+      s = `${NEW_DOMAIN}/${s}`;
+    }
+    return s;
+  }
   if (Array.isArray(obj)) return obj.map(fixUrls);
   if (obj && typeof obj === "object") {
     return Object.fromEntries(

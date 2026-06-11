@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import type { AxiosError, AxiosResponse } from "axios";
 
-import { Wallet, Menu, X, LogOut, Settings, PlusCircle } from "lucide-react";
+import { Wallet, Menu, X, LogOut, Settings, PlusCircle, Sun, Moon } from "lucide-react";
 import { BsTranslate } from "react-icons/bs";
 import {
   FaRegUser,
@@ -39,6 +39,7 @@ import { Input } from "./ui/input";
 
 import GoogleOAuth from "./GoogleAuth";
 import NavLogin from "./nav-login";
+import { useTheme } from "./theme-provider";
 
 import getUser from "../api/getUser";
 import putUser from "../api/putUser";
@@ -68,6 +69,8 @@ export default function Header() {
   const [t, i18n] = useTranslation("global");
 
   const token = localStorage.getItem("token");
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [editUser, setEditUser] = useState(false);
@@ -319,19 +322,31 @@ export default function Header() {
             />
           </Link>
 
-          {/* RIGHT: Menu */}
-          <button
-            type="button"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-1 text-foreground"
-            aria-label="Menu"
-          >
-            {mobileOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          {/* RIGHT: Theme + Menu */}
+          <div className="flex items-center gap-1">
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              className="p-2 rounded-full text-foreground hover:bg-secondary transition-colors"
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-primary" />}
+            </motion.button>
+
+            <button
+              type="button"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-1 text-foreground"
+              aria-label="Menu"
+            >
+              {mobileOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile / Desktop dropdown menu */}
