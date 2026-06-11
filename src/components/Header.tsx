@@ -341,10 +341,11 @@ export default function Header() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden border-t border-border"
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden border-t border-primary/20 bg-gradient-to-b from-background via-primary/5 to-background"
               dir={i18n.language === "ar" ? "rtl" : "ltr"}
             >
-              <div className="flex flex-col gap-2 px-4 py-4">
+              <div className="flex flex-col gap-3 px-4 py-5">
                 {/* Auth block */}
                 {!token && <NavLogin />}
 
@@ -355,76 +356,101 @@ export default function Header() {
                 )}
 
                 {isAuthed ? (
-                  <div className="mb-2 rounded-lg border border-border bg-secondary/40 p-3">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="flex h-9 w-9 items-center justify-center bg-primary/15">
-                        <FaRegUser className="text-primary" />
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold">
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-3 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-4 backdrop-blur-sm shadow-lg"
+                  >
+                    {/* User Info */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="relative">
+                        <Avatar className="flex h-12 w-12 items-center justify-center bg-gradient-to-br from-primary to-accent text-white shadow-lg">
+                          <FaRegUser className="h-6 w-6" />
+                        </Avatar>
+                        <div className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-green-500 border-2 border-background"></div>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-foreground">
                           {getUserQuery.data.user_name}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {t("balance")}:{" "}
-                          {currency === "syrian"
-                            ? `${getUserQuery.data.balance.toFixed(0)} SYP`
-                            : `$${getUserQuery.data.balance.toFixed(2)}`}
-                        </span>
+                        </p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <span className="text-xs text-muted-foreground">{t("balance")}:</span>
+                          <span className="text-xs font-semibold text-primary">
+                            {currency === "syrian"
+                              ? `${getUserQuery.data.balance.toFixed(0)} SYP`
+                              : `$${getUserQuery.data.balance.toFixed(2)}`}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="mt-3 flex items-center gap-2">
-                      <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-background/50 px-3 py-2">
-                        <span className="text-xs text-muted-foreground">
-                          {t("currency")}
-                        </span>
-                        <select
-                          value={currency}
-                          onChange={(e) =>
-                            handleCurrencyChange(
-                              e.target.value as "syrian" | "dollar"
-                            )
-                          }
-                          className="w-full bg-transparent text-sm outline-none"
-                        >
-                          <option value="syrian">{t("syrian_pound")}</option>
-                          <option value="dollar">{t("usd_dollar")}</option>
-                        </select>
-                      </div>
+                    {/* Currency Selector */}
+                    <div className="mb-4 rounded-lg border border-primary/20 bg-background/50 px-3 py-2.5 backdrop-blur-sm">
+                      <label className="text-xs font-semibold text-muted-foreground mb-2 block">
+                        {t("currency")}
+                      </label>
+                      <select
+                        value={currency}
+                        onChange={(e) =>
+                          handleCurrencyChange(
+                            e.target.value as "syrian" | "dollar"
+                          )
+                        }
+                        aria-label={t("currency")}
+                        className="w-full bg-transparent text-sm font-medium outline-none cursor-pointer"
+                      >
+                        <option value="syrian">{t("syrian_pound")}</option>
+                        <option value="dollar">{t("usd_dollar")}</option>
+                      </select>
                     </div>
 
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      <button
+                    {/* Buttons */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => {
                           setEditUser(true);
                           setMobileOpen(false);
                         }}
-                        className="rounded-lg bg-secondary p-2 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                        className="rounded-lg bg-gradient-to-r from-primary/80 to-primary p-2.5 text-xs font-bold text-white transition-all hover:from-primary hover:to-primary/90 shadow-md hover:shadow-lg"
                       >
-                        {t("edit_username")}
-                      </button>
-                      <button
+                        <span className="inline-flex items-center justify-center gap-1.5">
+                          <Settings className="h-3.5 w-3.5" />
+                          {t("edit_username")}
+                        </span>
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={handleLogout}
-                        className="rounded-lg bg-secondary p-2 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-destructive/20 hover:text-destructive"
+                        className="rounded-lg bg-gradient-to-r from-red-500/80 to-red-600 p-2.5 text-xs font-bold text-white transition-all hover:from-red-500 hover:to-red-600 shadow-md hover:shadow-lg"
                       >
-                        {t("logout")}
-                      </button>
+                        <span className="inline-flex items-center justify-center gap-1.5">
+                          <LogOut className="h-3.5 w-3.5" />
+                          {t("logout")}
+                        </span>
+                      </motion.button>
                     </div>
 
+                    {/* API Button */}
                     {getUserQuery.data?.client && (
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => {
                           setMobileOpen(false);
                           navigate("/api");
                         }}
-                        className="mt-2 w-full rounded-lg bg-secondary p-2 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                        className="mt-3 w-full rounded-lg bg-gradient-to-r from-accent/80 to-accent p-2.5 text-xs font-bold text-white transition-all hover:from-accent hover:to-accent/90 shadow-md hover:shadow-lg"
                       >
-                        <span className="inline-flex items-center gap-2">
-                          <Settings className="h-4 w-4" /> API
+                        <span className="inline-flex items-center justify-center gap-2">
+                          <Settings className="h-4 w-4" />
+                          API {t("dashboard") || "Dashboard"}
                         </span>
-                      </button>
+                      </motion.button>
                     )}
-                  </div>
+                  </motion.div>
                 ) : null}
 
                 {/* Links */}
