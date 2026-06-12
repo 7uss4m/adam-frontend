@@ -53,6 +53,7 @@ export type Category = {
   bonus: number
   available: boolean
   order: string
+  parent_id?: number | null
   // visible: boolean
 }
 
@@ -72,7 +73,7 @@ export type Product = {
   prices: Price[]
   type: "one" | "bundle"
   quantity: number
-  categories: { id?: number; name: string }
+  categories: { id?: number; name: string; parent_id?: number | null }
   categoryId?: number | string
   source?: string | null
   mainPrice: string

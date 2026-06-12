@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, Play } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ChevronRight, ShoppingBag } from "lucide-react";
 import getAds from "../api/getAds";
 import type { Ad } from "../types/types";
 
@@ -9,6 +10,7 @@ type Slide = {
   id: string | number;
   image: string;
   title: string;
+  description?: string;
 };
 
 const HeroBanner = () => {
@@ -31,143 +33,167 @@ const HeroBanner = () => {
         id: ad.id,
         image: String(ad.image),
         title: String(ad.title || ""),
+        description: ad.description ? String(ad.description) : undefined,
       }));
   }, [adsQuery.data]);
 
-  useEffect(() => { setCurrent(0); }, [slides.length]);
+  useEffect(() => {
+    setCurrent(0);
+  }, [slides.length]);
 
   useEffect(() => {
     if (slides.length <= 1) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
   if (adsQuery.isLoading) {
     return (
-      <div className="w-full h-[200px] sm:h-[320px] lg:h-[460px] rounded-3xl animate-pulse bg-gradient-to-br from-[#0a1628] to-[#050B14] border border-[#1a2a44] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(6,182,212,0.1)_25%,rgba(6,182,212,0.1)_50%,transparent_50%,transparent_75%,rgba(6,182,212,0.1)_75%,rgba(6,182,212,0.1))] bg-[length:60px_60px] animate-[slide_2s_linear_infinite]" />
+      <div className="relative h-[220px] w-full overflow-hidden rounded-3xl border border-[#1a2a44] bg-gradient-to-br from-[#0a1628] to-[#050B14] sm:h-[340px] lg:h-[480px]">
+        <div className="absolute inset-0 animate-pulse bg-[#0d1b2e]/50" />
       </div>
     );
   }
 
-  if (!slides.length) return null;
+  if (!slides.length) {
+    return (
+      <div className="relative flex h-[220px] w-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-[#1a2a44] bg-gradient-to-br from-[#0a1628] via-[#0d1b2e] to-[#050B14] sm:h-[340px] lg:h-[420px]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.15),transparent_60%)]" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative z-10 max-w-xl px-6 text-center"
+        >
+          <h1 className="text-3xl font-black text-white sm:text-4xl lg:text-5xl">
+            متجرك الرقمي
+            <span className="block bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              الأول
+            </span>
+          </h1>
+          <p className="mt-4 text-sm text-gray-400 sm:text-base">
+            آلاف المنتجات الرقمية — تسليم فوري — أسعار تنافسية
+          </p>
+          <Link
+            to="/categories"
+            className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-500/25"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            ابدأ التسوق
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
   const prev = () => setCurrent((p) => (p - 1 + slides.length) % slides.length);
   const next = () => setCurrent((p) => (p + 1) % slides.length);
+  const slide = slides[current];
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative w-full h-[200px] sm:h-[320px] lg:h-[460px] rounded-3xl overflow-hidden group"
+      className="group relative h-[220px] w-full overflow-hidden rounded-3xl sm:h-[340px] lg:h-[480px]"
     >
-      {/* Premium border glow */}
-      <div className="absolute inset-0 rounded-3xl border-2 border-transparent bg-gradient-to-r from-cyan-500 via-purple-500 to-cyan-500 p-[2px] opacity-30 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none z-20" />
+      <div className="pointer-events-none absolute inset-0 z-20 rounded-3xl border border-white/10" />
 
-      {/* Slides */}
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
-          initial={{ opacity: 0, scale: 1.05 }}
+          initial={{ opacity: 0, scale: 1.06 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.6 }}
-          className="absolute inset-0 w-full h-full"
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.55 }}
+          className="absolute inset-0 h-full w-full"
         >
           <img
-            src={slides[current].image}
-            alt={slides[current].title || "banner"}
-            className="w-full h-full object-cover"
+            src={slide.image}
+            alt={slide.title || "banner"}
+            className="h-full w-full object-cover"
             draggable={false}
           />
         </motion.div>
       </AnimatePresence>
 
-      {/* Multiple gradients for depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none z-10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/20 pointer-events-none z-10" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#050B14]/95 via-[#050B14]/30 to-transparent" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#050B14]/50 via-transparent to-transparent" />
 
-      {/* Navigation arrows */}
+      {/* Content overlay */}
+      <div className="absolute bottom-0 start-0 end-0 z-20 p-6 sm:p-10">
+        <motion.div
+          key={`text-${current}`}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="max-w-xl"
+        >
+          {slide.title && (
+            <h2 className="text-xl font-black text-white sm:text-2xl lg:text-3xl">
+              {slide.title}
+            </h2>
+          )}
+          {slide.description && (
+            <p className="mt-2 line-clamp-2 text-sm text-gray-300 sm:text-base">
+              {slide.description}
+            </p>
+          )}
+          <Link
+            to="/categories"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white/10 px-5 py-2.5 text-sm font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            تسوق الآن
+          </Link>
+        </motion.div>
+      </div>
+
       {slides.length > 1 && (
         <>
           <motion.button
-            whileHover={{ scale: 1.12 }}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             type="button"
             onClick={prev}
             aria-label="السابق"
-            className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3.5 rounded-full bg-white/10 backdrop-blur-xl hover:bg-white/20 text-white border border-white/20 hover:border-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl shadow-black/40"
+            className="absolute start-4 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-white/10 p-2.5 text-white opacity-0 backdrop-blur-xl transition-all group-hover:opacity-100 sm:start-6 sm:p-3.5"
           >
-            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 rotate-180" />
+            <ChevronRight className="h-5 w-5 rotate-180 sm:h-6 sm:w-6" />
           </motion.button>
 
           <motion.button
-            whileHover={{ scale: 1.12 }}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             type="button"
             onClick={next}
             aria-label="التالي"
-            className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3.5 rounded-full bg-white/10 backdrop-blur-xl hover:bg-white/20 text-white border border-white/20 hover:border-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl shadow-black/40"
+            className="absolute end-4 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-white/10 p-2.5 text-white opacity-0 backdrop-blur-xl transition-all group-hover:opacity-100 sm:end-6 sm:p-3.5"
           >
-            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
           </motion.button>
 
-          {/* Dots indicators */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="absolute bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2.5 px-5 py-3 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/50"
-          >
+          <div className="absolute bottom-5 start-1/2 z-30 flex -translate-x-1/2 gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-2.5 backdrop-blur-xl sm:bottom-8">
             {slides.map((_, i) => (
-              <motion.button
+              <button
                 key={i}
                 type="button"
                 onClick={() => setCurrent(i)}
                 aria-label={`slide ${i + 1}`}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
                 className={`rounded-full transition-all duration-300 ${
                   i === current
-                    ? "w-8 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 shadow-lg shadow-cyan-500/50"
-                    : "w-3 h-3 bg-white/30 hover:bg-white/60 hover:shadow-lg hover:shadow-white/20"
+                    ? "h-2.5 w-8 bg-gradient-to-r from-cyan-400 to-blue-500"
+                    : "h-2.5 w-2.5 bg-white/40 hover:bg-white/70"
                 }`}
               />
             ))}
-          </motion.div>
+          </div>
 
-          {/* Counter badge */}
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="absolute top-5 sm:top-6 right-5 sm:right-6 z-20 px-4 py-2 rounded-full bg-white/5 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/50"
-          >
-            <span className="text-xs sm:text-sm font-bold text-white">
-              <span className="text-cyan-400">{current + 1}</span>
-              <span className="text-white/40 mx-1">/</span>
-              <span>{slides.length}</span>
-            </span>
-          </motion.div>
-
-          {/* Play indicator for first load */}
-          {current === 0 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="absolute inset-0 flex items-center justify-center z-15 pointer-events-none"
-            >
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="flex items-center justify-center w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20"
-              >
-                <Play className="w-6 h-6 text-white fill-white ml-0.5" />
-              </motion.div>
-            </motion.div>
-          )}
+          <div className="absolute end-5 top-5 z-30 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-xl sm:end-8 sm:top-8">
+            <span className="text-cyan-400">{current + 1}</span>
+            <span className="mx-1 text-white/40">/</span>
+            <span>{slides.length}</span>
+          </div>
         </>
       )}
     </motion.div>

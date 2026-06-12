@@ -169,7 +169,7 @@ function ProductCard({
           {product.source && (
             <Badge
               variant="outline"
-              className="rounded-lg border-border/60 bg-muted/30 text-[10px] font-semibold"
+              className="rounded-lg border-border/60 bg-muted/40 px-3 py-1.5 text-sm font-bold tracking-wide"
             >
               {product.source}
             </Badge>

@@ -1,36 +1,32 @@
-// TopUpSection.tsx
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useEmblaCarousel from "embla-carousel-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight, Wallet } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import getBoxes from "../api/getBoxes";
 import type { ChargeBox } from "../types/types";
 import { cn } from "../lib/utils";
-import { useTranslation } from "react-i18next";
-
-// Small helper: responsive slide widths (feel free to tweak)
-function slideBasis(type: "method" | "box") {
-  return type === "method"
-    ? "basis-[78%] sm:basis-[46%] lg:basis-[23%]"
-    : "basis-[60%] sm:basis-[36%] lg:basis-[22%]";
-}
+import SectionHeader from "./SectionHeader";
 
 export default function TopUpSection() {
   const { i18n } = useTranslation("global");
-  // ✅ Drag-free carousel for boxes (API)
-  const [boxesRef] = useEmblaCarousel({
+  const token = useMemo(() => localStorage.getItem("token") || "", []);
+
+  const [boxesRef, emblaApi] = useEmblaCarousel({
     dragFree: true,
     containScroll: "trimSnaps",
     align: "start",
-    direction: i18n.language == "ar" ? "rtl" : "ltr",
+    direction: i18n.language === "ar" ? "rtl" : "ltr",
   });
 
-  const token = useMemo(() => localStorage.getItem("token") || "", []);
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   const boxesQuery = useQuery({
-    queryKey: ["boxes"],
+    queryKey: ["boxes", "home"],
     queryFn: async () => {
       const res = await getBoxes(token);
       return res.data.result as ChargeBox[];
@@ -40,73 +36,107 @@ export default function TopUpSection() {
     retry: false,
   });
 
+  if (!token) return null;
+
   return (
-    <section id="topup" className="py-8">
-      <h2 className="mb-2 font-orbitron text-xl font-bold text-foreground">
-        شحن رصيدك
-      </h2>
-      <p className="mb-6 text-sm text-muted-foreground">
-        اختر وسيلة الدفع المناسبة لك
-      </p>
+    <section id="topup" className="py-4">
+      <SectionHeader
+        icon={Wallet}
+        title="شحن رصيدك"
+        subtitle="وسائل دفع متعددة — شحن فوري"
+        viewAllHref="/add-balance"
+        accent="text-emerald-400"
+      />
 
-      {/* ✅ Boxes carousel (drag-free) */}
-      {!token ? (
-        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-          يجب تسجيل الدخول لعرض صناديق الشحن.
+      {boxesQuery.isLoading ? (
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-48 w-56 shrink-0 animate-pulse rounded-2xl bg-[#0a1628] border border-[#1a2a44]"
+            />
+          ))}
         </div>
-      ) : boxesQuery.isLoading ? (
-        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-          جارٍ التحميل...
-        </div>
-      ) : boxesQuery.isError ? (
-        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-          حدث خطأ أثناء جلب الصناديق.
-        </div>
-      ) : (boxesQuery.data?.length ?? 0) === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
-          لا توجد صناديق حالياً.
-        </div>
+      ) : boxesQuery.isError || !boxesQuery.data?.length ? (
+        <Link
+          to="/add-balance"
+          className="flex items-center justify-center rounded-2xl border border-dashed border-[#1a2a44] bg-[#0a1628]/50 py-12 text-sm text-gray-400 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
+        >
+          اذهب لصفحة شحن الرصيد ←
+        </Link>
       ) : (
-        <div ref={boxesRef} className="overflow-hidden">
-          <div className="flex gap-4">
-            {boxesQuery.data!.map((box, i) => (
-              <div key={box.id} className={cn("shrink-0", slideBasis("box"))}>
-                <motion.div
-                  initial={{ opacity: 0, y: 14 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                  viewport={{ once: true }}
-                  className="select-none h-full"
+        <div className="group/carousel relative">
+          <div ref={boxesRef} className="overflow-hidden">
+            <div className="flex gap-4">
+              {boxesQuery.data.map((box, i) => (
+                <div
+                  key={box.id}
+                  className="shrink-0 basis-[72%] sm:basis-[46%] md:basis-[32%] lg:basis-[24%]"
                 >
-                  <Link
-                    to={`/add-balance/${box.id}/box`}
-                    className={cn(
-                      "block h-full overflow-hidden rounded-2xl border border-border bg-card",
-                      "transition-colors hover:border-primary/30"
-                    )}
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04 }}
+                    viewport={{ once: true }}
                   >
-                    <div className="aspect-[4/3] w-full bg-secondary">
-                      {box.image ? (
-                        <img
-                          src={box.image}
-                          alt={box.name}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          draggable={false}
-                        />
-                      ) : null}
-                    </div>
-
-                    <div className="p-4">
-                      <p className="line-clamp-1 text-sm font-bold text-foreground">
-                        {box.name}
-                      </p>
-                    </div>
-                  </Link>
-                </motion.div>
-              </div>
-            ))}
+                    <Link
+                      to={`/add-balance/${box.id}/box`}
+                      className={cn(
+                        "group block overflow-hidden rounded-2xl border border-[#1a2a44]/80 bg-[#0a1628]/90",
+                        "transition-all hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/10"
+                      )}
+                    >
+                      <div className="relative aspect-[4/3] overflow-hidden bg-[#0d1b2e]">
+                        {box.image ? (
+                          <img
+                            src={box.image}
+                            alt={box.name}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                            draggable={false}
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center">
+                            <Wallet className="h-12 w-12 text-emerald-500/40" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#050B14]/80 to-transparent" />
+                      </div>
+                      <div className="p-4">
+                        <p className="line-clamp-1 text-sm font-bold text-white">
+                          {box.name}
+                        </p>
+                        <p className="mt-1 text-[10px] text-emerald-400/80">
+                          شحن فوري
+                        </p>
+                      </div>
+                    </Link>
+                  </motion.div>
+                </div>
+              ))}
+            </div>
           </div>
+
+          {(boxesQuery.data?.length ?? 0) > 3 && (
+            <>
+              <button
+                type="button"
+                title="السابق"
+                onClick={scrollPrev}
+                className="absolute -end-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a2a44] bg-[#0a1628]/95 text-white opacity-0 backdrop-blur-md transition-all group-hover/carousel:opacity-100"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                title="التالي"
+                onClick={scrollNext}
+                className="absolute -start-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a2a44] bg-[#0a1628]/95 text-white opacity-0 backdrop-blur-md transition-all group-hover/carousel:opacity-100"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+            </>
+          )}
         </div>
       )}
     </section>
