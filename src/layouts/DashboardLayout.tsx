@@ -1,5 +1,4 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { ThemeProvider } from "../components/theme-provider";
 import {
   FaBox,
   FaCashRegister,
@@ -36,7 +35,6 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Toaster } from "../components/ui/toaster";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import getUser from "../api/getUser";
 import Spinner from "../components/Spinner";
@@ -469,8 +467,7 @@ export default function DashboardLayout() {
 
   return (
     <div className="dashboard min-h-screen bg-background">
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        {getUserQuery.isLoading ? (
+      {getUserQuery.isLoading ? (
           <div className="flex min-h-screen items-center justify-center">
             <Spinner />
           </div>
@@ -570,8 +567,6 @@ export default function DashboardLayout() {
           />
         )}
 
-        <Toaster />
-      </ThemeProvider>
     </div>
   );
 }

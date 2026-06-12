@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -70,7 +70,7 @@ export default function AddBalance() {
 
   if (getChargeBoxesQuery.isLoading) {
     return (
-      <section className="min-h-[60vh] flex justify-center items-center bg-[#050B14]">
+      <section className="min-h-[60vh] flex justify-center items-center bg-background">
         <Spinner />
       </section>
     );
@@ -78,7 +78,7 @@ export default function AddBalance() {
 
   if (!getChargeBoxesQuery.isSuccess) {
     return (
-      <section className="min-h-svh flex justify-center items-center text-cyan-400 text-xl bg-[#050B14]">
+      <section className="min-h-svh flex justify-center items-center text-cyan-400 text-xl bg-background">
         {t("something_went_wrong")}
       </section>
     );
@@ -87,7 +87,7 @@ export default function AddBalance() {
   const boxes = getChargeBoxesQuery.data;
 
   return (
-    <div dir="rtl" className="min-h-svh bg-[#050B14] relative overflow-hidden">
+    <div dir="rtl" className="min-h-svh bg-background relative overflow-hidden">
 
       {/* ── Ambient background effects ── */}
       <div className="pointer-events-none absolute inset-0">
@@ -131,7 +131,7 @@ export default function AddBalance() {
                 <span className="text-xs font-bold text-cyan-400">بوابة الشحن الآمنة</span>
               </div>
 
-              <h1 className="text-4xl font-black text-white leading-tight lg:text-5xl">
+              <h1 className="text-4xl font-black text-foreground leading-tight lg:text-5xl">
                 شحن{" "}
                 <span className="bg-gradient-to-l from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                   الرصيد
@@ -149,12 +149,12 @@ export default function AddBalance() {
                   <p className="text-2xl font-black text-cyan-400">{boxes.length}+</p>
                   <p className="text-[11px] text-gray-500">طريقة دفع</p>
                 </div>
-                <div className="h-8 w-px bg-[#1a2a44]" />
+                <div className="h-8 w-px bg-border" />
                 <div className="text-center">
                   <p className="text-2xl font-black text-green-400">24/7</p>
                   <p className="text-[11px] text-gray-500">دعم فني</p>
                 </div>
-                <div className="h-8 w-px bg-[#1a2a44]" />
+                <div className="h-8 w-px bg-border" />
                 <div className="text-center">
                   <p className="text-2xl font-black text-purple-400">SSL</p>
                   <p className="text-[11px] text-gray-500">تشفير آمن</p>
@@ -186,14 +186,14 @@ export default function AddBalance() {
                     <motion.div
                       animate={{ y: [-4, 4, -4] }}
                       transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                      className="absolute -top-4 -right-4 w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-yellow-500/30"
+                      className="absolute -top-4 -right-4 w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-foreground font-black text-sm shadow-lg shadow-yellow-500/30"
                     >
                       $
                     </motion.div>
                     <motion.div
                       animate={{ y: [3, -3, 3] }}
                       transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                      className="absolute -bottom-3 -left-3 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-green-500/30"
+                      className="absolute -bottom-3 -left-3 w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-foreground font-bold text-xs shadow-lg shadow-green-500/30"
                     >
                       ✓
                     </motion.div>
@@ -202,7 +202,7 @@ export default function AddBalance() {
                       transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                       className="absolute top-2 -left-6 w-7 h-7 rounded-lg bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center shadow-lg shadow-purple-500/30"
                     >
-                      <Shield className="w-3.5 h-3.5 text-white" />
+                      <Shield className="w-3.5 h-3.5 text-foreground" />
                     </motion.div>
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export default function AddBalance() {
                   <div className={`mb-2 inline-flex rounded-xl ${c.bg} p-2.5`}>
                     <Icon className={`h-5 w-5 ${c.text}`} />
                   </div>
-                  <h3 className="text-sm font-bold text-white">{title}</h3>
+                  <h3 className="text-sm font-bold text-foreground">{title}</h3>
                   <p className="mt-0.5 text-[11px] text-gray-500 leading-relaxed">{sub}</p>
                   {/* Corner glow on hover */}
                   <div className={`pointer-events-none absolute -bottom-4 -left-4 h-16 w-16 rounded-full ${c.bg} opacity-0 blur-2xl transition-opacity group-hover:opacity-100`} />
@@ -255,7 +255,7 @@ export default function AddBalance() {
         >
           <div className="flex items-center gap-2 mb-6">
             <CreditCard className="h-5 w-5 text-gray-400" />
-            <h2 className="text-lg font-black text-white">طرق الدفع المتاحة</h2>
+            <h2 className="text-lg font-black text-foreground">طرق الدفع المتاحة</h2>
           </div>
 
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -274,8 +274,8 @@ export default function AddBalance() {
                     onMouseLeave={() => setSelectedId(null)}
                     className={`group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-300
                       ${isSelected
-                        ? "border-cyan-500/50 bg-[#0a1628] shadow-lg shadow-cyan-500/10 scale-[1.02]"
-                        : "border-[#1a2a44] bg-[#0a1628]/80 hover:border-cyan-500/30 hover:shadow-md hover:shadow-cyan-500/5"
+                        ? "border-cyan-500/50 bg-card shadow-lg shadow-cyan-500/10 scale-[1.02]"
+                        : "border-border bg-card/80 hover:border-cyan-500/30 hover:shadow-md hover:shadow-cyan-500/5"
                       }`}
                   >
                     {/* Selected badge */}
@@ -296,7 +296,7 @@ export default function AddBalance() {
                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                             loading="lazy"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
                         </>
                       ) : (
                         <div className="flex flex-col items-center gap-1.5 text-gray-600">
@@ -308,7 +308,7 @@ export default function AddBalance() {
 
                     {/* Info */}
                     <div className="flex flex-1 flex-col p-4">
-                      <h3 className="text-sm font-bold text-white line-clamp-1 group-hover:text-cyan-300 transition-colors">
+                      <h3 className="text-sm font-bold text-foreground line-clamp-1 group-hover:text-cyan-300 transition-colors">
                         {box.name}
                       </h3>
                       {box.description && (
@@ -321,13 +321,13 @@ export default function AddBalance() {
                           {box.currencies.slice(0, 3).map((cur) => (
                             <span
                               key={cur.id}
-                              className="rounded-md bg-[#060e1a] border border-[#1a2a44] px-2 py-0.5 text-[10px] font-medium text-gray-400"
+                              className="rounded-md bg-[#060e1a] border border-border px-2 py-0.5 text-[10px] font-medium text-gray-400"
                             >
                               {cur.name}
                             </span>
                           ))}
                           {box.currencies.length > 3 && (
-                            <span className="rounded-md bg-[#060e1a] border border-[#1a2a44] px-2 py-0.5 text-[10px] text-gray-500">
+                            <span className="rounded-md bg-[#060e1a] border border-border px-2 py-0.5 text-[10px] text-gray-500">
                               +{box.currencies.length - 3}
                             </span>
                           )}
@@ -338,7 +338,7 @@ export default function AddBalance() {
                       <div className={`mt-3 flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-bold transition-all duration-300
                         ${isSelected
                           ? "border-cyan-500/40 bg-gradient-to-r from-cyan-500/15 to-blue-500/15 text-cyan-400"
-                          : "border-[#1a2a44] bg-[#060e1a] text-gray-400 group-hover:border-cyan-500/30 group-hover:text-cyan-400"
+                          : "border-border bg-[#060e1a] text-gray-400 group-hover:border-cyan-500/30 group-hover:text-cyan-400"
                         }`}
                       >
                         اختر الدفع
@@ -364,7 +364,7 @@ export default function AddBalance() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="py-10 border-t border-[#1a2a44]"
+          className="py-10 border-t border-border"
         >
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
             <div className="flex items-center gap-3 text-center sm:text-right">
@@ -372,7 +372,7 @@ export default function AddBalance() {
                 <MessageCircle className="h-5 w-5 text-purple-400" />
               </div>
               <div>
-                <p className="text-sm font-bold text-white">لم تجد طريقة الدفع المناسبة؟</p>
+                <p className="text-sm font-bold text-foreground">لم تجد طريقة الدفع المناسبة؟</p>
                 <p className="text-xs text-gray-500">إذا كنت تواجه مشكلة في الدفع أو تحتاج إلى طريقة أخرى، تواصل مع فريق الدعم وسنساعدك.</p>
               </div>
             </div>

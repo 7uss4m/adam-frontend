@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+﻿import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight, LucideIcon } from "lucide-react";
@@ -76,9 +76,9 @@ export default function ProductCarousel({
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628]"
+              className="overflow-hidden rounded-2xl border border-border bg-card"
             >
-              <div className="aspect-[4/3] animate-pulse bg-[#0d1b2e]" />
+              <div className="aspect-[4/3] animate-pulse bg-muted" />
               <div className="space-y-2.5 p-4">
                 <div className="h-3 w-2/3 animate-pulse rounded-full bg-[#1a2a44]" />
                 <div className="h-4 w-1/2 animate-pulse rounded-full bg-[#1a2a44]" />
@@ -107,7 +107,7 @@ export default function ProductCarousel({
                 type="button"
                 title="السابق"
                 onClick={scrollPrev}
-                className="absolute -end-1 top-[42%] z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a2a44] bg-[#0a1628]/95 text-white opacity-0 shadow-xl backdrop-blur-md transition-all hover:border-cyan-500/50 group-hover/carousel:opacity-100"
+                className="absolute -end-1 top-[42%] z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/95 text-foreground opacity-0 shadow-xl backdrop-blur-md transition-all hover:border-cyan-500/50 group-hover/carousel:opacity-100"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
@@ -115,7 +115,7 @@ export default function ProductCarousel({
                 type="button"
                 title="التالي"
                 onClick={scrollNext}
-                className="absolute -start-1 top-[42%] z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a2a44] bg-[#0a1628]/95 text-white opacity-0 shadow-xl backdrop-blur-md transition-all hover:border-cyan-500/50 group-hover/carousel:opacity-100"
+                className="absolute -start-1 top-[42%] z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/95 text-foreground opacity-0 shadow-xl backdrop-blur-md transition-all hover:border-cyan-500/50 group-hover/carousel:opacity-100"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>

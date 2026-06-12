@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import {
   Wallet,
@@ -64,11 +64,11 @@ export default function WalletNavTabs({
             className={cn(
               "flex shrink-0 items-center gap-2.5 rounded-2xl border px-4 py-3 transition-all",
               active
-                ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-300 shadow-md shadow-cyan-500/10"
-                : "border-white/15 bg-[#1a2230] text-gray-300 hover:border-white/25 hover:text-white"
+                ? "border-primary/40 bg-primary/10 text-primary shadow-sm"
+                : "border-border bg-card text-muted-foreground hover:border-border hover:text-foreground"
             )}
           >
-            <Icon className={cn("h-5 w-5 shrink-0", active && "text-cyan-400")} />
+            <Icon className={cn("h-5 w-5 shrink-0", active && "text-primary")} />
             <div>
               <p className="whitespace-nowrap text-sm font-bold">{label}</p>
               {sub && (

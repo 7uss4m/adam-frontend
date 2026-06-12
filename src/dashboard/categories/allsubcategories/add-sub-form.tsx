@@ -12,7 +12,7 @@ import {
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { useQuery, useMutation, UseQueryResult } from "@tanstack/react-query";
+import { useMutation, UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../../../components/ui/use-toast";
 import { AxiosError } from "axios";
 import postSub from "../../../api/postSub";
@@ -39,12 +39,15 @@ export function AddSubForm({ query }: { query: UseQueryResult }) {
   const bonusRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [t, i18n] = useTranslation("global");
 
   const categoriesQuery = useQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories", "parents"],
     queryFn: async () => {
-      const response = await getCategories();
+      const response = await getCategories({
+        token: localStorage.getItem("token") as string,
+      });
       const categories: Category[] = response.data.result;
       return categories;
     },
@@ -77,6 +80,8 @@ export function AddSubForm({ query }: { query: UseQueryResult }) {
       });
       setOpen(false);
       query.refetch();
+      queryClient.invalidateQueries({ queryKey: ["sub"] });
+      queryClient.invalidateQueries({ queryKey: ["sub-category-stats"] });
     },
     onError: (error: AxiosError) => {
       toast({
@@ -153,7 +158,7 @@ export function AddSubForm({ query }: { query: UseQueryResult }) {
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">order</Label>
+            <Label className="text-right">{t("cat_sort_order")}</Label>
             <Input
               type="number"
               min={1}

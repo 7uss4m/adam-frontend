@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import { Flame, Crown, Sparkles } from "lucide-react";
 import getCategories from "../api/getCategories";
 import type { Category } from "../types/types";
@@ -27,11 +27,11 @@ const Index = () => {
   const categoryCount = categoriesQuery.data?.length ?? 0;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#050B14]">
+    <div className="relative min-h-screen overflow-x-hidden bg-background">
       {/* Background */}
-      <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(6,182,212,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.04)_1px,transparent_1px)] bg-[size:64px_64px] opacity-30" />
-      <div className="pointer-events-none fixed -top-48 -end-32 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-[100px]" />
-      <div className="pointer-events-none fixed -bottom-48 -start-32 h-[480px] w-[480px] rounded-full bg-purple-600/8 blur-[120px]" />
+      <div className="pointer-events-none fixed inset-0 app-grid-overlay opacity-40 dark:opacity-30" />
+      <div className="pointer-events-none fixed -top-48 -end-32 h-[420px] w-[420px] rounded-full app-glow-cyan blur-[100px]" />
+      <div className="pointer-events-none fixed -bottom-48 -start-32 h-[480px] w-[480px] rounded-full app-glow-purple blur-[120px]" />
       <div className="pointer-events-none fixed top-1/3 start-1/2 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-blue-600/5 blur-[80px]" />
 
       <main className="relative container mx-auto max-w-[1400px] space-y-12 px-4 py-8 sm:space-y-14 sm:py-10">

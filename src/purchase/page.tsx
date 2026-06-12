@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,19 +83,19 @@ function Field({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="group relative rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-5 transition-all duration-200 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5">
+    <div className="group relative rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           {icon && (
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#0d1b2e] border border-[#1a2a44] text-cyan-400">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-muted border border-border text-cyan-400">
               {icon}
             </span>
           )}
-          <span className="text-sm font-bold text-white">{label}</span>
+          <span className="text-sm font-bold text-foreground">{label}</span>
         </div>
         <div className="flex items-center gap-2">
           {hint && (
-            <span className="rounded-md bg-[#0d1b2e] border border-[#1a2a44] px-2 py-0.5 text-[11px] text-gray-500 font-mono">
+            <span className="rounded-md bg-muted border border-border px-2 py-0.5 text-[11px] text-muted-foreground font-mono">
               {hint}
             </span>
           )}
@@ -113,7 +113,7 @@ function DarkInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={
-        "w-full rounded-xl border border-[#1a2a44] bg-[#060e1a] px-4 py-3.5 text-base text-white outline-none " +
+        "w-full rounded-xl border border-border bg-[#060e1a] px-4 py-3.5 text-base text-foreground outline-none " +
         "placeholder:text-gray-600 transition-all duration-200 " +
         "focus:border-cyan-500/60 focus:bg-[#071320] focus:ring-2 focus:ring-cyan-500/15 " +
         (props.className ?? "")
@@ -277,7 +277,7 @@ export default function Purchase() {
 
   if (getAllSubQuery.isLoading || getProductQuery.isLoading || getDolla.isLoading) {
     return (
-      <section className="min-h-[60vh] flex justify-center items-center bg-[#050B14]">
+      <section className="min-h-[60vh] flex justify-center items-center bg-background">
         <Spinner />
       </section>
     );
@@ -285,7 +285,7 @@ export default function Purchase() {
 
   if (!product) {
     return (
-      <section className="min-h-svh flex justify-center items-center text-cyan-400 text-xl bg-[#050B14]">
+      <section className="min-h-svh flex justify-center items-center text-cyan-400 text-xl bg-background">
         {t("no_product")}
       </section>
     );
@@ -297,7 +297,7 @@ export default function Purchase() {
     : null;
 
   return (
-    <div dir="rtl" className="min-h-svh bg-[#050B14]">
+    <div dir="rtl" className="min-h-svh bg-background">
       {/* subtle grid bg */}
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
@@ -327,7 +327,7 @@ export default function Purchase() {
             className="flex flex-col gap-6"
           >
             {/* Image card */}
-            <div className="group relative overflow-hidden rounded-3xl border border-[#1a2a44] bg-[#0a1628] shadow-2xl shadow-black/40">
+            <div className="group relative overflow-hidden rounded-3xl border border-border bg-card shadow-2xl shadow-black/40">
               <img
                 src={product.image}
                 alt={product.name}
@@ -335,11 +335,11 @@ export default function Purchase() {
               />
 
               {/* gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050B14] via-[#050B14]/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
               {/* category pill */}
               {getAllSubQuery.data?.name && (
-                <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-[#050B14]/80 px-3 py-1 backdrop-blur-md">
+                <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-background/80 px-3 py-1 backdrop-blur-md">
                   <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
                   <span className="text-xs font-semibold text-cyan-300">{getAllSubQuery.data.name}</span>
                 </div>
@@ -347,7 +347,7 @@ export default function Purchase() {
 
               {/* bottom info bar */}
               <div className="absolute bottom-0 inset-x-0 px-5 pb-5 pt-10">
-                <h1 className="text-xl font-black text-white drop-shadow-lg sm:text-2xl">
+                <h1 className="text-xl font-black text-foreground drop-shadow-lg sm:text-2xl">
                   {product.name}
                 </h1>
                 <div className="mt-2 flex items-center gap-3">
@@ -358,7 +358,7 @@ export default function Purchase() {
                         className={`h-3.5 w-3.5 ${i <= 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-600"}`}
                       />
                     ))}
-                    <span className="mr-1 text-xs text-gray-300">4.9</span>
+                    <span className="mr-1 text-xs text-muted-foreground">4.9</span>
                   </div>
                   <span className="h-3 w-px bg-white/20" />
                   <span className="text-xs text-gray-400">منتج رقمي معتمد</span>
@@ -389,8 +389,8 @@ export default function Purchase() {
                     {icon}
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-white">{label}</p>
-                    <p className="text-[10px] text-gray-500">{sub}</p>
+                    <p className="text-xs font-bold text-foreground">{label}</p>
+                    <p className="text-[10px] text-muted-foreground">{sub}</p>
                   </div>
                 </div>
               ))}
@@ -398,8 +398,8 @@ export default function Purchase() {
 
             {/* Description */}
             {product.description && (
-              <div className="rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-5">
-                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-500">تفاصيل المنتج</p>
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-muted-foreground">تفاصيل المنتج</p>
                 <div className="prose prose-sm prose-invert max-w-none leading-relaxed text-gray-400">
                   {parse(product.description)}
                 </div>
@@ -415,16 +415,16 @@ export default function Purchase() {
             className="flex flex-col gap-4"
           >
             {/* Price card */}
-            <div className="relative overflow-hidden rounded-3xl border border-[#1a2a44] bg-[#0a1628] p-6 shadow-xl">
+            <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-xl">
               {/* glow */}
               <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-48 -translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl" />
 
-              <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 {getAllSubQuery.data?.name || "المنتج"}
               </p>
-              <h2 className="mt-1 text-lg font-black text-white">{product.name}</h2>
+              <h2 className="mt-1 text-lg font-black text-foreground">{product.name}</h2>
 
-              <div className="mt-5 flex items-end justify-between gap-3 border-t border-[#1a2a44] pt-5">
+              <div className="mt-5 flex items-end justify-between gap-3 border-t border-border pt-5">
                 <div>
                   <p className="text-[11px] text-gray-600 mb-1">السعر الإجمالي</p>
                   <div className="flex items-end gap-2">
@@ -432,13 +432,13 @@ export default function Purchase() {
                       {displayPrice}
                     </p>
                     {displayOriginalPrice && (
-                      <p className="text-lg text-gray-500 line-through pb-1">
+                      <p className="text-lg text-muted-foreground line-through pb-1">
                         {displayOriginalPrice}
                       </p>
                     )}
                   </div>
-                  <p className="mt-1.5 text-xs text-gray-500">
-                    الكمية: <span className="text-gray-300 font-bold">{computedQty}</span>
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    الكمية: <span className="text-muted-foreground font-bold">{computedQty}</span>
                   </p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
@@ -505,13 +505,13 @@ export default function Purchase() {
                       {min !== undefined && max !== undefined && (
                         <div className="mt-3 space-y-1.5">
                           <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-gray-500">الحد الأدنى: <span className="font-bold text-gray-300">{min}</span></span>
+                            <span className="text-muted-foreground">الحد الأدنى: <span className="font-bold text-muted-foreground">{min}</span></span>
                             <span className={`font-bold ${quantity < min || quantity > max ? "text-red-400" : "text-cyan-400"}`}>
                               {quantity < min ? "أقل من الحد" : quantity > max ? "تجاوز الحد" : `✓ ضمن النطاق`}
                             </span>
-                            <span className="text-gray-500">الحد الأقصى: <span className="font-bold text-gray-300">{max}</span></span>
+                            <span className="text-muted-foreground">الحد الأقصى: <span className="font-bold text-muted-foreground">{max}</span></span>
                           </div>
-                          <div className="h-1.5 w-full rounded-full bg-[#0d1b2e] overflow-hidden">
+                          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all duration-300 ${
                                 quantity < min || quantity > max
@@ -549,13 +549,13 @@ export default function Purchase() {
                           setCurrQuantityOption(value);
                         }}
                       >
-                        <SelectTrigger className="h-12 w-full rounded-xl border border-[#1a2a44] bg-[#060e1a] text-base text-white focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/15">
+                        <SelectTrigger className="h-12 w-full rounded-xl border border-border bg-[#060e1a] text-base text-foreground focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/15">
                           <SelectValue placeholder="اختر الكمية" />
                         </SelectTrigger>
-                        <SelectContent className="border-[#1a2a44] bg-[#0a1628]">
+                        <SelectContent className="border-border bg-card">
                           <SelectGroup>
                             {quantityOptions.map((option, i) => (
-                              <SelectItem key={i} value={option} className="text-base text-white focus:bg-[#1a2a44]">
+                              <SelectItem key={i} value={option} className="text-base text-foreground focus:bg-muted">
                                 {option}
                               </SelectItem>
                             ))}
@@ -572,13 +572,13 @@ export default function Purchase() {
               {product.areas && product.areas.length > 0 && (
                 <Field label={t("area") || "المنطقة"} icon={<MapPin className="h-3.5 w-3.5" />}>
                   <Select value={selectedAreaId} onValueChange={setSelectedAreaId}>
-                    <SelectTrigger className="h-12 w-full rounded-xl border border-[#1a2a44] bg-[#060e1a] text-base text-white focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/15">
+                    <SelectTrigger className="h-12 w-full rounded-xl border border-border bg-[#060e1a] text-base text-foreground focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/15">
                       <SelectValue placeholder={t("select_area") || "اختر المنطقة"} />
                     </SelectTrigger>
-                    <SelectContent className="border-[#1a2a44] bg-[#0a1628]">
+                    <SelectContent className="border-border bg-card">
                       <SelectGroup>
                         {product.areas.map((area) => (
-                          <SelectItem key={area.id} value={area.id} className="text-base text-white focus:bg-[#1a2a44]">
+                          <SelectItem key={area.id} value={area.id} className="text-base text-foreground focus:bg-muted">
                             {area.name}
                           </SelectItem>
                         ))}
@@ -595,7 +595,7 @@ export default function Purchase() {
                     whileTap={{ scale: 0.98 }}
                     disabled={disableBuy}
                     type="button"
-                    className="relative mt-1 flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 py-4 text-base font-black text-white shadow-lg shadow-cyan-500/25 transition-all hover:shadow-cyan-500/50 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="relative mt-1 flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 py-4 text-base font-black text-foreground shadow-lg shadow-cyan-500/25 transition-all hover:shadow-cyan-500/50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {/* shimmer */}
                     <span className="pointer-events-none absolute inset-0 -translate-x-full animate-[shimmer_2.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -630,21 +630,21 @@ export default function Purchase() {
                   </motion.button>
                 </AlertDialogTrigger>
 
-                <AlertDialogContent dir="rtl" className="border-[#1a2a44] bg-[#0a1628]">
+                <AlertDialogContent dir="rtl" className="border-border bg-card">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-lg font-black text-white">
+                    <AlertDialogTitle className="text-lg font-black text-foreground">
                       {t("confirm_purchase") || "تأكيد الشراء"}
                     </AlertDialogTitle>
                     <AlertDialogDescription asChild>
-                      <div className="mt-3 space-y-3 rounded-xl border border-[#1a2a44] bg-[#060e1a] p-4 text-right">
+                      <div className="mt-3 space-y-3 rounded-xl border border-border bg-[#060e1a] p-4 text-right">
                         {[
                           { label: t("product") || "المنتج", value: product.name, highlight: false },
                           { label: t("quantity") || "الكمية", value: String(computedQty), highlight: false },
                           { label: t("total") || "الإجمالي", value: displayPrice, highlight: true },
                         ].map(({ label, value, highlight }) => (
                           <div key={label} className="flex items-center justify-between gap-4">
-                            <span className="text-sm text-gray-500">{label}</span>
-                            <span className={`text-sm font-bold ${highlight ? "text-cyan-400 text-base" : "text-white"}`}>
+                            <span className="text-sm text-muted-foreground">{label}</span>
+                            <span className={`text-sm font-bold ${highlight ? "text-cyan-400 text-base" : "text-foreground"}`}>
                               {value}
                             </span>
                           </div>
@@ -654,7 +654,7 @@ export default function Purchase() {
                   </AlertDialogHeader>
 
                   <AlertDialogFooter className="mt-2 grid grid-cols-2 gap-3 sm:justify-start">
-                    <AlertDialogCancel className="rounded-xl border-[#1a2a44] bg-[#0d1b2e] text-gray-300 hover:bg-[#1a2a44] hover:text-white">
+                    <AlertDialogCancel className="rounded-xl border-border bg-muted text-muted-foreground hover:bg-muted hover:text-foreground">
                       {t("cancel") || "إلغاء"}
                     </AlertDialogCancel>
                     <AlertDialogAction
@@ -663,7 +663,7 @@ export default function Purchase() {
                         e.preventDefault();
                         postOrderMutation.mutate();
                       }}
-                      className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 font-bold text-white hover:from-cyan-400 hover:to-blue-500"
+                      className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 font-bold text-foreground hover:from-cyan-400 hover:to-blue-500"
                     >
                       {postOrderMutation.isPending ? (
                         <Loader2 className="animate-spin" />
@@ -690,10 +690,10 @@ export default function Purchase() {
         </div>
 
         {/* Back */}
-        <div className="mt-12 border-t border-[#1a2a44] pt-6">
+        <div className="mt-12 border-t border-border pt-6">
           <Link
             to={`/categories/${id}/subs/${subId}`}
-            className="inline-flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-cyan-400"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-cyan-400"
           >
             <ArrowRight className="h-4 w-4" />
             {t("back") || "العودة للمنتجات"}

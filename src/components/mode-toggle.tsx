@@ -16,7 +16,7 @@ export function ModeToggle({
   small: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme, resolvedTheme } = useTheme();
 
   return (
     <DropdownMenu>
@@ -43,7 +43,7 @@ export function ModeToggle({
             variant="outline"
             size="icon"
             onClick={() => {
-              setTheme(theme == "dark" ? "light" : "dark");
+              setTheme(resolvedTheme === "dark" ? "light" : "dark");
               setOpen(false);
             }}
           >

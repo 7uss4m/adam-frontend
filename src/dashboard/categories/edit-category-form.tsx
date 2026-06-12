@@ -19,33 +19,39 @@ import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
+type EditCategoryFormProps = {
+  category: Category;
+  query: UseQueryResult;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
 export default function EditCategoryForm({
   category,
   query,
-}: {
-  category: Category;
-  query: UseQueryResult;
-}) {
-  // state
-  const [open, setOpen] = useState(false);
+  open: controlledOpen,
+  onOpenChange,
+}: EditCategoryFormProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   const [order, setOrder] = useState(category.order);
 
-  // refs
   const nameRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
-  // toast
   const { toast } = useToast();
 
-  // mutation
   const editCategoryMutation = useMutation({
     mutationFn: async () => {
       const response = await putCategory(
         localStorage.getItem("token") as string,
         category.id.toString(),
-        Number(order),
-        nameRef.current?.value as string,
-        imageRef.current?.files ? imageRef.current?.files[0] : undefined
+        {
+          order: Number(order),
+          name: nameRef.current?.value as string,
+          image: imageRef.current?.files ? imageRef.current.files[0] : undefined,
+        }
       );
 
       return response;
@@ -66,14 +72,15 @@ export default function EditCategoryForm({
     },
   });
 
-  // translation
   const [t, i18n] = useTranslation("global");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="default">{t("edit")}</Button>
-      </DialogTrigger>
+      {controlledOpen === undefined && (
+        <DialogTrigger asChild>
+          <Button variant="default">{t("edit")}</Button>
+        </DialogTrigger>
+      )}
       <DialogContent
         dir={i18n.language == "en" ? "ltr" : "rtl"}
         className="sm:max-w-[425px]"
@@ -109,17 +116,25 @@ export default function EditCategoryForm({
               ref={imageRef}
               id="image"
               type="file"
-              src={category.image}
               className="col-span-3"
             />
           </div>
+          {category.image && (
+            <div className="flex justify-center">
+              <img
+                src={category.image}
+                alt={category.name}
+                className="h-16 w-16 rounded-xl object-cover border border-border"
+              />
+            </div>
+          )}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="order" className="text-right">
-              order
+              {t("cat_sort_order")}
             </Label>
             <Input
               type="number"
-              min={1}
+              min={0}
               value={order}
               onChange={(e) => setOrder(e.target.value)}
               className="col-span-3"

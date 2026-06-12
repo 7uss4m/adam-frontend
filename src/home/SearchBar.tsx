@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
   LayoutGrid,
@@ -87,7 +87,7 @@ export default function SearchBar() {
     <div ref={wrapperRef} className="relative">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch">
         <form onSubmit={handleSearch} className="relative flex-1">
-          <Search className="absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
+          <Search className="absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           {searchQuery.isFetching && debounced.length >= 2 && (
             <Loader2 className="absolute end-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-cyan-500" />
           )}
@@ -97,7 +97,7 @@ export default function SearchBar() {
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setFocused(true)}
             placeholder="ابحث عن PUBG، Steam، Netflix، بطاقات..."
-            className="h-14 w-full rounded-2xl border border-[#1a2a44] bg-[#0a1628]/90 px-5 ps-12 text-sm text-white shadow-inner backdrop-blur-sm placeholder:text-gray-500 outline-none transition-all focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20"
+            className="h-14 w-full rounded-2xl border border-border bg-card/90 px-5 ps-12 text-sm text-foreground shadow-inner backdrop-blur-sm placeholder:text-muted-foreground outline-none transition-all focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20"
             dir="rtl"
           />
         </form>
@@ -108,11 +108,11 @@ export default function SearchBar() {
             className="flex shrink-0 items-center gap-2 rounded-2xl border border-cyan-500/50 bg-cyan-500/10 px-4 py-3 text-cyan-400 transition-all hover:bg-cyan-500/20"
           >
             <div className="rounded-lg bg-cyan-500 p-1.5">
-              <LayoutGrid className="h-4 w-4 text-white" />
+              <LayoutGrid className="h-4 w-4 text-foreground" />
             </div>
             <div className="text-right">
               <p className="text-xs font-bold">الكل</p>
-              <p className="text-[9px] text-gray-500">جميع الأقسام</p>
+              <p className="text-[9px] text-muted-foreground">جميع الأقسام</p>
             </div>
           </Link>
 
@@ -122,12 +122,12 @@ export default function SearchBar() {
               <Link
                 key={cat.id}
                 to={`/categories/${cat.id}/subs`}
-                className="flex shrink-0 items-center gap-2 rounded-2xl border border-[#1a2a44] bg-[#0a1628]/80 px-4 py-3 text-gray-400 transition-all hover:border-cyan-500/40 hover:text-gray-200"
+                className="flex shrink-0 items-center gap-2 rounded-2xl border border-border bg-card/80 px-4 py-3 text-muted-foreground transition-all hover:border-cyan-500/40 hover:text-gray-200"
               >
-                <div className="rounded-lg bg-[#1a2a44] p-1.5">
+                <div className="rounded-lg bg-muted p-1.5">
                   <Icon className="h-4 w-4 text-amber-400" />
                 </div>
-                <p className="max-w-[80px] truncate text-xs font-bold text-white">
+                <p className="max-w-[80px] truncate text-xs font-bold text-foreground">
                   {cat.name}
                 </p>
               </Link>
@@ -142,9 +142,9 @@ export default function SearchBar() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="absolute start-0 end-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628]/95 shadow-2xl backdrop-blur-xl"
+            className="absolute start-0 end-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-border bg-card/95 shadow-2xl backdrop-blur-xl"
           >
-            <div className="border-b border-[#1a2a44] px-4 py-2.5 text-xs text-gray-500">
+            <div className="border-b border-border px-4 py-2.5 text-xs text-muted-foreground">
               نتائج البحث عن &quot;{debounced}&quot;
             </div>
             <ul className="max-h-72 overflow-y-auto py-1">
@@ -161,11 +161,11 @@ export default function SearchBar() {
                       className="h-10 w-10 rounded-lg object-cover"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold text-white">
+                      <p className="truncate text-sm font-bold text-foreground">
                         {product.name}
                       </p>
                       {product.categories?.name && (
-                        <p className="truncate text-xs text-gray-500">
+                        <p className="truncate text-xs text-muted-foreground">
                           {product.categories.name}
                         </p>
                       )}
@@ -180,7 +180,7 @@ export default function SearchBar() {
             <Link
               to="/categories"
               onClick={() => setFocused(false)}
-              className="flex items-center justify-center gap-1 border-t border-[#1a2a44] py-3 text-xs font-semibold text-cyan-400 hover:bg-cyan-500/5"
+              className="flex items-center justify-center gap-1 border-t border-border py-3 text-xs font-semibold text-cyan-400 hover:bg-cyan-500/5"
             >
               عرض كل النتائج
               <ArrowLeft className="h-3.5 w-3.5" />

@@ -1,4 +1,4 @@
-/* WalletPayments.tsx - same functionality, V2-ish cards */
+﻿/* WalletPayments.tsx - same functionality, V2-ish cards */
 import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import moment from "moment";
 import { useMemo } from "react";
@@ -74,7 +74,7 @@ export default function WalletPayments() {
               return (
                 <div
                   key={order.id}
-                  className="flex flex-col gap-4 rounded-2xl border border-white/15 bg-[#1a2230] p-5 transition-colors hover:border-cyan-500/30 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 transition-colors hover:border-cyan-500/30 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-center gap-4">
                     <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cyan-500/10">
@@ -82,7 +82,7 @@ export default function WalletPayments() {
                     </div>
                     <div>
                       <p className="text-base font-bold text-white">{productName}</p>
-                      <p className="text-sm text-gray-300">
+                      <p className="text-sm text-muted-foreground">
                         {created.toLocaleDateString(i18n.language === "ar" ? "ar-EG" : "en-US", {
                           year: "numeric",
                           month: "short",
@@ -94,7 +94,7 @@ export default function WalletPayments() {
                           minute: "2-digit",
                         })}
                       </p>
-                      <p className="mt-1 text-xs text-gray-400">
+                      <p className="mt-1 text-xs text-muted-foreground">
                         {t("application")}: <span className="font-semibold text-gray-200">{categoryName}</span>
                       </p>
                     </div>
@@ -102,19 +102,19 @@ export default function WalletPayments() {
 
                   <div className="flex items-center gap-4 sm:gap-6">
                     <div className="text-left">
-                      <p className="text-xs font-semibold text-gray-400">{t("quantity")}</p>
+                      <p className="text-xs font-semibold text-muted-foreground">{t("quantity")}</p>
                       <p className="font-orbitron text-base font-black text-white">
                         {order.quantity}
                       </p>
                     </div>
 
                     <div className="text-left">
-                      <p className="text-xs font-semibold text-gray-400">{t("price")}</p>
+                      <p className="text-xs font-semibold text-muted-foreground">{t("price")}</p>
                       <p className="font-orbitron text-base font-black text-white">{price}</p>
                     </div>
 
                     <div className="text-left">
-                      <p className="text-xs font-semibold text-gray-400">{t("total")}</p>
+                      <p className="text-xs font-semibold text-muted-foreground">{t("total")}</p>
                       <p className="font-orbitron text-lg font-black text-cyan-400">
                         {Number(order.total).toFixed(2)} USD
                       </p>

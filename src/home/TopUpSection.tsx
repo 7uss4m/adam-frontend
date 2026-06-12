@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+﻿import { useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useEmblaCarousel from "embla-carousel-react";
 import { motion } from "framer-motion";
@@ -53,14 +53,14 @@ export default function TopUpSection() {
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-48 w-56 shrink-0 animate-pulse rounded-2xl bg-[#0a1628] border border-[#1a2a44]"
+              className="h-48 w-56 shrink-0 animate-pulse rounded-2xl bg-card border border-border"
             />
           ))}
         </div>
       ) : boxesQuery.isError || !boxesQuery.data?.length ? (
         <Link
           to="/add-balance"
-          className="flex items-center justify-center rounded-2xl border border-dashed border-[#1a2a44] bg-[#0a1628]/50 py-12 text-sm text-gray-400 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
+          className="flex items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 py-12 text-sm text-muted-foreground transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
         >
           اذهب لصفحة شحن الرصيد ←
         </Link>
@@ -82,11 +82,11 @@ export default function TopUpSection() {
                     <Link
                       to={`/add-balance/${box.id}/box`}
                       className={cn(
-                        "group block overflow-hidden rounded-2xl border border-[#1a2a44]/80 bg-[#0a1628]/90",
+                        "group block overflow-hidden rounded-2xl border border-border/80 bg-card/90",
                         "transition-all hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/10"
                       )}
                     >
-                      <div className="relative aspect-[4/3] overflow-hidden bg-[#0d1b2e]">
+                      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                         {box.image ? (
                           <img
                             src={box.image}
@@ -100,10 +100,10 @@ export default function TopUpSection() {
                             <Wallet className="h-12 w-12 text-emerald-500/40" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#050B14]/80 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                       </div>
                       <div className="p-4">
-                        <p className="line-clamp-1 text-sm font-bold text-white">
+                        <p className="line-clamp-1 text-sm font-bold text-foreground">
                           {box.name}
                         </p>
                         <p className="mt-1 text-[10px] text-emerald-400/80">
@@ -123,7 +123,7 @@ export default function TopUpSection() {
                 type="button"
                 title="السابق"
                 onClick={scrollPrev}
-                className="absolute -end-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a2a44] bg-[#0a1628]/95 text-white opacity-0 backdrop-blur-md transition-all group-hover/carousel:opacity-100"
+                className="absolute -end-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/95 text-foreground opacity-0 backdrop-blur-md transition-all group-hover/carousel:opacity-100"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
@@ -131,7 +131,7 @@ export default function TopUpSection() {
                 type="button"
                 title="التالي"
                 onClick={scrollNext}
-                className="absolute -start-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#1a2a44] bg-[#0a1628]/95 text-white opacity-0 backdrop-blur-md transition-all group-hover/carousel:opacity-100"
+                className="absolute -start-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/95 text-foreground opacity-0 backdrop-blur-md transition-all group-hover/carousel:opacity-100"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>

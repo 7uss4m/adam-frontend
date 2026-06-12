@@ -1,4 +1,4 @@
-import { LucideIcon, ArrowRight } from "lucide-react";
+﻿import { LucideIcon, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -19,9 +19,9 @@ export default function WalletEmptyState({
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center gap-5 rounded-2xl border border-white/15 bg-[#1a2230] px-6 py-20 shadow-inner">
+    <div className="flex flex-col items-center gap-5 rounded-2xl border border-border bg-card px-6 py-20 shadow-inner">
       <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/5">
-        <Icon className="h-10 w-10 text-gray-400" />
+        <Icon className="h-10 w-10 text-muted-foreground" />
       </div>
       <p className="text-center text-lg font-semibold text-gray-200">
         {message || t("no_items")}

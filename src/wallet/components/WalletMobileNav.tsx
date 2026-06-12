@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+﻿import { Link, useLocation } from "react-router-dom";
 import { Home, ShoppingBag, Wallet } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../lib/utils";
@@ -29,7 +29,7 @@ export default function WalletMobileNav() {
   ];
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/5 bg-[#121820]/95 backdrop-blur-xl md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-card/95 backdrop-blur-xl md:hidden">
       <div className="mx-auto flex max-w-lg items-stretch justify-around px-2 pb-[env(safe-area-inset-bottom)]">
         {items.map(({ to, icon: Icon, label, active }) => (
           <Link
@@ -37,7 +37,7 @@ export default function WalletMobileNav() {
             to={to}
             className={cn(
               "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] font-semibold transition-colors",
-              active ? "text-cyan-400" : "text-gray-500"
+              active ? "text-cyan-400" : "text-muted-foreground"
             )}
           >
             <Icon className={cn("h-5 w-5", active && "drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]")} />

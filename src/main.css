@@ -51,42 +51,42 @@
   }
 
   .light {
-    --background: 0 0% 98%;
-    --foreground: 220 20% 10%;
+    --background: 210 30% 97%;
+    --foreground: 222 35% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card-foreground: 222 35% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover-foreground: 222 35% 11%;
 
-    --primary: 175 85% 38%;
+    --primary: 175 80% 36%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 15% 92%;
-    --secondary-foreground: 220 20% 20%;
+    --secondary: 210 25% 93%;
+    --secondary-foreground: 222 30% 18%;
 
-    --muted: 220 15% 94%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 210 22% 94%;
+    --muted-foreground: 215 16% 42%;
 
-    --accent: 280 70% 50%;
+    --accent: 265 65% 52%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 85%;
-    --input: 220 15% 88%;
-    --ring: 175 85% 38%;
+    --border: 214 22% 86%;
+    --input: 214 22% 88%;
+    --ring: 175 80% 36%;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 20% 10%;
-    --sidebar-primary: 175 85% 38%;
+    --sidebar-foreground: 222 35% 11%;
+    --sidebar-primary: 175 80% 36%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 92%;
-    --sidebar-accent-foreground: 220 20% 20%;
-    --sidebar-border: 220 15% 85%;
-    --sidebar-ring: 175 85% 38%;
+    --sidebar-accent: 210 25% 93%;
+    --sidebar-accent-foreground: 222 30% 18%;
+    --sidebar-border: 214 22% 86%;
+    --sidebar-ring: 175 80% 36%;
   }
 
   .dark {
@@ -430,7 +430,40 @@
 }
 
 .dashboard-panel {
-  @apply rounded-2xl border border-border/50 bg-card/70 p-4 shadow-sm backdrop-blur-sm md:p-6;
+  @apply rounded-2xl border border-border/60 bg-card/90 p-4 shadow-sm backdrop-blur-sm md:p-6;
+}
+
+.app-page {
+  @apply bg-background text-foreground;
+}
+
+.app-card {
+  @apply rounded-2xl border border-border/70 bg-card shadow-sm;
+}
+
+.app-card-muted {
+  @apply rounded-2xl border border-border/60 bg-muted/40;
+}
+
+.app-grid-overlay {
+  background-image:
+    linear-gradient(hsl(var(--primary) / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.dark .app-grid-overlay {
+  background-image:
+    linear-gradient(hsl(var(--primary) / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.04) 1px, transparent 1px);
+}
+
+.app-glow-cyan {
+  @apply bg-primary/10 dark:bg-cyan-500/10;
+}
+
+.app-glow-purple {
+  @apply bg-accent/10 dark:bg-purple-600/10;
 }
 
 .dashboard-content section.container {

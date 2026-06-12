@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -65,14 +65,14 @@ export default function QuickAccessBar() {
     <motion.section
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="overflow-hidden rounded-3xl border border-[#1a2a44]/80 bg-gradient-to-br from-[#0a1628] via-[#0d1b2e] to-[#0a1628] p-5 shadow-xl sm:p-6"
+      className="overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-card via-muted/50 to-card p-5 shadow-xl sm:p-6"
     >
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-cyan-500/80">
             مرحباً بعودتك
           </p>
-          <h2 className="mt-1 text-lg font-black text-white sm:text-xl">
+          <h2 className="mt-1 text-lg font-black text-foreground sm:text-xl">
             {user?.user_name || user?.email || "مستخدم"}
           </h2>
           {user?.level?.name && (
@@ -97,7 +97,7 @@ export default function QuickAccessBar() {
           </div>
           <Link
             to="/notifications"
-            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#1a2a44] bg-[#050B14]/60 text-gray-400 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
+            className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-background/60 text-muted-foreground transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
           >
             <Bell className="h-5 w-5" />
           </Link>
@@ -112,16 +112,16 @@ export default function QuickAccessBar() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
               whileHover={{ y: -3 }}
-              className="group flex items-center gap-3 rounded-2xl border border-[#1a2a44]/60 bg-[#050B14]/40 p-3.5 transition-all hover:border-cyan-500/30 hover:bg-[#050B14]/70"
+              className="group flex items-center gap-3 rounded-2xl border border-border/60 bg-background/40 p-3.5 transition-all hover:border-cyan-500/30 hover:bg-background/70"
             >
               <div
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} shadow-lg`}
               >
-                <Icon className="h-5 w-5 text-white" />
+                <Icon className="h-5 w-5 text-foreground" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-white">{label}</p>
-                <p className="truncate text-[10px] text-gray-500">{sub}</p>
+                <p className="text-xs font-bold text-foreground">{label}</p>
+                <p className="truncate text-[10px] text-muted-foreground">{sub}</p>
               </div>
             </motion.div>
           </Link>

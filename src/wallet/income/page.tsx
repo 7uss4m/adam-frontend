@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLocation, useOutletContext, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useMemo } from "react";
@@ -57,7 +57,7 @@ export default function Income() {
               return (
                 <div
                   key={charge.id}
-                  className="flex flex-col gap-4 rounded-2xl border border-white/15 bg-[#1a2230] p-5 transition-colors hover:border-emerald-500/30 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 transition-colors hover:border-emerald-500/30 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-center gap-4">
                     <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-emerald-500/10">
@@ -68,7 +68,7 @@ export default function Income() {
                       <p className="text-base font-bold text-white">
                         {t("income")} #{charge.id}
                       </p>
-                      <p className="text-sm text-gray-300">
+                      <p className="text-sm text-muted-foreground">
                         {created.toLocaleDateString(
                           i18n.language === "ar" ? "ar-EG" : "en-US",
                           { year: "numeric", month: "short", day: "numeric" }
@@ -84,7 +84,7 @@ export default function Income() {
 
                   <div className="flex items-center gap-6">
                     <div className="text-left">
-                      <p className="text-xs font-semibold text-gray-400">
+                      <p className="text-xs font-semibold text-muted-foreground">
                         {t("amount")}
                       </p>
                       <p className="font-orbitron text-lg font-black text-emerald-400">

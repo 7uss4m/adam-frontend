@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -51,15 +51,15 @@ const HeroBanner = () => {
 
   if (adsQuery.isLoading) {
     return (
-      <div className="relative h-[220px] w-full overflow-hidden rounded-3xl border border-[#1a2a44] bg-gradient-to-br from-[#0a1628] to-[#050B14] sm:h-[340px] lg:h-[480px]">
-        <div className="absolute inset-0 animate-pulse bg-[#0d1b2e]/50" />
+      <div className="relative h-[220px] w-full overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-[#0a1628] to-[#050B14] sm:h-[340px] lg:h-[480px]">
+        <div className="absolute inset-0 animate-pulse bg-muted/50" />
       </div>
     );
   }
 
   if (!slides.length) {
     return (
-      <div className="relative flex h-[220px] w-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-[#1a2a44] bg-gradient-to-br from-[#0a1628] via-[#0d1b2e] to-[#050B14] sm:h-[340px] lg:h-[420px]">
+      <div className="relative flex h-[220px] w-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-[#0a1628] via-[#0d1b2e] to-[#050B14] sm:h-[340px] lg:h-[420px]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.15),transparent_60%)]" />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -72,7 +72,7 @@ const HeroBanner = () => {
               الأول
             </span>
           </h1>
-          <p className="mt-4 text-sm text-gray-400 sm:text-base">
+          <p className="mt-4 text-sm text-muted-foreground sm:text-base">
             آلاف المنتجات الرقمية — تسليم فوري — أسعار تنافسية
           </p>
           <Link
@@ -97,7 +97,7 @@ const HeroBanner = () => {
       animate={{ opacity: 1, y: 0 }}
       className="group relative h-[220px] w-full overflow-hidden rounded-3xl sm:h-[340px] lg:h-[480px]"
     >
-      <div className="pointer-events-none absolute inset-0 z-20 rounded-3xl border border-white/10" />
+      <div className="pointer-events-none absolute inset-0 z-20 rounded-3xl border border-border/80" />
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -135,7 +135,7 @@ const HeroBanner = () => {
             </h2>
           )}
           {slide.description && (
-            <p className="mt-2 line-clamp-2 text-sm text-gray-300 sm:text-base">
+            <p className="mt-2 line-clamp-2 text-sm text-muted-foreground sm:text-base">
               {slide.description}
             </p>
           )}
@@ -173,7 +173,7 @@ const HeroBanner = () => {
             <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
           </motion.button>
 
-          <div className="absolute bottom-5 start-1/2 z-30 flex -translate-x-1/2 gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-2.5 backdrop-blur-xl sm:bottom-8">
+          <div className="absolute bottom-5 start-1/2 z-30 flex -translate-x-1/2 gap-2 rounded-full border border-border/80 bg-black/30 px-4 py-2.5 backdrop-blur-xl sm:bottom-8">
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -189,7 +189,7 @@ const HeroBanner = () => {
             ))}
           </div>
 
-          <div className="absolute end-5 top-5 z-30 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-xl sm:end-8 sm:top-8">
+          <div className="absolute end-5 top-5 z-30 rounded-full border border-border/80 bg-black/30 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-xl sm:end-8 sm:top-8">
             <span className="text-cyan-400">{current + 1}</span>
             <span className="mx-1 text-white/40">/</span>
             <span>{slides.length}</span>

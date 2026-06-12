@@ -12,9 +12,7 @@ import {
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Category } from "../../types/types";
-import getCategories from "../../api/getCategories";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../../components/ui/use-toast";
 import postCategory from "../../api/postCategory";
 import { AxiosError } from "axios";
@@ -30,17 +28,7 @@ export function AddCategoryForm() {
 
   // toast
   const { toast } = useToast();
-
-  // query
-  const getCategoriesQuery = useQuery({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const response = await getCategories();
-      const categories: Category[] = response.data.result;
-      return categories;
-    },
-    refetchOnWindowFocus: false,
-  });
+  const queryClient = useQueryClient();
 
   // mutation
   const postCategoryMutation = useMutation({
@@ -59,7 +47,8 @@ export function AddCategoryForm() {
         description: data.data.result,
       });
       setOpen(false);
-      getCategoriesQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["category-stats"] });
     },
     onError: (error: AxiosError) => {
       toast({
@@ -108,7 +97,7 @@ export function AddCategoryForm() {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="order" className="text-right">
-              order
+              {t("cat_sort_order")}
             </Label>
             <Input
               type="number"

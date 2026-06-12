@@ -69,8 +69,8 @@ export default function Header() {
   const [t, i18n] = useTranslation("global");
 
   const token = localStorage.getItem("token");
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [editUser, setEditUser] = useState(false);

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -30,13 +30,13 @@ function CategoryCard({ cat, index }: { cat: Category; index: number }) {
         transition={{ delay: index * 0.04, duration: 0.4 }}
         viewport={{ once: true }}
         whileHover={{ y: -6, scale: 1.03 }}
-        className={`group relative overflow-hidden rounded-2xl border border-[#1a2a44]/80 bg-gradient-to-br ${gradient} from-[#0a1628] to-[#0a1628] shadow-lg transition-all duration-300 hover:border-cyan-500/40 hover:shadow-cyan-500/10`}
+        className={`group relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br ${gradient} from-[#0a1628] to-[#0a1628] shadow-lg transition-all duration-300 hover:border-cyan-500/40 hover:shadow-cyan-500/10`}
       >
         <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none">
           <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
         </div>
 
-        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-[#0d1b2e]/50 p-4">
+        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-muted/50 p-4">
           <img
             src={imgSrc}
             alt={cat.name}
@@ -46,8 +46,8 @@ function CategoryCard({ cat, index }: { cat: Category; index: number }) {
           />
         </div>
 
-        <div className="border-t border-[#1a2a44]/60 px-3 py-3 text-center">
-          <p className="line-clamp-1 text-sm font-bold text-white">{cat.name}</p>
+        <div className="border-t border-border/60 px-3 py-3 text-center">
+          <p className="line-clamp-1 text-sm font-bold text-foreground">{cat.name}</p>
         </div>
       </motion.div>
     </Link>
@@ -88,10 +88,10 @@ export default function CategorySection() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628]"
+              className="overflow-hidden rounded-2xl border border-border bg-card"
             >
-              <div className="aspect-[4/3] animate-pulse bg-[#0d1b2e]" />
-              <div className="border-t border-[#1a2a44] px-3 py-3">
+              <div className="aspect-[4/3] animate-pulse bg-muted" />
+              <div className="border-t border-border px-3 py-3">
                 <div className="mx-auto h-3 w-3/4 animate-pulse rounded-full bg-[#1a2a44]" />
               </div>
             </div>
@@ -104,7 +104,7 @@ export default function CategorySection() {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-10 text-center text-sm text-gray-500">
+        <div className="rounded-2xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">
           لا يوجد أقسام حالياً
         </div>
       )}
@@ -113,7 +113,7 @@ export default function CategorySection() {
         <div className="mt-6 text-center">
           <Link
             to="/categories"
-            className="inline-flex items-center gap-2 rounded-2xl border border-[#1a2a44] px-6 py-2.5 text-sm font-semibold text-cyan-400 transition-colors hover:border-cyan-500/40 hover:bg-cyan-500/5"
+            className="inline-flex items-center gap-2 rounded-2xl border border-border px-6 py-2.5 text-sm font-semibold text-cyan-400 transition-colors hover:border-cyan-500/40 hover:bg-cyan-500/5"
           >
             عرض كل الأقسام ({allCategories.length})
             <ArrowLeft className="h-4 w-4" />

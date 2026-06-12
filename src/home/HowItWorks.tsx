@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+﻿import { motion } from "framer-motion";
 import { Search, CreditCard, Zap } from "lucide-react";
 
 const STEPS = [
@@ -54,7 +54,7 @@ export default function HowItWorks() {
         <p className="text-xs font-bold uppercase tracking-widest text-cyan-500/80">
           كيف يعمل؟
         </p>
-        <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-black text-foreground sm:text-3xl">
           ثلاث خطوات للشراء
         </h2>
       </motion.div>
@@ -82,19 +82,19 @@ export default function HowItWorks() {
               <div
                 className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${color} shadow-lg ring-4 ring-[#050B14]`}
               >
-                <Icon className="h-5 w-5 text-white" />
+                <Icon className="h-5 w-5 text-foreground" />
               </div>
               {i < STEPS.length - 1 && (
-                <span className="mt-1 text-[10px] font-bold text-white/20">
+                <span className="mt-1 text-[10px] font-bold text-foreground/20">
                   {step}
                 </span>
               )}
             </div>
 
-            <div className="relative min-w-0 flex-1 overflow-hidden rounded-3xl border border-[#1a2a44]/60 bg-[#0a1628]/80 p-5 backdrop-blur-sm sm:p-6 md:p-6">
+            <div className="relative min-w-0 flex-1 overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-5 backdrop-blur-sm sm:p-6 md:p-6">
               <span
                 aria-hidden
-                className="pointer-events-none absolute -end-1 -top-3 select-none text-6xl font-black text-white/[0.04] sm:text-7xl"
+                className="pointer-events-none absolute -end-1 -top-3 select-none text-6xl font-black text-foreground/[0.04] sm:text-7xl"
               >
                 {step}
               </span>
@@ -103,13 +103,13 @@ export default function HowItWorks() {
               <div
                 className={`mb-4 hidden h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${color} shadow-lg md:flex`}
               >
-                <Icon className="h-7 w-7 text-white" />
+                <Icon className="h-7 w-7 text-foreground" />
               </div>
 
-              <h3 className="text-base font-black text-white sm:text-lg">
+              <h3 className="text-base font-black text-foreground sm:text-lg">
                 {title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-gray-400">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {desc}
               </p>
             </div>

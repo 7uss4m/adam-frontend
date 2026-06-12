@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -63,16 +63,16 @@ function CopyField({
   };
 
   return (
-    <div className="group rounded-xl border border-[#1a2a44] bg-[#060e1a] p-3 transition-all hover:border-cyan-500/20">
+    <div className="group rounded-xl border border-border bg-muted/40 p-3 transition-all hover:border-primary/30">
       <div className="flex items-center justify-between mb-1.5">
-        <span className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500">
+        <span className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
           {icon}
           {label}
         </span>
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1 rounded-lg bg-[#0a1628] border border-[#1a2a44] px-2 py-1 text-[10px] font-bold text-gray-400 transition-all hover:border-cyan-500/30 hover:text-cyan-400"
+          className="flex items-center gap-1 rounded-lg bg-card border border-border px-2 py-1 text-[10px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:text-primary"
         >
           {copied ? (
             <><CheckCheck className="h-3 w-3 text-green-400" /> تم النسخ</>
@@ -83,7 +83,7 @@ function CopyField({
       </div>
       <p
         onClick={handleCopy}
-        className="cursor-pointer select-all rounded-lg bg-[#0a1628]/60 px-3 py-2 font-mono text-sm text-white break-all"
+        className="cursor-pointer select-all rounded-lg bg-card/60 px-3 py-2 font-mono text-sm text-foreground break-all"
       >
         {value}
       </p>
@@ -110,16 +110,16 @@ function WalletQR({
   };
 
   return (
-    <div className="rounded-xl border border-[#1a2a44] bg-[#060e1a] p-4 transition-all hover:border-cyan-500/20">
+    <div className="rounded-xl border border-border bg-muted/40 p-4 transition-all hover:border-primary/30">
       <div className="flex items-center justify-between mb-3">
-        <span className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500">
+        <span className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
           <Coins className="h-3 w-3" />
           {label}
         </span>
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1 rounded-lg bg-[#0a1628] border border-[#1a2a44] px-2 py-1 text-[10px] font-bold text-gray-400 transition-all hover:border-cyan-500/30 hover:text-cyan-400"
+          className="flex items-center gap-1 rounded-lg bg-card border border-border px-2 py-1 text-[10px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:text-primary"
         >
           {copied ? (
             <><CheckCheck className="h-3 w-3 text-green-400" /> تم النسخ</>
@@ -131,23 +131,23 @@ function WalletQR({
 
       <div className="flex flex-col items-center gap-3">
         {/* QR Code */}
-        <div className="rounded-2xl bg-white p-3 shadow-lg shadow-cyan-500/5">
+        <div className="rounded-2xl bg-white p-3 shadow-md ring-1 ring-border">
           <QRCodeSVG
             value={address}
             size={160}
             bgColor="#ffffff"
-            fgColor="#050B14"
+            fgColor="#0f172a"
             level="M"
             marginSize={0}
           />
         </div>
-        <p className="text-[10px] text-gray-600">امسح الكود بمحفظتك للنسخ التلقائي</p>
+        <p className="text-[10px] text-muted-foreground">امسح الكود بمحفظتك للنسخ التلقائي</p>
       </div>
 
       {/* Address text */}
       <p
         onClick={handleCopy}
-        className="mt-3 cursor-pointer select-all rounded-lg bg-[#0a1628]/60 px-3 py-2 font-mono text-xs text-cyan-400 break-all text-center leading-relaxed"
+        className="mt-3 cursor-pointer select-all rounded-lg bg-background/80 px-3 py-2 font-mono text-xs text-primary break-all text-center leading-relaxed"
       >
         {address}
       </p>
@@ -172,12 +172,12 @@ function FormField({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="flex items-center gap-1.5 text-xs font-bold text-gray-300">
+        <label className="flex items-center gap-1.5 text-xs font-bold text-foreground">
           {icon}
           {label}
           {required && <span className="text-red-400">*</span>}
         </label>
-        {hint && <span className="text-[10px] text-gray-600">{hint}</span>}
+        {hint && <span className="text-[10px] text-muted-foreground">{hint}</span>}
       </div>
       {children}
     </div>
@@ -185,7 +185,7 @@ function FormField({
 }
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-[#1a2a44] bg-[#060e1a] px-4 py-3 text-sm text-white outline-none placeholder:text-gray-600 transition-all focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/10";
+  "w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground transition-all focus:border-primary/50 focus:ring-2 focus:ring-primary/10";
 
 export default function BoxPage() {
   const navigate = useNavigate();
@@ -286,7 +286,7 @@ export default function BoxPage() {
 
   if (getBoxQuery.isLoading) {
     return (
-      <section className="min-h-[60vh] flex justify-center items-center bg-[#050B14]">
+      <section className="min-h-[60vh] flex justify-center items-center bg-background">
         <Spinner />
       </section>
     );
@@ -294,7 +294,7 @@ export default function BoxPage() {
 
   if (!getBoxQuery.isSuccess || !getBoxQuery.data) {
     return (
-      <section className="min-h-svh flex justify-center items-center text-cyan-400 text-xl bg-[#050B14]">
+      <section className="min-h-svh flex justify-center items-center text-primary text-xl bg-background">
         {t("something_went_wrong")}
       </section>
     );
@@ -313,59 +313,57 @@ export default function BoxPage() {
   const hasDetails = box.account_code || box.box_name || box.wallet_address || box.description;
 
   return (
-    <div dir="rtl" className="min-h-svh bg-[#050B14] relative overflow-hidden">
+    <div dir="rtl" className="min-h-svh bg-background relative overflow-hidden">
       {/* Ambient bg */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-[400px] w-[600px] rounded-full bg-cyan-500/[0.05] blur-[120px]" />
-      </div>
+      <div className="pointer-events-none absolute inset-0 app-grid-overlay opacity-40 dark:opacity-30" />
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-[400px] w-[600px] rounded-full app-glow-cyan blur-[120px]" />
 
       <main className="relative container mx-auto max-w-[95%] md:max-w-[88%] lg:max-w-[72%] px-4">
 
         {/* Breadcrumb */}
-        <nav className="pt-6 pb-2 flex items-center gap-1.5 text-xs text-gray-600">
-          <Link to="/" className="flex items-center gap-1 hover:text-cyan-400 transition-colors">
+        <nav className="pt-6 pb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Link to="/" className="flex items-center gap-1 hover:text-primary transition-colors">
             <Home className="w-3 h-3" /> الرئيسية
           </Link>
           <ChevronLeft className="w-3 h-3" />
-          <Link to="/add-balance" className="hover:text-cyan-400 transition-colors">شحن الرصيد</Link>
+          <Link to="/add-balance" className="hover:text-primary transition-colors">شحن الرصيد</Link>
           <ChevronLeft className="w-3 h-3" />
-          <span className="text-gray-400 truncate max-w-[160px]">{box.name}</span>
+          <span className="text-foreground/70 truncate max-w-[160px]">{box.name}</span>
         </nav>
 
         {/* ── Header card ── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 mb-8 rounded-2xl border border-[#1a2a44] bg-[#0a1628] overflow-hidden"
+          className="mt-4 mb-8 rounded-2xl border border-border bg-card overflow-hidden"
         >
           <div className="flex flex-col sm:flex-row items-center gap-5 p-5 sm:p-6">
             {/* Box image */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-[#1a2a44] bg-[#060e1a] flex-shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-border bg-muted flex-shrink-0">
               {box.image ? (
                 <img src={box.image} alt={box.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-600">
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                   <CreditCard className="w-8 h-8" />
                 </div>
               )}
             </div>
 
             <div className="flex-1 text-center sm:text-right">
-              <h1 className="text-xl font-black text-white lg:text-2xl">{box.name}</h1>
+              <h1 className="text-xl font-black text-foreground lg:text-2xl">{box.name}</h1>
               {box.account_name && (
-                <p className="mt-1 text-sm text-gray-400">{box.account_name}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{box.account_name}</p>
               )}
 
               {/* Tags */}
               <div className="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                <span className="flex items-center gap-1 rounded-full border border-green-500/20 bg-green-500/10 px-2.5 py-0.5 text-[11px] font-bold text-green-400">
+                <span className="flex items-center gap-1 rounded-full border border-green-500/25 bg-green-500/10 px-2.5 py-0.5 text-[11px] font-bold text-green-600 dark:text-green-400">
                   <ShieldCheck className="h-3 w-3" /> آمن وموثوق
                 </span>
-                <span className="flex items-center gap-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold text-cyan-400">
+                <span className="flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary">
                   <Zap className="h-3 w-3" /> تنفيذ سريع
                 </span>
-                <span className="flex items-center gap-1 rounded-full border border-purple-500/20 bg-purple-500/10 px-2.5 py-0.5 text-[11px] font-bold text-purple-400">
+                <span className="flex items-center gap-1 rounded-full border border-violet-500/25 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-bold text-violet-600 dark:text-violet-400">
                   <Clock className="h-3 w-3" /> دعم 24/7
                 </span>
               </div>
@@ -384,9 +382,9 @@ export default function BoxPage() {
               transition={{ delay: 0.05 }}
               className="space-y-4"
             >
-              <div className="rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-5">
-                <h2 className="flex items-center gap-2 text-sm font-bold text-white mb-4">
-                  <FileText className="h-4 w-4 text-cyan-400" />
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <h2 className="flex items-center gap-2 text-sm font-bold text-foreground mb-4">
+                  <FileText className="h-4 w-4 text-primary" />
                   {t("details") || "تفاصيل الدفع"}
                 </h2>
 
@@ -415,23 +413,23 @@ export default function BoxPage() {
 
               {/* Description */}
               {box.description && (
-                <div className="rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-5">
+                <div className="rounded-2xl border border-border bg-card p-5">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="flex items-center gap-2 text-xs font-bold text-gray-400">
+                    <h3 className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
                       <FileText className="h-3.5 w-3.5" />
                       {t("description") || "التعليمات"}
                     </h3>
                     <button
                       type="button"
                       onClick={() => copy(box.description)}
-                      className="flex items-center gap-1 text-[10px] font-bold text-gray-500 hover:text-cyan-400 transition-colors"
+                      className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors"
                     >
                       <Copy className="h-3 w-3" /> نسخ
                     </button>
                   </div>
                   <div
                     onClick={() => copy(box.description)}
-                    className="cursor-pointer rounded-xl bg-[#060e1a] border border-[#1a2a44] p-4 text-sm text-gray-400 leading-relaxed whitespace-pre-wrap"
+                    className="cursor-pointer rounded-xl bg-muted/40 border border-border p-4 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap"
                   >
                     {box.description}
                   </div>
@@ -440,8 +438,8 @@ export default function BoxPage() {
 
               {/* Extracted numbers */}
               {extractedNumbers.length > 0 && (
-                <div className="rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-5">
-                  <h3 className="flex items-center gap-2 text-xs font-bold text-gray-400 mb-3">
+                <div className="rounded-2xl border border-border bg-card p-5">
+                    <h3 className="flex items-center gap-2 text-xs font-bold text-muted-foreground mb-3">
                     <Hash className="h-3.5 w-3.5" />
                     {t("numbers") || "أرقام التحويل"}
                   </h3>
@@ -451,10 +449,10 @@ export default function BoxPage() {
                         type="button"
                         key={n}
                         onClick={() => { copy(n); toast({ title: `${n} ${t("copied")}` }); }}
-                        className="flex items-center justify-between rounded-xl border border-[#1a2a44] bg-[#060e1a] px-4 py-2.5 transition-all hover:border-cyan-500/30"
+                        className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-2.5 transition-all hover:border-primary/30"
                       >
-                        <span className="font-mono text-sm font-bold text-white">{n}</span>
-                        <Copy className="h-3.5 w-3.5 text-gray-500" />
+                        <span className="font-mono text-sm font-bold text-foreground">{n}</span>
+                        <Copy className="h-3.5 w-3.5 text-muted-foreground" />
                       </button>
                     ))}
                   </div>
@@ -469,14 +467,14 @@ export default function BoxPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="sticky top-6 rounded-2xl border border-[#1a2a44] bg-[#0a1628] overflow-hidden">
+            <div className="sticky top-6 rounded-2xl border border-border bg-card overflow-hidden">
               {/* Form header */}
-              <div className="border-b border-[#1a2a44] bg-[#060e1a] px-5 py-4">
-                <h2 className="flex items-center gap-2 text-sm font-bold text-white">
-                  <Send className="h-4 w-4 text-cyan-400" />
+              <div className="border-b border-border bg-muted/30 px-5 py-4">
+                <h2 className="flex items-center gap-2 text-sm font-bold text-foreground">
+                  <Send className="h-4 w-4 text-primary" />
                   {t("add_balance") || "إرسال طلب الشحن"}
                 </h2>
-                <p className="mt-1 text-[11px] text-gray-500">أكمل البيانات أدناه لإرسال طلب الشحن</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">أكمل البيانات أدناه لإرسال طلب الشحن</p>
               </div>
 
               <form
@@ -490,7 +488,7 @@ export default function BoxPage() {
                 {!isAuto && (
                   <FormField
                     label={t("amount") || "المبلغ"}
-                    icon={<Coins className="h-3.5 w-3.5 text-cyan-400" />}
+                    icon={<Coins className="h-3.5 w-3.5 text-primary" />}
                     required
                   >
                     <input
@@ -508,7 +506,7 @@ export default function BoxPage() {
                 {/* Currency */}
                 <FormField
                   label={t("payment") || "العملة"}
-                  icon={<CreditCard className="h-3.5 w-3.5 text-cyan-400" />}
+                  icon={<CreditCard className="h-3.5 w-3.5 text-primary" />}
                   required
                 >
                   {box.currencies && box.currencies.length <= 4 ? (
@@ -521,8 +519,8 @@ export default function BoxPage() {
                           onClick={() => setMethodId(cur.id)}
                           className={`flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-bold transition-all
                             ${methodId === cur.id
-                              ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-400 shadow-sm shadow-cyan-500/10"
-                              : "border-[#1a2a44] bg-[#060e1a] text-gray-400 hover:border-cyan-500/30 hover:text-gray-300"
+                              ? "border-primary/50 bg-primary/10 text-primary shadow-sm"
+                              : "border-border bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground"
                             }`}
                         >
                           <Coins className="h-3.5 w-3.5" />
@@ -537,12 +535,12 @@ export default function BoxPage() {
                       onOpenChange={() => setTimeout(() => setOpen((v: any) => !v), 0)}
                       onValueChange={(value) => setMethodId(value)}
                     >
-                      <SelectTrigger className="w-full h-12 rounded-xl border border-[#1a2a44] bg-[#060e1a] text-sm text-white">
+                      <SelectTrigger className="w-full h-12 rounded-xl border border-border bg-background text-sm text-foreground">
                         <SelectValue placeholder={t("select_payment_method") || "اختر العملة"} />
                       </SelectTrigger>
-                      <SelectContent className="border-[#1a2a44] bg-[#0a1628]">
+                      <SelectContent className="border-border bg-card">
                         {box.currencies?.map((currency) => (
-                          <SelectItem key={currency.id} value={currency.id} className="text-white focus:bg-[#1a2a44]">
+                          <SelectItem key={currency.id} value={currency.id} className="text-foreground focus:bg-muted">
                             {currency.name}
                           </SelectItem>
                         ))}
@@ -554,12 +552,12 @@ export default function BoxPage() {
                 {/* Receipt image */}
                 <FormField
                   label={t("note") || "إيصال الدفع"}
-                  icon={<ImageIcon className="h-3.5 w-3.5 text-cyan-400" />}
+                  icon={<ImageIcon className="h-3.5 w-3.5 text-primary" />}
                   required
                 >
                   <div
                     onClick={() => imageRef.current?.click()}
-                    className="group relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#1a2a44] bg-[#060e1a] p-5 text-center transition-all hover:border-cyan-500/30 hover:bg-[#060e1a]/80"
+                    className="group relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/30 p-5 text-center transition-all hover:border-primary/30 hover:bg-muted/50"
                   >
                     <AnimatePresence mode="wait">
                       {imagePreview ? (
@@ -570,7 +568,7 @@ export default function BoxPage() {
                           className="flex flex-col items-center gap-2"
                         >
                           <img src={imagePreview} alt="إيصال" className="h-24 w-auto rounded-lg object-contain" />
-                          <span className="text-[11px] text-cyan-400">اضغط لتغيير الصورة</span>
+                          <span className="text-[11px] text-primary">اضغط لتغيير الصورة</span>
                         </motion.div>
                       ) : (
                         <motion.div
@@ -579,12 +577,12 @@ export default function BoxPage() {
                           animate={{ opacity: 1 }}
                           className="flex flex-col items-center gap-2"
                         >
-                          <div className="rounded-full bg-[#0a1628] border border-[#1a2a44] p-3">
-                            <ImageIcon className="h-5 w-5 text-gray-600" />
+                          <div className="rounded-full bg-card border border-border p-3">
+                            <ImageIcon className="h-5 w-5 text-muted-foreground" />
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-gray-300">ارفع صورة الإيصال</p>
-                            <p className="text-[11px] text-gray-600">PNG, JPG, WEBP</p>
+                            <p className="text-sm font-medium text-foreground">ارفع صورة الإيصال</p>
+                            <p className="text-[11px] text-muted-foreground">PNG, JPG, WEBP</p>
                           </div>
                         </motion.div>
                       )}
@@ -611,24 +609,24 @@ export default function BoxPage() {
                 {isTxIdRequired && box.account_name === "syriatel" && (
                   <FormField
                     label="كود التحويل"
-                    icon={<Hash className="h-3.5 w-3.5 text-cyan-400" />}
+                    icon={<Hash className="h-3.5 w-3.5 text-primary" />}
                     required
                   >
                     {extractedNumbers.length > 0 ? (
                       <>
                         <Select value={code} onValueChange={(v) => setCode(v)}>
-                          <SelectTrigger className="w-full h-12 rounded-xl border border-[#1a2a44] bg-[#060e1a] text-sm text-white">
+                          <SelectTrigger className="w-full h-12 rounded-xl border border-border bg-background text-sm text-foreground">
                             <SelectValue placeholder="اختر كود التحويل" />
                           </SelectTrigger>
-                          <SelectContent className="border-[#1a2a44] bg-[#0a1628]">
+                          <SelectContent className="border-border bg-card">
                             {extractedNumbers.map((n) => (
-                              <SelectItem key={n} value={n} className="text-white focus:bg-[#1a2a44] font-mono">
+                              <SelectItem key={n} value={n} className="text-foreground focus:bg-muted font-mono">
                                 {n}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                        <p className="text-[10px] text-gray-600">اختر كود التحويل من الأرقام المتاحة</p>
+                        <p className="text-[10px] text-muted-foreground">اختر كود التحويل من الأرقام المتاحة</p>
                       </>
                     ) : (
                       <input
@@ -648,7 +646,7 @@ export default function BoxPage() {
                 {isTxIdRequired && (
                   <FormField
                     label="رقم العملية"
-                    icon={<Hash className="h-3.5 w-3.5 text-cyan-400" />}
+                    icon={<Hash className="h-3.5 w-3.5 text-primary" />}
                     required
                     hint="مطلوب"
                   >
@@ -662,7 +660,7 @@ export default function BoxPage() {
                       required
                       className={INPUT_CLASS}
                     />
-                    <p className="flex items-center gap-1 text-[10px] text-gray-600">
+                    <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
                       <AlertCircle className="h-3 w-3" />
                       {t("tx_id_required_hint") || "هذا الحقل مطلوب لهذه الطريقة"}
                     </p>
@@ -674,7 +672,7 @@ export default function BoxPage() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={!methodId || submitting || (isTxIdRequired && !txId.trim())}
-                  className="relative mt-2 flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 py-4 text-sm font-black text-white shadow-lg shadow-cyan-500/20 transition-all hover:shadow-cyan-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="relative mt-2 flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 py-4 text-sm font-black text-white shadow-lg shadow-primary/20 transition-all hover:shadow-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {/* Shimmer */}
                   <span className="pointer-events-none absolute inset-0 -translate-x-full animate-[shimmer_2.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -686,7 +684,7 @@ export default function BoxPage() {
                 </motion.button>
 
                 {/* Security note */}
-                <p className="flex items-center justify-center gap-1.5 text-center text-[10px] text-gray-600">
+                <p className="flex items-center justify-center gap-1.5 text-center text-[10px] text-muted-foreground">
                   <ShieldCheck className="h-3 w-3 text-green-500/60" />
                   جميع المعاملات مشفرة ومحمية بتقنية SSL
                 </p>
@@ -696,10 +694,10 @@ export default function BoxPage() {
         </div>
 
         {/* Back */}
-        <div className="py-8 border-t border-[#1a2a44]">
+        <div className="py-8 border-t border-border">
           <Link
             to="/add-balance"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-cyan-400"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowRight className="h-4 w-4" />
             {t("back") || "العودة لطرق الدفع"}

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+﻿import { motion } from "framer-motion";
 import { RefreshCw, Lock, Star, DollarSign, Headphones, ShieldCheck, Zap } from "lucide-react";
 
 const ITEMS = [
@@ -50,7 +50,7 @@ export default function TrustBar() {
         className="mb-6 flex items-center justify-center gap-2"
       >
         <ShieldCheck className="h-5 w-5 text-cyan-400" />
-        <h2 className="text-lg font-black text-white">لماذا AdamZone؟</h2>
+        <h2 className="text-lg font-black text-foreground">لماذا AdamZone؟</h2>
       </motion.div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -62,16 +62,16 @@ export default function TrustBar() {
             transition={{ delay: i * 0.05 }}
             viewport={{ once: true }}
             whileHover={{ y: -4 }}
-            className="flex flex-col items-center gap-3 rounded-2xl border border-[#1a2a44]/60 bg-[#0a1628]/60 p-4 text-center backdrop-blur-sm transition-colors hover:border-cyan-500/30"
+            className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card/60 p-4 text-center backdrop-blur-sm transition-colors hover:border-cyan-500/30"
           >
             <div
               className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${item.gradient} shadow-lg`}
             >
-              <item.icon className="h-5 w-5 text-white" />
+              <item.icon className="h-5 w-5 text-foreground" />
             </div>
             <div>
-              <p className="text-xs font-bold text-white">{item.label}</p>
-              <p className="mt-0.5 text-[10px] text-gray-500">{item.sub}</p>
+              <p className="text-xs font-bold text-foreground">{item.label}</p>
+              <p className="mt-0.5 text-[10px] text-muted-foreground">{item.sub}</p>
             </div>
           </motion.div>
         ))}

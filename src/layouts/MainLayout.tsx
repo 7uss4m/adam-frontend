@@ -21,7 +21,6 @@ import postFcmToken from "../api/postFcmToken";
 // } from "../components/ui/dialog";
 // import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { CurrencyProvider } from "../context/CurrencyContext";
-import { ThemeProvider } from "../components/theme-provider";
 import Footer from "./Footer";
 
 const AUTH_REQUIRED_PAGES = [
@@ -141,7 +140,6 @@ export default function MainLayout() {
   // }, [params, showPurchaseSuccess]);
   return (
     <>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
         <main
           dir={i18n.language == "ar" ? "rtl" : "ltr"}
           className="main bg-background area relative min-h-[90vh] sm:min-h-[100vh] "
@@ -211,10 +209,8 @@ export default function MainLayout() {
 
             <Outlet />
             <Footer />
-            <Toaster />
           </CurrencyProvider>
         </main>
-      </ThemeProvider>
     </>
   );
 }

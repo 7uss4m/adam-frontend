@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Tag, Zap } from "lucide-react";
@@ -30,9 +30,9 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       <motion.div
         whileHover={{ y: -8, scale: 1.02 }}
         transition={{ duration: 0.25, type: "spring", stiffness: 320 }}
-        className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#1a2a44]/80 bg-[#0a1628]/90 shadow-lg backdrop-blur-sm transition-shadow duration-300 hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/10"
+        className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/80 bg-card/90 shadow-lg backdrop-blur-sm transition-shadow duration-300 hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/10"
       >
-        <div className="relative aspect-[4/3] overflow-hidden bg-[#0d1b2e]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           <img
             src={imgSrc}
             alt={product.name}
@@ -45,7 +45,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-[#050B14]/90 via-transparent to-transparent" />
 
           {hasDiscount && (
-            <div className="absolute start-3 top-3 flex items-center gap-1 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-lg">
+            <div className="absolute start-3 top-3 flex items-center gap-1 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-2.5 py-1 text-[10px] font-bold text-foreground shadow-lg">
               <Tag className="h-3 w-3" />
               {product.offer_type === "percent" && product.discount_percent
                 ? `-${product.discount_percent}%`
@@ -59,12 +59,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               مميز
             </div>
           )}
-
-          {product.source && (
-            <div className="absolute end-3 top-3 rounded-lg bg-black/50 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white/80 backdrop-blur-md">
-              {product.source}
-            </div>
-          )}
         </div>
 
         <div className="flex flex-1 flex-col gap-2.5 p-4">
@@ -73,7 +67,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               {product.categories.name}
             </p>
           )}
-          <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-snug text-white">
+          <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-snug text-foreground">
             {product.name}
           </h3>
 
@@ -83,12 +77,12 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                 {formatUsd(price)}
               </p>
               {originalPrice && Number(originalPrice) > price && (
-                <p className="text-xs tabular-nums text-gray-500 line-through">
+                <p className="text-xs tabular-nums text-muted-foreground line-through">
                   {formatUsd(originalPrice)}
                 </p>
               )}
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20 transition-transform group-hover:scale-110">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-foreground shadow-lg shadow-cyan-500/20 transition-transform group-hover:scale-110">
               <ShoppingCart className="h-4 w-4" />
             </div>
           </div>

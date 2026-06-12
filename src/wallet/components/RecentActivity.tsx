@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+﻿import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { ArrowDownLeft, ArrowUpRight, Package } from "lucide-react";
@@ -60,11 +60,11 @@ export default function RecentActivity({
 
   if (!items.length) {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-2xl border border-white/15 bg-[#1a2230] py-16">
+      <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-card py-16">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5">
-          <Package className="h-8 w-8 text-gray-400" />
+          <Package className="h-8 w-8 text-muted-foreground" />
         </div>
-        <p className="text-base font-semibold text-gray-300">{t("no_items")}</p>
+        <p className="text-base font-semibold text-muted-foreground">{t("no_items")}</p>
         <Link
           to="/add-balance"
           className="mt-1 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-500/20"
@@ -84,7 +84,7 @@ export default function RecentActivity({
         return (
           <div
             key={item.id}
-            className="flex items-center gap-4 rounded-2xl border border-white/15 bg-[#1a2230] px-5 py-4 transition-colors hover:border-white/25"
+            className="flex items-center gap-4 rounded-2xl border border-border bg-card px-5 py-4 transition-colors hover:border-white/25"
           >
             <div
               className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
@@ -99,7 +99,7 @@ export default function RecentActivity({
               <p className="truncate text-base font-bold text-white">
                 {item.title}
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-muted-foreground">
                 {moment(item.date).locale(i18n.language).format("D MMM · HH:mm")}
               </p>
             </div>
@@ -118,13 +118,13 @@ export default function RecentActivity({
       <div className="flex gap-3 pt-2">
         <Link
           to="/wallet/payments"
-          className="flex-1 rounded-xl border border-white/15 bg-[#1a2230] py-3 text-center text-sm font-bold text-gray-300 hover:border-cyan-500/40 hover:text-cyan-400"
+          className="flex-1 rounded-xl border border-border bg-card py-3 text-center text-sm font-bold text-muted-foreground hover:border-cyan-500/40 hover:text-cyan-400"
         >
           {t("my_payments") || "كل الدفعات"}
         </Link>
         <Link
           to="/wallet/income"
-          className="flex-1 rounded-xl border border-white/15 bg-[#1a2230] py-3 text-center text-sm font-bold text-gray-300 hover:border-cyan-500/40 hover:text-cyan-400"
+          className="flex-1 rounded-xl border border-border bg-card py-3 text-center text-sm font-bold text-muted-foreground hover:border-cyan-500/40 hover:text-cyan-400"
         >
           {t("income") || "كل الشحنات"}
         </Link>

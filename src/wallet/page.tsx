@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FaFilter } from "react-icons/fa";
 import {
   Select,
@@ -149,7 +149,7 @@ export default function Wallet() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[85vh] items-center justify-center bg-[#0a0e14]">
+      <div className="flex min-h-[85vh] items-center justify-center bg-background">
         <Spinner />
       </div>
     );
@@ -157,7 +157,7 @@ export default function Wallet() {
 
   if (!isAuthed || !user) {
     return (
-      <section className="flex min-h-[85vh] items-center justify-center bg-[#0a0e14]">
+      <section className="flex min-h-[85vh] items-center justify-center bg-background">
         <p className="text-xl text-cyan-400">{t("login_first")}</p>
       </section>
     );
@@ -165,21 +165,21 @@ export default function Wallet() {
 
   return (
     <div
-      className="min-h-svh bg-[#0a0e14] pb-24 md:pb-10"
+      className="min-h-svh bg-background pb-24 md:pb-10"
       dir={i18n.language === "ar" ? "rtl" : "ltr"}
     >
       {/* Header — matches mobile mockup */}
-      <header className="sticky top-0 z-30 bg-[#0a0e14]/95 backdrop-blur-md">
+      <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-md">
         <div className="container mx-auto flex max-w-lg items-center justify-between px-4 py-4 sm:max-w-2xl">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-white/80 transition-colors hover:bg-white/5"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted"
             aria-label="Back"
           >
             <ChevronLeft className="h-6 w-6 rotate-180" />
           </button>
-          <h1 className="text-lg font-bold text-white">
+          <h1 className="text-lg font-bold text-foreground">
             {t("my_wallet") || "المحفظة"}
           </h1>
           <div className="w-10" />
@@ -200,10 +200,10 @@ export default function Wallet() {
           <button
             type="button"
             onClick={copyInviteCode}
-            className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/15 bg-[#1a2230] px-5 py-4 text-start transition-colors hover:border-cyan-500/40"
+            className="flex w-full items-center justify-between gap-3 rounded-2xl border border-border bg-card px-5 py-4 text-start transition-colors hover:border-cyan-500/40"
           >
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {t("invite_code") || "رمز الدعوة"}
               </p>
               <p className="font-mono text-base font-bold text-cyan-400">
@@ -213,7 +213,7 @@ export default function Wallet() {
             {copiedCode ? (
               <Check className="h-4 w-4 text-emerald-400" />
             ) : (
-              <Copy className="h-4 w-4 text-gray-500" />
+              <Copy className="h-4 w-4 text-muted-foreground" />
             )}
           </button>
         )}
@@ -244,12 +244,12 @@ export default function Wallet() {
           ].map(({ label, value, accent }) => (
             <div
               key={label}
-              className="rounded-2xl border border-white/15 bg-[#1a2230] p-4 shadow-sm"
+              className="rounded-2xl border border-border bg-card p-4 shadow-sm"
             >
               <p className={`text-xl font-black tabular-nums sm:text-2xl ${accent}`}>
                 {value}
               </p>
-              <p className="mt-1.5 text-xs font-semibold leading-snug text-gray-300">
+              <p className="mt-1.5 text-xs font-semibold leading-snug text-muted-foreground">
                 {label}
               </p>
             </div>
@@ -279,10 +279,10 @@ export default function Wallet() {
                 navigate({ search: next.toString() }, { replace: true });
               }}
             >
-              <SelectTrigger className="w-full max-w-[260px] rounded-xl border-white/10 bg-[#121820] text-white">
+              <SelectTrigger className="w-full max-w-[260px] rounded-xl border-border/80 bg-card text-white">
                 <SelectValue placeholder={getPlaceholderText(filter, t)} />
               </SelectTrigger>
-              <SelectContent className="bg-[#121820] text-white">
+              <SelectContent className="bg-card text-white">
                 <SelectItem value="today">{t("today")}</SelectItem>
                 <SelectItem value="7">{t("last_7_days")}</SelectItem>
                 <SelectItem value="30">{t("last_30_days")}</SelectItem>

@@ -21,6 +21,9 @@ export type User = {
     expire_limit: number
   }[]
   debit: number
+  verify_admin?: boolean
+  verify?: boolean
+  created_at?: string
   client?: {
     active: boolean
     allowed_ips: null | string
@@ -52,8 +55,13 @@ export type Category = {
   type: "one" | "bundle";
   bonus: number
   available: boolean
+  active?: boolean
   order: string
   parent_id?: number | null
+  source?: string | null
+  external_id?: number | null
+  sub_count?: number
+  product_count?: number
   // visible: boolean
 }
 

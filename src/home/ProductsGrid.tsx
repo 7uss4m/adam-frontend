@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+﻿import { useEffect, useMemo, useState, useCallback } from "react";
 import logo from "../assets/logo.webp";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -87,9 +87,9 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
       >
         <div className="flex items-center gap-2">
           <Crown className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-          <h2 className="text-lg font-black text-white">{title}</h2>
+          <h2 className="text-lg font-black text-foreground">{title}</h2>
           {subtitle && (
-            <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
           )}
         </div>
 
@@ -107,18 +107,18 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
       {loading ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628]">
-              <div className="aspect-[4/3] animate-pulse bg-[#0d1b2e]" />
+            <div key={i} className="overflow-hidden rounded-2xl border border-border bg-card">
+              <div className="aspect-[4/3] animate-pulse bg-muted" />
               <div className="p-3.5 space-y-2.5">
-                <div className="h-3 w-2/3 mx-auto rounded animate-pulse bg-[#1a2a44]" />
-                <div className="h-3 w-1/2 mx-auto rounded animate-pulse bg-[#1a2a44]" />
-                <div className="h-8 w-full rounded-xl animate-pulse bg-[#1a2a44]" />
+                <div className="h-3 w-2/3 mx-auto rounded animate-pulse bg-muted" />
+                <div className="h-3 w-1/2 mx-auto rounded animate-pulse bg-muted" />
+                <div className="h-8 w-full rounded-xl animate-pulse bg-muted" />
               </div>
             </div>
           ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="rounded-2xl border border-[#1a2a44] bg-[#0a1628] p-10 text-center text-sm text-gray-500">
+        <div className="rounded-2xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">
           لا توجد منتجات حالياً
         </div>
       ) : (
@@ -160,7 +160,7 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
             type="button"
             title="السابق"
             onClick={scrollPrev}
-            className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 p-2 rounded-full bg-[#0a1628]/90 border border-[#1a2a44] text-white hover:border-cyan-500/50 hover:bg-[#0a1628] transition-all opacity-0 group-hover/carousel:opacity-100"
+            className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 p-2 rounded-full bg-card/90 border border-border text-foreground hover:border-cyan-500/50 hover:bg-card transition-all opacity-0 group-hover/carousel:opacity-100"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -168,7 +168,7 @@ export default function ProductsGrid({ title, subtitle }: ProductsGridProps) {
             type="button"
             title="التالي"
             onClick={scrollNext}
-            className="absolute left-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 p-2 rounded-full bg-[#0a1628]/90 border border-[#1a2a44] text-white hover:border-cyan-500/50 hover:bg-[#0a1628] transition-all opacity-0 group-hover/carousel:opacity-100"
+            className="absolute left-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 p-2 rounded-full bg-card/90 border border-border text-foreground hover:border-cyan-500/50 hover:bg-card transition-all opacity-0 group-hover/carousel:opacity-100"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>

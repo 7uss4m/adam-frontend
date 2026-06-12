@@ -28,6 +28,7 @@ axios.interceptors.response.use((response) => {
   response.data = fixUrls(response.data);
   return response;
 });
+import { ThemeProvider } from "./components/theme-provider";
 import Page from "./home/page";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -359,8 +360,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <I18nextProvider i18n={i18next}>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <Toaster />
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <RouterProvider router={router} />
+          <Toaster />
+        </ThemeProvider>
       </QueryClientProvider>
     </I18nextProvider>
   </GoogleOAuthProvider>

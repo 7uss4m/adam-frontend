@@ -31,11 +31,17 @@ import getAllSub from "../../../api/getAllSub";
 export default function EditSubForm({
   sub,
   query,
+  open: controlledOpen,
+  onOpenChange,
 }: {
   sub: Category;
   query: UseQueryResult;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   const [categoryType, setCategoryType] = useState(sub.type);
   const [order, setOrder] = useState(String(sub.order ?? ""));
   const [parentId, setParentId] = useState<string | undefined>(undefined);
@@ -95,9 +101,11 @@ export default function EditSubForm({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="default">{t("edit")}</Button>
-      </DialogTrigger>
+      {controlledOpen === undefined && (
+        <DialogTrigger asChild>
+          <Button variant="default">{t("edit")}</Button>
+        </DialogTrigger>
+      )}
       <DialogContent
         dir={i18n.language === "en" ? "ltr" : "rtl"}
         className="sm:max-w-[425px]"
@@ -177,7 +185,7 @@ export default function EditSubForm({
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="order" className="text-right">
-              order
+              {t("cat_sort_order")}
             </Label>
             <Input
               type="number"

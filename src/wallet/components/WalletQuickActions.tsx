@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { ShoppingBag, TrendingUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -28,14 +28,14 @@ export default function WalletQuickActions() {
         <Link
           key={to}
           to={to}
-          className="group flex flex-col items-center gap-3 rounded-2xl border border-white/15 bg-[#1a2230] p-5 transition-all hover:border-cyan-500/40 hover:bg-[#1f2838]"
+          className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 transition-all hover:border-cyan-500/40 hover:bg-muted"
         >
           <div
             className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${color} shadow-lg transition-transform group-hover:scale-110`}
           >
             <Icon className="h-6 w-6 text-white" />
           </div>
-          <span className="text-center text-sm font-bold text-gray-200 group-hover:text-white">
+          <span className="text-center text-sm font-bold text-gray-200 group-hover:text-foreground">
             {t(labelKey) || fallback}
           </span>
         </Link>

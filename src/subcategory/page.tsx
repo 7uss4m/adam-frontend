@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { useMemo, useState, useRef, useEffect } from "react";
@@ -23,10 +23,10 @@ import getCategories from "../api/getCategories";
 
 /* ── Feature badges with subtitles (matching screenshot) ── */
 const FEATURES_TOP = [
-  { icon: Zap, label: "تسليم فوري", subtitle: "في غضون دقائق", iconBg: "bg-cyan-500", iconColor: "text-white" },
-  { icon: Shield, label: "دفع آمن", subtitle: "حماية 100%", iconBg: "bg-emerald-500", iconColor: "text-white" },
-  { icon: Headphones, label: "دعم فني 24/7", subtitle: "نحن هنا لمساعدتك", iconBg: "bg-blue-500", iconColor: "text-white" },
-  { icon: BadgeCheck, label: "منتجات أصلية", subtitle: "جودة مضمونة 100%", iconBg: "bg-cyan-400", iconColor: "text-white" },
+  { icon: Zap, label: "تسليم فوري", subtitle: "في غضون دقائق", iconBg: "bg-cyan-500", iconColor: "text-foreground" },
+  { icon: Shield, label: "دفع آمن", subtitle: "حماية 100%", iconBg: "bg-emerald-500", iconColor: "text-foreground" },
+  { icon: Headphones, label: "دعم فني 24/7", subtitle: "نحن هنا لمساعدتك", iconBg: "bg-blue-500", iconColor: "text-foreground" },
+  { icon: BadgeCheck, label: "منتجات أصلية", subtitle: "جودة مضمونة 100%", iconBg: "bg-cyan-400", iconColor: "text-foreground" },
 ];
 
 /* ── Bottom trust bar (matching screenshot) ── */
@@ -72,8 +72,8 @@ function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortK
           type="button"
           title="ترتيب"
           onClick={() => setOpen(!open)}
-          className={`flex items-center gap-2 rounded-xl border bg-[#0a1628] text-foreground px-4 py-2.5 text-xs font-bold transition-all cursor-pointer ${
-            open ? "border-cyan-500 ring-2 ring-cyan-500/20" : "border-[#1a2a44] hover:border-cyan-500/40"
+          className={`flex items-center gap-2 rounded-xl border bg-card text-foreground px-4 py-2.5 text-xs font-bold transition-all cursor-pointer ${
+            open ? "border-cyan-500 ring-2 ring-cyan-500/20" : "border-border hover:border-cyan-500/40"
           }`}
         >
           <span>{current?.label}</span>
@@ -88,7 +88,7 @@ function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortK
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 z-50 min-w-[180px] rounded-xl border border-[#1a2a44] bg-[#0a1628] shadow-2xl overflow-hidden"
+            className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 z-50 min-w-[180px] rounded-xl border border-border bg-card shadow-2xl overflow-hidden"
           >
             {SORT_OPTIONS.map((o) => (
               <button
@@ -98,7 +98,7 @@ function SortDropdown({ value, onChange }: { value: SortKey; onChange: (v: SortK
                 className={`flex items-center justify-between w-full px-4 py-3 text-xs font-semibold transition-colors ${
                   value === o.value
                     ? "bg-cyan-500/10 text-cyan-400"
-                    : "text-gray-300 hover:bg-white/5"
+                    : "text-muted-foreground hover:bg-white/5"
                 }`}
               >
                 <span>{o.label}</span>
@@ -153,9 +153,9 @@ function ProductCard({
           transition={{ delay: index * 0.03, duration: 0.35 }}
           viewport={{ once: true }}
           whileHover={product.active ? { x: -3 } : {}}
-          className={`group flex items-center gap-4 rounded-2xl border border-[#1a2a44] bg-[#0a1628]/80 backdrop-blur-sm p-4 hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/5 transition-all duration-300 ${!product.active ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          className={`group flex items-center gap-4 rounded-2xl border border-border bg-card/80 backdrop-blur-sm p-4 hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/5 transition-all duration-300 ${!product.active ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
         >
-          <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-xl bg-[#0d1b2e]">
+          <div className="relative w-24 h-24 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
             <img
               src={imgSrc}
               alt={product.name}
@@ -164,32 +164,32 @@ function ProductCard({
               onError={() => setImgSrc(logo)}
             />
             {showBadge && (
-              <div className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded text-[9px] font-bold text-white ${badgeColor}`}>
+              <div className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded text-[9px] font-bold text-foreground ${badgeColor}`}>
                 {badgeText}
               </div>
             )}
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-white line-clamp-1">{product.name}</h3>
+            <h3 className="text-sm font-bold text-foreground line-clamp-1">{product.name}</h3>
             <div className="flex items-center gap-1 mt-1">
               <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
               <span className="text-[11px] text-yellow-400 font-bold">{rating}</span>
-              <span className="text-[10px] text-gray-500">({reviewCount})</span>
+              <span className="text-[10px] text-muted-foreground">({reviewCount})</span>
             </div>
             <div className="flex items-center gap-2 mt-1.5">
               {price != null && (
                 <span className="text-sm font-black text-cyan-400">${price.toLocaleString()}</span>
               )}
               {hasDiscount && originalPrice != null && (
-                <span className="text-xs text-gray-500 line-through">${originalPrice.toLocaleString()}</span>
+                <span className="text-xs text-muted-foreground line-through">${originalPrice.toLocaleString()}</span>
               )}
             </div>
           </div>
 
           {product.active && (
             <div className="flex-shrink-0">
-              <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-xs font-bold text-white hover:shadow-lg hover:shadow-cyan-500/30 transition-all">
+              <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-xs font-bold text-foreground hover:shadow-lg hover:shadow-cyan-500/30 transition-all">
                 <span>شراء الآن</span>
                 <ShoppingCart className="w-3.5 h-3.5" />
               </div>
@@ -211,10 +211,10 @@ function ProductCard({
         transition={{ delay: index * 0.04, duration: 0.4 }}
         viewport={{ once: true }}
         whileHover={product.active ? { y: -6, scale: 1.02 } : {}}
-        className={`group relative overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628] hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/10 transition-all duration-300 ${!product.active ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+        className={`group relative overflow-hidden rounded-2xl border border-border bg-card hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/10 transition-all duration-300 ${!product.active ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       >
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-[#0d1b2e]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           <img
             src={imgSrc}
             alt={product.name}
@@ -225,13 +225,13 @@ function ProductCard({
 
           {/* Badge */}
           {showBadge && (
-            <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-bold text-white ${badgeColor}`}>
+            <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-bold text-foreground ${badgeColor}`}>
               {badgeText}
             </div>
           )}
 
           {!product.active && (
-            <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-red-500/90 text-[10px] font-bold text-white">
+            <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-red-500/90 text-[10px] font-bold text-foreground">
               غير متاح
             </div>
           )}
@@ -240,13 +240,13 @@ function ProductCard({
         {/* Info */}
         <div className="p-3.5 space-y-2">
           {/* Title */}
-          <h3 className="text-sm font-bold text-white line-clamp-1 text-center">{product.name}</h3>
+          <h3 className="text-sm font-bold text-foreground line-clamp-1 text-center">{product.name}</h3>
 
           {/* Rating */}
           <div className="flex items-center justify-center gap-1">
             <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
             <span className="text-[11px] text-yellow-400 font-bold">{rating}</span>
-            <span className="text-[10px] text-gray-500">({reviewCount})</span>
+            <span className="text-[10px] text-muted-foreground">({reviewCount})</span>
           </div>
 
           {/* Price */}
@@ -255,7 +255,7 @@ function ProductCard({
               <span className="text-base font-black text-cyan-400">${price.toLocaleString()}</span>
             )}
             {hasDiscount && originalPrice != null && (
-              <span className="text-xs text-gray-500 line-through">${originalPrice.toLocaleString()}</span>
+              <span className="text-xs text-muted-foreground line-through">${originalPrice.toLocaleString()}</span>
             )}
           </div>
 
@@ -265,7 +265,7 @@ function ProductCard({
               type="button"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-xs font-bold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-shadow"
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-xs font-bold text-foreground shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-shadow"
             >
               <span>شراء الآن</span>
               <ShoppingCart className="w-3.5 h-3.5" />
@@ -348,14 +348,14 @@ export default function SubCategoryPage() {
   const totalProducts = getProductQuery.data?.length ?? 0;
 
   return (
-    <section className="min-h-screen pb-20 bg-[#050B14]">
+    <section className="min-h-screen pb-20 bg-background">
       <div className="container max-w-[100%] md:max-w-[90%] lg:max-w-[80%] xl:max-w-[75%] px-4 py-6 space-y-6">
 
         {/* ═══ Breadcrumbs ═══ */}
         <motion.nav
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-2 text-sm text-gray-400"
+          className="flex items-center gap-2 text-sm text-muted-foreground"
         >
           <Link to="/" className="hover:text-cyan-400 transition-colors">
             {t("home") || "الرئيسية"}
@@ -376,7 +376,7 @@ export default function SubCategoryPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-cyan-500/30 bg-[#0a1628] shadow-lg shadow-cyan-500/10 flex-shrink-0">
+          <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-cyan-500/30 bg-card shadow-lg shadow-cyan-500/10 flex-shrink-0">
             <img
               src={parentCategory?.image || logo}
               alt={parentCategory?.name || ""}
@@ -385,10 +385,10 @@ export default function SubCategoryPage() {
             />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white">
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground">
               منتجات {parentCategory?.name || ""}
             </h1>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {totalProducts > 0 ? `${totalProducts} منتج متاح` : ""}
             </p>
           </div>
@@ -401,13 +401,13 @@ export default function SubCategoryPage() {
           transition={{ delay: 0.05 }}
           className="relative"
         >
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="ابحث عن منتج..."
-            className="w-full rounded-2xl border border-[#1a2a44] bg-[#0a1628] px-5 py-4 pr-5 pl-14 text-sm text-white placeholder:text-gray-500 outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+            className="w-full rounded-2xl border border-border bg-card px-5 py-4 pr-5 pl-14 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 transition-all"
           />
           {search && (
             <button
@@ -416,7 +416,7 @@ export default function SubCategoryPage() {
               onClick={() => setSearch("")}
               className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-white/10 transition-colors"
             >
-              <X className="w-4 h-4 text-gray-400" />
+              <X className="w-4 h-4 text-muted-foreground" />
             </button>
           )}
         </motion.div>
@@ -434,14 +434,14 @@ export default function SubCategoryPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.12 + i * 0.05 }}
-              className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-[#1a2a44] bg-[#0a1628]/80 backdrop-blur-sm"
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-border bg-card/80 backdrop-blur-sm"
             >
               <div className={`p-2.5 rounded-xl ${f.iconBg} flex-shrink-0`}>
                 <f.icon className={`w-5 h-5 ${f.iconColor}`} />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-white">{f.label}</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">{f.subtitle}</p>
+                <p className="text-xs font-bold text-foreground">{f.label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{f.subtitle}</p>
               </div>
             </motion.div>
           ))}
@@ -457,8 +457,8 @@ export default function SubCategoryPage() {
           >
             {/* Section header */}
             <div className="flex items-center gap-2">
-              <Layers className="w-5 h-5 text-white" />
-              <h2 className="text-base font-black text-white">{t("subcategories") || "الفئات الفرعية"}</h2>
+              <Layers className="w-5 h-5 text-foreground" />
+              <h2 className="text-base font-black text-foreground">{t("subcategories") || "الفئات الفرعية"}</h2>
             </div>
 
             {/* Tabs */}
@@ -470,15 +470,15 @@ export default function SubCategoryPage() {
                 className={`flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-2xl text-sm font-bold transition-all border ${
                   activeTab === "all"
                     ? "bg-cyan-500/10 border-cyan-500 text-cyan-400 shadow-lg shadow-cyan-500/10"
-                    : "bg-[#0a1628] border-[#1a2a44] text-gray-400 hover:border-cyan-500/30 hover:text-gray-200"
+                    : "bg-card border-border text-muted-foreground hover:border-cyan-500/30 hover:text-gray-200"
                 }`}
               >
-                <div className={`p-2 rounded-xl ${activeTab === "all" ? "bg-cyan-500 text-white" : "bg-[#1a2a44] text-gray-400"}`}>
+                <div className={`p-2 rounded-xl ${activeTab === "all" ? "bg-cyan-500 text-foreground" : "bg-muted text-muted-foreground"}`}>
                   <LayoutGrid className="w-5 h-5" />
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold">الكل</p>
-                  <p className="text-[10px] text-gray-500">{totalProducts} منتج</p>
+                  <p className="text-[10px] text-muted-foreground">{totalProducts} منتج</p>
                 </div>
               </button>
 
@@ -493,10 +493,10 @@ export default function SubCategoryPage() {
                     className={`flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-2xl text-sm font-bold transition-all border ${
                       isActive
                         ? "bg-cyan-500/10 border-cyan-500 text-cyan-400 shadow-lg shadow-cyan-500/10"
-                        : "bg-[#0a1628] border-[#1a2a44] text-gray-400 hover:border-cyan-500/30 hover:text-gray-200"
+                        : "bg-card border-border text-muted-foreground hover:border-cyan-500/30 hover:text-gray-200"
                     }`}
                   >
-                    <div className={`p-2 rounded-xl ${isActive ? "bg-cyan-500 text-white" : "bg-[#1a2a44] text-gray-400"}`}>
+                    <div className={`p-2 rounded-xl ${isActive ? "bg-cyan-500 text-foreground" : "bg-muted text-muted-foreground"}`}>
                       <TabIcon className="w-5 h-5" />
                     </div>
                     <div className="text-right">
@@ -518,21 +518,21 @@ export default function SubCategoryPage() {
             className="flex items-center justify-between"
           >
             {/* View toggle */}
-            <div className="flex rounded-xl border border-[#1a2a44] bg-[#0a1628] overflow-hidden">
+            <div className="flex rounded-xl border border-border bg-card overflow-hidden">
               <button
                 type="button"
                 title="عرض شبكي"
                 onClick={() => setView("grid")}
-                className={`p-2.5 transition-colors ${view === "grid" ? "bg-cyan-500 text-white" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"}`}
+                className={`p-2.5 transition-colors ${view === "grid" ? "bg-cyan-500 text-foreground" : "text-muted-foreground hover:text-muted-foreground hover:bg-white/5"}`}
               >
                 <LayoutGrid className="w-4.5 h-4.5" />
               </button>
-              <div className="w-px bg-[#1a2a44]" />
+              <div className="w-px bg-muted" />
               <button
                 type="button"
                 title="عرض قائمة"
                 onClick={() => setView("list")}
-                className={`p-2.5 transition-colors ${view === "list" ? "bg-cyan-500 text-white" : "text-gray-500 hover:text-gray-300 hover:bg-white/5"}`}
+                className={`p-2.5 transition-colors ${view === "list" ? "bg-cyan-500 text-foreground" : "text-muted-foreground hover:text-muted-foreground hover:bg-white/5"}`}
               >
                 <List className="w-4.5 h-4.5" />
               </button>
@@ -564,7 +564,7 @@ export default function SubCategoryPage() {
                   {/* Section Header */}
                   <div className="flex items-center gap-2">
                     <Package className="w-5 h-5 text-cyan-400" />
-                    <h2 className="text-base font-black text-white">
+                    <h2 className="text-base font-black text-foreground">
                       المنتجات ({totalProducts})
                     </h2>
                   </div>
@@ -594,7 +594,7 @@ export default function SubCategoryPage() {
                 >
                   <div className="flex items-center gap-2">
                     <Layers className="w-5 h-5 text-cyan-400" />
-                    <h2 className="text-base font-black text-white">
+                    <h2 className="text-base font-black text-foreground">
                       {t("subcategories") || "الفئات الفرعية"} ({totalSubs})
                     </h2>
                   </div>
@@ -611,9 +611,9 @@ export default function SubCategoryPage() {
                           transition={{ delay: i * 0.04, duration: 0.4 }}
                           viewport={{ once: true }}
                           whileHover={cat.available ? { y: -5, scale: 1.02 } : {}}
-                          className={`group relative overflow-hidden rounded-2xl border border-[#1a2a44] bg-[#0a1628] hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/10 transition-all duration-300 ${!cat.available ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                          className={`group relative overflow-hidden rounded-2xl border border-border bg-card hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/10 transition-all duration-300 ${!cat.available ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                         >
-                          <div className="relative aspect-square overflow-hidden bg-[#0d1b2e]">
+                          <div className="relative aspect-square overflow-hidden bg-muted">
                             <img
                               src={cat.image || logo}
                               alt={cat.name}
@@ -621,10 +621,10 @@ export default function SubCategoryPage() {
                               loading="lazy"
                               onError={(e) => { (e.target as HTMLImageElement).src = logo; }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#050B14] via-transparent to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
                           </div>
                           <div className="px-3 py-2.5 text-center">
-                            <p className="text-xs font-bold text-white line-clamp-1">{cat.name}</p>
+                            <p className="text-xs font-bold text-foreground line-clamp-1">{cat.name}</p>
                           </div>
                         </motion.div>
                       </Link>
@@ -638,7 +638,7 @@ export default function SubCategoryPage() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex flex-col items-center justify-center py-24 gap-4 text-gray-500"
+                  className="flex flex-col items-center justify-center py-24 gap-4 text-muted-foreground"
                 >
                   <Search className="w-12 h-12 opacity-20" />
                   <p className="text-sm">{t("no_results") || "لا توجد نتائج"}</p>
@@ -654,7 +654,7 @@ export default function SubCategoryPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-16 border-t border-[#1a2a44] pt-8"
+            className="mt-16 border-t border-border pt-8"
           >
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {TRUST_BOTTOM.map((f, i) => (
@@ -667,11 +667,11 @@ export default function SubCategoryPage() {
                   className="flex items-center gap-3 px-3 py-3"
                 >
                   <div className={`p-2.5 rounded-full ${f.iconBg} flex-shrink-0`}>
-                    <f.icon className="w-5 h-5 text-white" />
+                    <f.icon className="w-5 h-5 text-foreground" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-white">{f.label}</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">{f.subtitle}</p>
+                    <p className="text-xs font-bold text-foreground">{f.label}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{f.subtitle}</p>
                   </div>
                 </motion.div>
               ))}
