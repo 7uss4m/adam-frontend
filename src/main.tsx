@@ -81,6 +81,7 @@ import LoginPage from "./login/page";
 import RegisterPage from "./register/page";
 import VerifyEmailPage from "./verify/page";
 import DashboardProducts from "./dashboard/products/page";
+import DashboardHome from "./dashboard/page";
 import DashboardClients from "./dashboard/clients/page";
 import DashboardNotifications from "./dashboard/notifications/page";
 import ApiPage from "./api-page/page";
@@ -220,6 +221,10 @@ const router = createBrowserRouter([
     path: `/${dashEndpoint}`,
     element: <DashboardLayout />,
     children: [
+      {
+        index: true,
+        element: <DashboardHome />,
+      },
       {
         path: "clients",
         element: <DashboardClients />,

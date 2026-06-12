@@ -17,9 +17,14 @@ import getUserIncome from "../api/getUserIncome";
 import { useEffect, useMemo, useState } from "react";
 import getUserDepit from "../api/getUserDepit";
 import { useTranslation } from "react-i18next";
-import { Wallet as WalletIcon, ArrowRight, CreditCard, TrendingUp } from "lucide-react";
+import { ChevronLeft, Copy, Check } from "lucide-react";
 
-// helpers
+import BalanceCard from "./components/BalanceCard";
+import WalletQuickActions from "./components/WalletQuickActions";
+import WalletNavTabs from "./components/WalletNavTabs";
+import RecentActivity from "./components/RecentActivity";
+import WalletMobileNav from "./components/WalletMobileNav";
+
 const getPlaceholderText = (filter: string, t: (k: string) => string) => {
   switch (filter) {
     case "7":
@@ -37,28 +42,21 @@ const getPlaceholderText = (filter: string, t: (k: string) => string) => {
 
 function fmtUsd(n?: number) {
   if (!Number.isFinite(n as number)) return "";
-  return `${(n as number).toFixed(2)} USD`;
+  return `$${(n as number).toFixed(2)}`;
 }
 
 export default function Wallet() {
-  // translation
   const [t, i18n] = useTranslation("global");
-
-  // location
   const { pathname, search } = useLocation();
-
-  // params
+  const navigate = useNavigate();
   const params = new URLSearchParams(search);
   const filter = params.get("filter") || "all";
 
-  // navigate
-  const navigate = useNavigate();
-
-  // state
   const [totalPayments, setTotalPayments] = useState<number | undefined>(undefined);
   const [totalIncome, setTotalIncome] = useState<number | undefined>(undefined);
+  const [balanceHidden, setBalanceHidden] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
 
-  // query
   const getUserQuery = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
@@ -99,7 +97,6 @@ export default function Wallet() {
     retry: false,
   });
 
-  // totals
   useEffect(() => {
     let tp = 0;
     let ti = 0;
@@ -130,170 +127,202 @@ export default function Wallet() {
     getUserDeptQuery.isLoading;
 
   const isAuthed = getUserQuery.isSuccess && !!getUserQuery.data;
+  const user = getUserQuery.data;
+  const isMainWallet = pathname === "/wallet";
 
-  const cards = useMemo(() => {
-    const bal = getUserQuery.data?.balance ?? 0;
+  const monthSpent = useMemo(() => {
+    const orders = getUserPaymentsQuery.data || [];
+    const start = new Date();
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+    return orders
+      .filter((o) => new Date(o.created_at) >= start)
+      .reduce((s, o) => s + Number(o.total || 0), 0);
+  }, [getUserPaymentsQuery.data]);
 
-    return [
-      {
-        to: "/wallet",
-        active: pathname === "/wallet",
-        icon: WalletIcon,
-        label: t("balance"),
-        value: fmtUsd(Number(bal)),
-      },
-      {
-        to: "/wallet/payments",
-        active: pathname === "/wallet/payments",
-        icon: CreditCard,
-        label: t("my_payments"),
-        value: fmtUsd(totalPayments),
-      },
-      {
-        to: "/wallet/income",
-        active: pathname === "/wallet/income",
-        icon: TrendingUp,
-        label: t("income"),
-        value: totalIncome != null ? `${totalIncome} USD` : "",
-      },
-      {
-        to: "/wallet/debit",
-        active: pathname === "/wallet/debit",
-        icon: ArrowRight, // just an icon; you can change
-        label: t("debit_balance"),
-        value: `${getUserDeptQuery.data?.coins ? getUserDeptQuery.data?.coins : 0} USD`,
-      },
-    ];
-  }, [
-    pathname,
-    t,
-    getUserQuery.data?.balance,
-    totalPayments,
-    totalIncome,
-    getUserDeptQuery.data?.coins,
-  ]);
+  const copyInviteCode = async () => {
+    if (!user?.invite_code) return;
+    await navigator.clipboard.writeText(user.invite_code);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[85vh] items-center justify-center bg-[#0a0e14]">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (!isAuthed || !user) {
+    return (
+      <section className="flex min-h-[85vh] items-center justify-center bg-[#0a0e14]">
+        <p className="text-xl text-cyan-400">{t("login_first")}</p>
+      </section>
+    );
+  }
 
   return (
-    <>
-      {loading ? (
-        <div className="min-h-[85vh] flex items-center justify-center">
-          <Spinner />
+    <div
+      className="min-h-svh bg-[#0a0e14] pb-24 md:pb-10"
+      dir={i18n.language === "ar" ? "rtl" : "ltr"}
+    >
+      {/* Header — matches mobile mockup */}
+      <header className="sticky top-0 z-30 bg-[#0a0e14]/95 backdrop-blur-md">
+        <div className="container mx-auto flex max-w-lg items-center justify-between px-4 py-4 sm:max-w-2xl">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-white/80 transition-colors hover:bg-white/5"
+            aria-label="Back"
+          >
+            <ChevronLeft className="h-6 w-6 rotate-180" />
+          </button>
+          <h1 className="text-lg font-bold text-white">
+            {t("my_wallet") || "المحفظة"}
+          </h1>
+          <div className="w-10" />
         </div>
-      ) : isAuthed ? (
-        <div
-          className="min-h-svh bg-background"
-          dir={i18n.language === "ar" ? "rtl" : "ltr"}
-        >
-          <main className="container mx-auto px-4 py-8">
-            {/* Header (V2-ish) */}
-            <div className="mb-8 flex items-center gap-3">
-              <WalletIcon className="h-7 w-7 text-primary" />
-              <h1 className="font-orbitron text-2xl font-bold text-foreground">
-                {t("my_wallet")}
-              </h1>
+        <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/60 to-transparent" />
+      </header>
+
+      <main className="container mx-auto max-w-lg space-y-6 px-4 py-6 sm:max-w-2xl">
+        {/* Hero balance card */}
+        <BalanceCard
+          user={user}
+          hidden={balanceHidden}
+          onToggleHidden={() => setBalanceHidden((v) => !v)}
+        />
+
+        {/* Invite code */}
+        {user.invite_code && (
+          <button
+            type="button"
+            onClick={copyInviteCode}
+            className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/15 bg-[#1a2230] px-5 py-4 text-start transition-colors hover:border-cyan-500/40"
+          >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                {t("invite_code") || "رمز الدعوة"}
+              </p>
+              <p className="font-mono text-base font-bold text-cyan-400">
+                {user.invite_code}
+              </p>
             </div>
+            {copiedCode ? (
+              <Check className="h-4 w-4 text-emerald-400" />
+            ) : (
+              <Copy className="h-4 w-4 text-gray-500" />
+            )}
+          </button>
+        )}
 
-            {/* Stat cards (V2-ish) */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {cards.map((c) => {
-                const Icon = c.icon;
-                return (
-                  <Link
-                    key={c.to}
-                    to={c.to}
-                    className={[
-                      "group rounded-xl border bg-card p-4 transition-colors",
-                      "hover:border-primary/30",
-                      c.active ? "border-primary/40" : "border-border",
-                    ].join(" ")}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
-                        <Icon className="h-5 w-5 text-primary" />
-                      </div>
-
-                      {/* tiny active hint */}
-                      {c.active ? (
-                        <span className="text-[10px] font-semibold text-primary">
-                          {t("active") || ""}
-                        </span>
-                      ) : null}
-                    </div>
-
-                    <div className="mt-3">
-                      <p className="font-orbitron text-sm font-black text-foreground">
-                        {c.value}
-                      </p>
-                      <p className="mt-1 text-xs font-semibold text-muted-foreground">
-                        {c.label}
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })}
+        {/* Mini stats */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            {
+              label: t("my_payments") || "إجمالي الدفعات",
+              value: fmtUsd(totalPayments),
+              accent: "text-cyan-400",
+            },
+            {
+              label: t("income") || "إجمالي الشحن",
+              value: fmtUsd(totalIncome),
+              accent: "text-emerald-400",
+            },
+            {
+              label: t("month_spending") || "مصروفات الشهر",
+              value: fmtUsd(monthSpent),
+              accent: "text-amber-400",
+            },
+            {
+              label: t("debit_balance") || "الدين",
+              value: fmtUsd(Number(getUserDeptQuery.data?.coins || 0)),
+              accent: "text-rose-400",
+            },
+          ].map(({ label, value, accent }) => (
+            <div
+              key={label}
+              className="rounded-2xl border border-white/15 bg-[#1a2230] p-4 shadow-sm"
+            >
+              <p className={`text-xl font-black tabular-nums sm:text-2xl ${accent}`}>
+                {value}
+              </p>
+              <p className="mt-1.5 text-xs font-semibold leading-snug text-gray-300">
+                {label}
+              </p>
             </div>
+          ))}
+        </div>
 
-            {/* Filter row */}
-            <div className="mt-6 flex items-center gap-3">
-              <FaFilter className="text-primary" />
-              <Select
-                value={filter}
-                onValueChange={(value) => {
-                  const next = new URLSearchParams(search);
-                  next.set("filter", value);
-                  navigate({ search: next.toString() }, { replace: true });
-                }}
+        {/* Quick actions */}
+        <WalletQuickActions />
+
+        {/* Section tabs */}
+        <WalletNavTabs
+          pathname={pathname}
+          paymentsTotal={fmtUsd(totalPayments)}
+          incomeTotal={fmtUsd(totalIncome)}
+          debitTotal={fmtUsd(Number(getUserDeptQuery.data?.coins || 0))}
+        />
+
+        {/* Filter — sub-pages */}
+        {!isMainWallet && !pathname.startsWith("/wallet/debit") && (
+          <div className="flex items-center gap-3">
+            <FaFilter className="text-cyan-400" />
+            <Select
+              value={filter}
+              onValueChange={(value) => {
+                const next = new URLSearchParams(search);
+                next.set("filter", value);
+                navigate({ search: next.toString() }, { replace: true });
+              }}
+            >
+              <SelectTrigger className="w-full max-w-[260px] rounded-xl border-white/10 bg-[#121820] text-white">
+                <SelectValue placeholder={getPlaceholderText(filter, t)} />
+              </SelectTrigger>
+              <SelectContent className="bg-[#121820] text-white">
+                <SelectItem value="today">{t("today")}</SelectItem>
+                <SelectItem value="7">{t("last_7_days")}</SelectItem>
+                <SelectItem value="30">{t("last_30_days")}</SelectItem>
+                <SelectItem value="all">{t("all")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* Body */}
+        {isMainWallet ? (
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-bold text-white">
+                {t("history") || "آخر الحركات"}
+              </h2>
+              <Link
+                to="/wallet/payments"
+                className="text-xs font-semibold text-cyan-400"
               >
-                <SelectTrigger className="w-full max-w-[260px] bg-card text-foreground rounded-lg border border-border">
-                  <SelectValue placeholder={getPlaceholderText(filter, t)} />
-                </SelectTrigger>
-                <SelectContent className="bg-card text-foreground">
-                  <SelectItem className="capitalize" value="today">
-                    {t("today")}
-                  </SelectItem>
-                  <SelectItem className="capitalize" value="7">
-                    {t("last_7_days")}
-                  </SelectItem>
-                  <SelectItem className="capitalize" value="30">
-                    {t("last_30_days")}
-                  </SelectItem>
-                  <SelectItem className="capitalize" value="all">
-                    {t("all")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+                {t("all") || "الكل"}
+              </Link>
             </div>
+            <RecentActivity
+              orders={getUserPaymentsQuery.data}
+              income={getUserIncomeQuery.data}
+            />
+          </section>
+        ) : (
+            <Outlet
+            context={{
+              orders: getUserPaymentsQuery.data,
+              income: getUserIncomeQuery.data,
+              dept: getUserDeptQuery.data,
+            }}
+          />
+        )}
+      </main>
 
-            {/* Body */}
-            <div className="mt-6">
-              {pathname === "/wallet" ? (
-                <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card py-20">
-                  <WalletIcon className="h-16 w-16 text-muted-foreground/40" />
-                  <p className="text-lg text-muted-foreground">{t("no_items")}</p>
-                  <button
-                    onClick={() => navigate("/")}
-                    className="mt-2 flex items-center gap-2 rounded-lg gradient-primary px-6 py-2.5 text-sm font-bold text-primary-foreground"
-                  >
-                    {t("browse_products") || "تصفح المنتجات"}
-                    <ArrowRight className="h-4 w-4 rotate-180" />
-                  </button>
-                </div>
-              ) : (
-                <Outlet
-                  context={{
-                    orders: getUserPaymentsQuery.data,
-                    income: getUserIncomeQuery.data,
-                  }}
-                />
-              )}
-            </div>
-          </main>
-        </div>
-      ) : (
-        <section className="min-h-[85vh] flex items-center justify-center">
-          <p className="text-xl text-accent">{t("login_first")}</p>
-        </section>
-      )}
-    </>
+      <WalletMobileNav />
+    </div>
   );
 }

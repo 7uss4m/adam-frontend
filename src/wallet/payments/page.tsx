@@ -3,7 +3,8 @@ import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import moment from "moment";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Package, ArrowRight, CheckCircle } from "lucide-react";
+import { Package, CheckCircle } from "lucide-react";
+import WalletEmptyState from "../components/WalletEmptyState";
 import { Badge } from "../../components/ui/badge";
 import {
   Dialog,
@@ -57,17 +58,7 @@ export default function WalletPayments() {
     <div dir={i18n.language === "ar" ? "rtl" : "ltr"}>
       <section className="space-y-4 pb-32">
         {list.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card py-20">
-            <Package className="h-16 w-16 text-muted-foreground/40" />
-            <p className="text-lg text-muted-foreground">{t("no_items")}</p>
-            <button
-              onClick={() => navigate("/")}
-              className="mt-2 flex items-center gap-2 rounded-lg gradient-primary px-6 py-2.5 text-sm font-bold text-primary-foreground"
-            >
-              {t("browse_products") || "تصفح المنتجات"}
-              <ArrowRight className="h-4 w-4 rotate-180" />
-            </button>
-          </div>
+          <WalletEmptyState icon={Package} />
         ) : (
           <div className="space-y-4">
             {list.map((order) => {
@@ -83,15 +74,15 @@ export default function WalletPayments() {
               return (
                 <div
                   key={order.id}
-                  className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/30 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-4 rounded-2xl border border-white/15 bg-[#1a2230] p-5 transition-colors hover:border-cyan-500/30 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-secondary">
-                      <Package className="h-6 w-6 text-muted-foreground" />
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cyan-500/10">
+                      <Package className="h-7 w-7 text-cyan-400" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">{productName}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-base font-bold text-white">{productName}</p>
+                      <p className="text-sm text-gray-300">
                         {created.toLocaleDateString(i18n.language === "ar" ? "ar-EG" : "en-US", {
                           year: "numeric",
                           month: "short",
@@ -103,28 +94,28 @@ export default function WalletPayments() {
                           minute: "2-digit",
                         })}
                       </p>
-                      <p className="mt-1 text-[11px] text-muted-foreground">
-                        {t("application")}: <span className="text-foreground">{categoryName}</span>
+                      <p className="mt-1 text-xs text-gray-400">
+                        {t("application")}: <span className="font-semibold text-gray-200">{categoryName}</span>
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-4 sm:gap-6">
                     <div className="text-left">
-                      <p className="text-xs text-muted-foreground">{t("quantity")}</p>
-                      <p className="font-orbitron text-sm font-bold text-foreground">
+                      <p className="text-xs font-semibold text-gray-400">{t("quantity")}</p>
+                      <p className="font-orbitron text-base font-black text-white">
                         {order.quantity}
                       </p>
                     </div>
 
                     <div className="text-left">
-                      <p className="text-xs text-muted-foreground">{t("price")}</p>
-                      <p className="font-orbitron text-sm font-bold text-foreground">{price}</p>
+                      <p className="text-xs font-semibold text-gray-400">{t("price")}</p>
+                      <p className="font-orbitron text-base font-black text-white">{price}</p>
                     </div>
 
                     <div className="text-left">
-                      <p className="text-xs text-muted-foreground">{t("total")}</p>
-                      <p className="font-orbitron text-sm font-bold text-primary">
+                      <p className="text-xs font-semibold text-gray-400">{t("total")}</p>
+                      <p className="font-orbitron text-lg font-black text-cyan-400">
                         {Number(order.total).toFixed(2)} USD
                       </p>
                     </div>

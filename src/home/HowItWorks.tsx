@@ -25,13 +25,30 @@ const STEPS = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.12, delayChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
 export default function HowItWorks() {
   return (
     <section className="py-4">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
         className="mb-8 text-center"
       >
         <p className="text-xs font-bold uppercase tracking-widest text-cyan-500/80">
@@ -42,29 +59,63 @@ export default function HowItWorks() {
         </h2>
       </motion.div>
 
-      <div className="grid gap-5 md:grid-cols-3">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-5"
+      >
+        {/* Vertical connector line — mobile only */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute bottom-8 top-8 start-6 w-0.5 bg-gradient-to-b from-cyan-500/40 via-violet-500/40 to-amber-500/40 md:hidden"
+        />
+
         {STEPS.map(({ icon: Icon, step, title, desc, color }, i) => (
           <motion.div
             key={step}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            viewport={{ once: true }}
-            className="relative overflow-hidden rounded-3xl border border-[#1a2a44]/60 bg-[#0a1628]/80 p-6 backdrop-blur-sm"
+            variants={itemVariants}
+            className="relative flex gap-4 md:block"
           >
-            <span className="absolute -end-2 -top-4 text-7xl font-black text-white/[0.03]">
-              {step}
-            </span>
-            <div
-              className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${color} shadow-lg`}
-            >
-              <Icon className="h-7 w-7 text-white" />
+            {/* Step badge — mobile timeline */}
+            <div className="relative z-10 flex shrink-0 flex-col items-center md:hidden">
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${color} shadow-lg ring-4 ring-[#050B14]`}
+              >
+                <Icon className="h-5 w-5 text-white" />
+              </div>
+              {i < STEPS.length - 1 && (
+                <span className="mt-1 text-[10px] font-bold text-white/20">
+                  {step}
+                </span>
+              )}
             </div>
-            <h3 className="text-lg font-black text-white">{title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-gray-400">{desc}</p>
+
+            <div className="relative min-w-0 flex-1 overflow-hidden rounded-3xl border border-[#1a2a44]/60 bg-[#0a1628]/80 p-5 backdrop-blur-sm sm:p-6 md:p-6">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -end-1 -top-3 select-none text-6xl font-black text-white/[0.04] sm:text-7xl"
+              >
+                {step}
+              </span>
+
+              {/* Icon — desktop */}
+              <div
+                className={`mb-4 hidden h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${color} shadow-lg md:flex`}
+              >
+                <Icon className="h-7 w-7 text-white" />
+              </div>
+
+              <h3 className="text-base font-black text-white sm:text-lg">
+                {title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                {desc}
+              </p>
+            </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

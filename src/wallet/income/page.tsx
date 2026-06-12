@@ -3,11 +3,11 @@ import { useLocation, useOutletContext, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { TrendingUp, ArrowRight } from "lucide-react";
+import { TrendingUp } from "lucide-react";
+import WalletEmptyState from "../components/WalletEmptyState";
 
 import type { Charge } from "../../types/types";
 
-// helpers (same logic)
 function getLast7(data: Charge[]) {
   const today = moment();
   const sevenDaysAgo = moment().subtract(7, "days");
@@ -34,7 +34,6 @@ export default function Income() {
   const data = income || [];
 
   const { search } = useLocation();
-  const navigate = useNavigate();
 
   const params = new URLSearchParams(search);
   const filter = params.get("filter");
@@ -43,24 +42,14 @@ export default function Income() {
     if (filter === "7") return getLast7(data);
     if (filter === "30") return getLast30(data);
     if (filter === "today") return gettoday(data);
-    return data; // all / default
+    return data;
   }, [data, filter]);
 
   return (
     <div dir={i18n.language === "ar" ? "rtl" : "ltr"}>
       <section className="space-y-4 pb-32">
         {list.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card py-20">
-            <TrendingUp className="h-16 w-16 text-muted-foreground/40" />
-            <p className="text-lg text-muted-foreground">{t("no_items")}</p>
-            <button
-              onClick={() => navigate("/")}
-              className="mt-2 flex items-center gap-2 rounded-lg gradient-primary px-6 py-2.5 text-sm font-bold text-primary-foreground"
-            >
-              {t("browse_products") || "تصفح المنتجات"}
-              <ArrowRight className="h-4 w-4 rotate-180" />
-            </button>
-          </div>
+          <WalletEmptyState icon={TrendingUp} />
         ) : (
           <div className="space-y-4">
             {list.map((charge) => {
@@ -68,18 +57,18 @@ export default function Income() {
               return (
                 <div
                   key={charge.id}
-                  className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/30 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-4 rounded-2xl border border-white/15 bg-[#1a2230] p-5 transition-colors hover:border-emerald-500/30 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-secondary">
-                      <TrendingUp className="h-6 w-6 text-primary" />
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-emerald-500/10">
+                      <TrendingUp className="h-7 w-7 text-emerald-400" />
                     </div>
 
                     <div>
-                      <p className="font-semibold text-foreground">
+                      <p className="text-base font-bold text-white">
                         {t("income")} #{charge.id}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm text-gray-300">
                         {created.toLocaleDateString(
                           i18n.language === "ar" ? "ar-EG" : "en-US",
                           { year: "numeric", month: "short", day: "numeric" }
@@ -95,10 +84,10 @@ export default function Income() {
 
                   <div className="flex items-center gap-6">
                     <div className="text-left">
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs font-semibold text-gray-400">
                         {t("amount")}
                       </p>
-                      <p className="font-orbitron text-sm font-bold text-primary">
+                      <p className="font-orbitron text-lg font-black text-emerald-400">
                         {charge.coins} USD
                       </p>
                     </div>

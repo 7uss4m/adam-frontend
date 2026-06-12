@@ -27,7 +27,7 @@ const Index = () => {
   const categoryCount = categoriesQuery.data?.length ?? 0;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050B14]">
+    <div className="relative min-h-screen overflow-x-hidden bg-[#050B14]">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(6,182,212,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.04)_1px,transparent_1px)] bg-[size:64px_64px] opacity-30" />
       <div className="pointer-events-none fixed -top-48 -end-32 h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-[100px]" />

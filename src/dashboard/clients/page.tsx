@@ -29,7 +29,7 @@ export default function DashboardClients() {
       className="container mx-auto py-10 space-y-10"
     >
       <header className="flex justify-between items-center">
-        <p className="text-2xl md:text-6xl">{t("admins")}</p>
+        <p className="text-2xl md:text-3xl font-black">{t("clients")}</p>
         <AddClientForm query={getClientsQuery} />
       </header>
       {getClientsQuery.isFetching ? (
