@@ -10,10 +10,12 @@ import {
 import i18next from "i18next";
 
 const offerBadgeClass: Record<string, string> = {
-  offer_active_status: "border-cyan-500/30 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300",
-  offer_scheduled: "border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300",
-  offer_expired: "border-border bg-muted text-muted-foreground",
-  offer_none: "border-border bg-secondary/50 text-muted-foreground",
+  offer_active_status:
+    "border-cyan-500/30 bg-gradient-to-r from-cyan-500/15 to-blue-500/10 text-cyan-700 dark:text-cyan-300",
+  offer_scheduled:
+    "border-blue-500/30 bg-gradient-to-r from-blue-500/15 to-indigo-500/10 text-blue-700 dark:text-blue-300",
+  offer_expired: "border-border bg-muted/80 text-muted-foreground",
+  offer_none: "border-border/60 bg-muted/40 text-muted-foreground",
 };
 
 export const columns: ColumnDef<Product>[] = [
@@ -21,7 +23,7 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "id",
     header: () => i18next.t("global:product_id") || "ID",
     cell: ({ row }) => (
-      <span className="font-mono text-xs text-muted-foreground">
+      <span className="inline-flex rounded-lg bg-muted/50 px-2 py-1 font-mono text-[11px] font-semibold text-muted-foreground">
         #{row.original.id}
       </span>
     ),
@@ -33,7 +35,7 @@ export const columns: ColumnDef<Product>[] = [
       <img
         src={getProductImageUrl(row.original.image)}
         alt={row.original.name}
-        className="h-12 w-12 rounded-lg border border-border/50 object-cover"
+        className="h-12 w-12 rounded-xl border border-border/50 object-cover shadow-sm"
         onError={(e) => {
           (e.target as HTMLImageElement).src = getProductImageUrl(null);
         }}
@@ -44,12 +46,12 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "name",
     header: () => i18next.t("global:name") || "Name",
     cell: ({ row }) => (
-      <div className="min-w-[140px] space-y-0.5">
-        <p className="font-semibold text-foreground line-clamp-1">
+      <div className="min-w-[160px] space-y-0.5">
+        <p className="line-clamp-1 font-bold tracking-tight text-foreground">
           {row.original.name}
         </p>
         {row.original.categories?.name && (
-          <p className="text-xs text-muted-foreground line-clamp-1">
+          <p className="line-clamp-1 text-xs text-muted-foreground">
             {row.original.categories.name}
           </p>
         )}
@@ -61,12 +63,12 @@ export const columns: ColumnDef<Product>[] = [
     header: () => i18next.t("global:price") || "Price",
     cell: ({ row }) => (
       <div className="space-y-0.5">
-        <p className="font-bold text-primary">
+        <p className="text-base font-black tabular-nums text-primary">
           ${Number(row.original.price).toFixed(2)}
         </p>
         {row.original.mainPrice &&
           Number(row.original.mainPrice) > Number(row.original.price) && (
-            <p className="text-xs text-muted-foreground line-through">
+            <p className="text-xs tabular-nums text-muted-foreground line-through">
               ${Number(row.original.mainPrice).toFixed(2)}
             </p>
           )}
@@ -78,11 +80,14 @@ export const columns: ColumnDef<Product>[] = [
     header: () => i18next.t("global:source") || "Source",
     cell: ({ row }) =>
       row.original.source ? (
-        <Badge variant="outline" className="text-[10px]">
+        <Badge
+          variant="outline"
+          className="rounded-lg border-border/60 bg-muted/30 text-[10px] font-semibold"
+        >
           {row.original.source}
         </Badge>
       ) : (
-        <span className="text-xs text-muted-foreground">—</span>
+        <span className="text-xs text-muted-foreground/60">—</span>
       ),
   },
   {
@@ -103,7 +108,10 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "active",
     header: () => i18next.t("global:active"),
     cell: ({ row }) => (
-      <Badge variant={row.original.active ? "accept" : "destructive"} className="text-[10px]">
+      <Badge
+        variant={row.original.active ? "accept" : "destructive"}
+        className="rounded-lg text-[10px]"
+      >
         {row.original.active
           ? i18next.t("global:active")
           : i18next.t("global:inactive") || "Inactive"}

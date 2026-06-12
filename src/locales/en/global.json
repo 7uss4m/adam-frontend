@@ -303,5 +303,10 @@
   "category": "Category",
   "all_categories": "All categories",
   "all_sources": "All sources",
+  "filters": "Filters",
+  "active_filters": "active filter(s)",
+  "try_different_filters": "Try changing your search or filters",
+  "cards_view": "Cards",
+  "table_view": "Table",
   "actions_label": "Actions"
 }

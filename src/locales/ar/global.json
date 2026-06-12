@@ -305,5 +305,10 @@
   "category": "الفئة",
   "all_categories": "كل الفئات",
   "all_sources": "كل المصادر",
+  "filters": "الفلاتر",
+  "active_filters": "فلتر نشط",
+  "try_different_filters": "جرّب تغيير معايير البحث أو الفلاتر",
+  "cards_view": "كروت",
+  "table_view": "جدول",
   "actions_label": "إجراءات"
 }
