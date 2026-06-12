@@ -1,9 +1,9 @@
-import { AxiosError } from "axios"
-import { Button } from "../../components/ui/button"
-import patchNote from "../../api/patchNote"
-import { useMutation, UseQueryResult } from "@tanstack/react-query"
-import { useToast } from "../../components/ui/use-toast"
-import { useTranslation } from "react-i18next"
+import { AxiosError } from "axios";
+import { Button } from "../../components/ui/button";
+import patchNote from "../../api/patchNote";
+import { useMutation, UseQueryResult, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "../../components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -12,75 +12,74 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../components/ui/dialog"
-import { useState } from "react"
+} from "../../components/ui/dialog";
+import { DropdownMenuItem } from "../../components/ui/dropdown-menu";
+import { useState } from "react";
 
-export default function PatchNoteForm({ query, id, status }: { query: UseQueryResult, id: string, status: string }) {
-  // toast
-  const { toast } = useToast()
-  
-  // state
-  const [open, setOpen] = useState(false)
-  const [selectedStatus, setSelectedStatus] = useState<string>("")
+type PatchNoteFormProps = {
+  query: UseQueryResult;
+  id: string;
+  status: string;
+  asMenuItem?: boolean;
+};
 
-  // translation
-  const [t] = useTranslation("global")
+export default function PatchNoteForm({
+  query,
+  id,
+  status,
+  asMenuItem = false,
+}: PatchNoteFormProps) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [t] = useTranslation("global");
 
-  // mutation 
   const patchNoteMutation = useMutation({
     mutationFn: async (newStatus: string) => {
-      const response = await patchNote(localStorage.getItem("token") as string, id, newStatus)
-      return response.data
+      const response = await patchNote(
+        localStorage.getItem("token") as string,
+        id,
+        newStatus
+      );
+      return response.data;
     },
     onSuccess: (data) => {
-      toast({
-        title: t("success"),
-        description: data.result
-      })
-      query.refetch()
-      setOpen(false)
+      toast({ title: t("success"), description: data.result });
+      query.refetch();
+      queryClient.invalidateQueries({ queryKey: ["note-stats"] });
+      setOpen(false);
     },
     onError: (error: AxiosError) => {
-      console.error(error)
       toast({
-        title: t("error"),
-        description: (error.response?.data as { error: string }).error
-      })
-    }
-  })
+        title: t("error") || "Error",
+        description: (error.response?.data as { error: string }).error,
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleStatusChange = () => {
-    if (selectedStatus) {
-      patchNoteMutation.mutate(selectedStatus)
-    }
-  }
+    if (selectedStatus) patchNoteMutation.mutate(selectedStatus);
+  };
 
-  // Get Arabic translations for status
-  const getStatusLabel = (status: string) => {
-    if (status === "success") return "نجاح"
-    if (status === "reject") return "رفض"
-    return status
-  }
+  const isSuccess = status === "success";
 
-  const getOppositeStatus = (currentStatus: string) => {
-    return currentStatus === "reject" ? "success" : "reject"
-  }
-
-  return (
+  const dialog = (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" disabled={patchNoteMutation.isPending}>
-          {patchNoteMutation.isPending ? t("loading") : t("change_status")}
-        </Button>
-      </DialogTrigger>
+      {!asMenuItem && (
+        <DialogTrigger asChild>
+          <Button variant="outline" disabled={patchNoteMutation.isPending || isSuccess}>
+            {patchNoteMutation.isPending ? t("loading") : t("change_status")}
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t("change_status")}</DialogTitle>
-          <DialogDescription>
-            {t("select_new_status") || "اختر الحالة الجديدة للملاحظة"}
-          </DialogDescription>
+          <DialogDescription>{t("select_new_status")}</DialogDescription>
         </DialogHeader>
-        
+
         <div className="grid grid-cols-2 gap-4 py-4">
           <Button
             variant={selectedStatus === "success" ? "default" : "outline"}
@@ -88,36 +87,25 @@ export default function PatchNoteForm({ query, id, status }: { query: UseQueryRe
             className="h-auto py-4"
           >
             <div className="flex flex-col items-center gap-2">
-              <span className="text-lg font-semibold">✅</span>
-              <span className="text-sm">{getStatusLabel("success")}</span>
+              <CheckCircle2Icon />
+              <span className="text-sm">{t("succeed")}</span>
             </div>
           </Button>
-          
           <Button
-            variant={selectedStatus === "reject" ? "default" : "outline"}
+            variant={selectedStatus === "reject" ? "destructive" : "outline"}
             onClick={() => setSelectedStatus("reject")}
             className="h-auto py-4"
           >
             <div className="flex flex-col items-center gap-2">
-              <span className="text-lg font-semibold">❌</span>
-              <span className="text-sm">{getStatusLabel("reject")}</span>
+              <XCircleIcon />
+              <span className="text-sm">{t("rejected")}</span>
             </div>
           </Button>
         </div>
 
-        <div className="text-sm text-muted-foreground text-center">
-          {t("current_status") || "الحالة الحالية"}: <strong>{getStatusLabel(status)}</strong>
-          <br />
-          {t("suggested_change") || "مقترح التغيير"}: <strong>{getStatusLabel(getOppositeStatus(status))}</strong>
-        </div>
-
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={patchNoteMutation.isPending}
-          >
-            {t("cancel") || "إلغاء"}
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={patchNoteMutation.isPending}>
+            {t("cancel")}
           </Button>
           <Button
             onClick={handleStatusChange}
@@ -128,5 +116,32 @@ export default function PatchNoteForm({ query, id, status }: { query: UseQueryRe
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
+
+  if (asMenuItem) {
+    return (
+      <>
+        <DropdownMenuItem
+          disabled={isSuccess}
+          onSelect={(e) => {
+            e.preventDefault();
+            setOpen(true);
+          }}
+        >
+          {t("change_status")}
+        </DropdownMenuItem>
+        {dialog}
+      </>
+    );
+  }
+
+  return dialog;
+}
+
+function CheckCircle2Icon() {
+  return <span className="text-lg">✅</span>;
+}
+
+function XCircleIcon() {
+  return <span className="text-lg">❌</span>;
 }
