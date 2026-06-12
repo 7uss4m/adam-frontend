@@ -50,6 +50,7 @@ import WalletPayments from "./wallet/payments/page";
 import Income from "./wallet/income/page";
 import Dept from "./wallet/dept/page";
 import DashboardLevels from "./dashboard/levels/page";
+import DashboardCurrencies from "./dashboard/currencies/page";
 import AddBalance from "./add-balance/page";
 import Payments from "./payments/page";
 import Orders from "./orders/page";
@@ -270,6 +271,10 @@ const router = createBrowserRouter([
       {
         path: "levels",
         element: <DashboardLevels />,
+      },
+      {
+        path: "currencies",
+        element: <DashboardCurrencies />,
       },
       {
         path: "charges",

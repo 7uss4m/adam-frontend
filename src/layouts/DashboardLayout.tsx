@@ -18,7 +18,7 @@ import { BsCartCheck } from "react-icons/bs";
 import { MdAdminPanelSettings, MdInventory } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 
-import { HandCoins, LucideBox, X } from "lucide-react";
+import { HandCoins, LucideBox, X, Coins } from "lucide-react";
 
 import { Button } from "../components/ui/button";
 import logo from "../assets/logo.webp";
@@ -168,6 +168,15 @@ function NavLinks({
           to={`/${d}/levels`}
         >
           <FaLevelUpAlt /> {t("levels")}
+        </Link>
+      </li>
+      <li>
+        <Link
+          onClick={onClickLink}
+          className="flex items-center gap-2 p-2 hover:bg-secondary rounded transition-all"
+          to={`/${d}/currencies`}
+        >
+          <Coins className="w-4 h-4" /> العملات
         </Link>
       </li>
       <li>
