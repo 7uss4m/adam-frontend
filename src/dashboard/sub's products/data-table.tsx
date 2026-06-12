@@ -21,6 +21,7 @@ import { AxiosError } from "axios";
 import { useToast } from "../../components/ui/use-toast";
 import DeleteProductForm from "./delete-product-form";
 import EditProductForm from "./edit-product-form";
+import OfferProductForm from "../products/offer-product-form";
 import { useTranslation } from "react-i18next";
 
 interface DataTableProps<TData, TValue> {
@@ -142,6 +143,10 @@ export function DataTable<TData, TValue>({
                   </TableCell>
                 ))}
                 <TableCell className="flex items-center justify-center gap-5">
+                  <OfferProductForm
+                    product={row.original as Product}
+                    query={query}
+                  />
                   <EditProductForm
                     id={(row.original as Product).id.toString()}
                     query={query}

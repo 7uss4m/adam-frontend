@@ -39,7 +39,7 @@ import {
 } from "../../components/ui/popover";
 import { cn } from "../../lib/utils";
 import { BiCaretDown } from "react-icons/bi";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, Pencil } from "lucide-react";
 
 type ProductWithAreas = Product & { areas?: { name: string }[] };
 
@@ -47,10 +47,18 @@ export default function EditProductForm({
   id,
   query,
   product,
+  compact = false,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
 }: {
   id: string;
   query: UseQueryResult;
   product: ProductWithAreas;
+  compact?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
 }) {
   const [requires, setRequires] = useState<Require[]>(product.requires || []);
   const [requireValues, setRequireValues] = useState<
@@ -58,7 +66,9 @@ export default function EditProductForm({
   >({});
 
   // state
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   // refs
   const nameRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -80,6 +90,7 @@ export default function EditProductForm({
       const response = await getAllSub();
       return response.data.result as Category[];
     },
+    enabled: open,
   });
   const getAllCategoriesQuery = useQuery({
     queryKey: ["categories"],
@@ -87,6 +98,7 @@ export default function EditProductForm({
       const response = await getCategories();
       return response.data.result as Category[];
     },
+    enabled: open,
   });
 
   // Combine categories and subcategories for the combobox
@@ -171,9 +183,17 @@ export default function EditProductForm({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>Edit</Button>
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger asChild>
+          {compact ? (
+            <Button variant="ghost" size="icon" className="h-8 w-8" title="Edit">
+              <Pencil className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm">Edit</Button>
+          )}
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px] overflow-y-scroll max-h-full">
         <DialogHeader>
           <DialogTitle className="text-primary">Edit Product</DialogTitle>

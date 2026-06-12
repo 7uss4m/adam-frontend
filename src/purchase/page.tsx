@@ -209,9 +209,19 @@ export default function Purchase() {
     return 1;
   }, [hasQuantity, quantity, hasQuantityOptions, currQuantityOption]);
 
+  const unitPriceUSD = Number(product?.price || 0);
+  const originalUnitPriceUSD = product?.originalPrice
+    ? Number(product.originalPrice)
+    : null;
+
   const totalPriceUSD = useMemo(() => {
-    return Number(product?.price || 0) * Number(computedQty || 1);
-  }, [product?.price, computedQty]);
+    return unitPriceUSD * Number(computedQty || 1);
+  }, [unitPriceUSD, computedQty]);
+
+  const originalTotalPriceUSD = useMemo(() => {
+    if (!originalUnitPriceUSD || !product?.hasOffer) return null;
+    return originalUnitPriceUSD * Number(computedQty || 1);
+  }, [originalUnitPriceUSD, product?.hasOffer, computedQty]);
 
   const postOrderMutation = useMutation({
     mutationFn: async () => {
@@ -282,6 +292,9 @@ export default function Purchase() {
   }
 
   const displayPrice = formatMoney({ currency, usd: totalPriceUSD, usdToSyp });
+  const displayOriginalPrice = originalTotalPriceUSD
+    ? formatMoney({ currency, usd: originalTotalPriceUSD, usdToSyp })
+    : null;
 
   return (
     <div dir="rtl" className="min-h-svh bg-[#050B14]">
@@ -414,14 +427,26 @@ export default function Purchase() {
               <div className="mt-5 flex items-end justify-between gap-3 border-t border-[#1a2a44] pt-5">
                 <div>
                   <p className="text-[11px] text-gray-600 mb-1">السعر الإجمالي</p>
-                  <p className="text-4xl font-black text-cyan-400 leading-none">
-                    {displayPrice}
-                  </p>
+                  <div className="flex items-end gap-2">
+                    <p className="text-4xl font-black text-cyan-400 leading-none">
+                      {displayPrice}
+                    </p>
+                    {displayOriginalPrice && (
+                      <p className="text-lg text-gray-500 line-through pb-1">
+                        {displayOriginalPrice}
+                      </p>
+                    )}
+                  </div>
                   <p className="mt-1.5 text-xs text-gray-500">
                     الكمية: <span className="text-gray-300 font-bold">{computedQty}</span>
                   </p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
+                  {product.hasOffer && (
+                    <span className="flex items-center gap-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 text-[11px] font-bold text-cyan-400">
+                      {t("special_offer")}
+                    </span>
+                  )}
                   <span className="flex items-center gap-1 rounded-full bg-green-500/10 border border-green-500/20 px-2.5 py-1 text-[11px] font-bold text-green-400">
                     <CheckCircle2 className="h-3 w-3" />
                     متوفر

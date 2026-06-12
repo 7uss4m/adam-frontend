@@ -125,15 +125,17 @@ function ProductCard({
   view: "grid" | "list";
 }) {
   const [imgSrc, setImgSrc] = useState(product.image || logo);
-  const mainPrice = product.mainPrice ? parseFloat(product.mainPrice) : null;
   const price = product.price ? parseFloat(product.price) : null;
-  const hasDiscount = mainPrice && price && mainPrice > price;
-
-  // Generate a pseudo-random badge based on product index
-  const badges = ["الأكثر مبيعاً", "عرض خاص"];
-  const badgeColors = ["bg-green-500", "bg-cyan-600"];
-  const badgeIndex = index % 3; // every 3rd has no badge
-  const showBadge = badgeIndex < 2;
+  const originalPrice = product.originalPrice
+    ? Number(product.originalPrice)
+    : product.mainPrice && price && parseFloat(product.mainPrice) > price
+      ? parseFloat(product.mainPrice)
+      : null;
+  const hasDiscount =
+    product.hasOffer || (originalPrice != null && price != null && originalPrice > price);
+  const showBadge = product.hasOffer;
+  const badgeText = "عرض خاص";
+  const badgeColor = "bg-cyan-600";
 
   // Generate pseudo rating
   const rating = 4.9;
@@ -162,8 +164,8 @@ function ProductCard({
               onError={() => setImgSrc(logo)}
             />
             {showBadge && (
-              <div className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded text-[9px] font-bold text-white ${badgeColors[badgeIndex]}`}>
-                {badges[badgeIndex]}
+              <div className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded text-[9px] font-bold text-white ${badgeColor}`}>
+                {badgeText}
               </div>
             )}
           </div>
@@ -179,8 +181,8 @@ function ProductCard({
               {price != null && (
                 <span className="text-sm font-black text-cyan-400">${price.toLocaleString()}</span>
               )}
-              {hasDiscount && (
-                <span className="text-xs text-gray-500 line-through">${mainPrice.toLocaleString()}</span>
+              {hasDiscount && originalPrice != null && (
+                <span className="text-xs text-gray-500 line-through">${originalPrice.toLocaleString()}</span>
               )}
             </div>
           </div>
@@ -223,8 +225,8 @@ function ProductCard({
 
           {/* Badge */}
           {showBadge && (
-            <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-bold text-white ${badgeColors[badgeIndex]}`}>
-              {badges[badgeIndex]}
+            <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-bold text-white ${badgeColor}`}>
+              {badgeText}
             </div>
           )}
 
@@ -252,8 +254,8 @@ function ProductCard({
             {price != null && (
               <span className="text-base font-black text-cyan-400">${price.toLocaleString()}</span>
             )}
-            {hasDiscount && (
-              <span className="text-xs text-gray-500 line-through">${mainPrice.toLocaleString()}</span>
+            {hasDiscount && originalPrice != null && (
+              <span className="text-xs text-gray-500 line-through">${originalPrice.toLocaleString()}</span>
             )}
           </div>
 

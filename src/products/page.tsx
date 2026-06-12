@@ -169,10 +169,20 @@ export default function Products() {
 
               {/* PRODUCTS (full image cards + price overlay) */}
               {filteredProd?.map((product) => {
+                const price = Number(product.price);
+                const originalPrice = product.originalPrice
+                  ? Number(product.originalPrice)
+                  : null;
                 const priceText =
                   currency === "dollar"
-                    ? `$${Number(product.price).toFixed(2)}`
-                    : `SYP ${(Number(product.price) * dollar).toFixed(0)}`;
+                    ? `$${price.toFixed(2)}`
+                    : `SYP ${(price * dollar).toFixed(0)}`;
+                const originalPriceText =
+                  originalPrice && product.hasOffer
+                    ? currency === "dollar"
+                      ? `$${originalPrice.toFixed(2)}`
+                      : `SYP ${(originalPrice * dollar).toFixed(0)}`
+                    : null;
 
                 return (
                   <Link
@@ -204,6 +214,10 @@ export default function Products() {
                       <div className="absolute left-2 top-2 rounded-full bg-destructive/90 px-2 py-1 text-[10px] font-semibold text-white">
                         {t("not_available")}
                       </div>
+                    ) : product.hasOffer ? (
+                      <div className="absolute left-2 top-2 rounded-full bg-cyan-600/90 px-2 py-1 text-[10px] font-semibold text-white">
+                        {t("special_offer")}
+                      </div>
                     ) : null}
 
                     {/* title + price */}
@@ -211,9 +225,16 @@ export default function Products() {
                       <p className="text-sm font-bold text-white drop-shadow-lg line-clamp-1">
                         {product.name}
                       </p>
-                      <p className="mt-1 text-[11px] font-semibold text-white/90">
-                        {priceText}
-                      </p>
+                      <div className="mt-1 flex items-center justify-center gap-1.5">
+                        <p className="text-[11px] font-semibold text-cyan-300">
+                          {priceText}
+                        </p>
+                        {originalPriceText && (
+                          <p className="text-[10px] text-white/60 line-through">
+                            {originalPriceText}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 );

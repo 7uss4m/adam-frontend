@@ -39,7 +39,7 @@ import {
 } from "../../components/ui/popover";
 import { cn } from "../../lib/utils";
 import { BiCaretDown } from "react-icons/bi";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, Plus } from "lucide-react";
 
 export default function AddProductForm({ query }: { query: UseQueryResult }) {
   // state
@@ -154,7 +154,10 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Product</Button>
+        <Button className="gap-2 shadow-sm">
+          <Plus className="h-4 w-4" />
+          Add Product
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-h-full overflow-y-scroll">
         <DialogHeader>

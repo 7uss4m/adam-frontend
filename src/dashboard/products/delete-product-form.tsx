@@ -15,10 +15,26 @@ import { useToast } from "../../components/ui/use-toast";
 import { AxiosError } from "axios";
 import { Button } from "../../components/ui/button";
 import deleteProduct from "../../api/deleteProduct";
+import { Trash2 } from "lucide-react";
 
-export default function DeleteProductForm({ id, query }: { id: string, query: UseQueryResult }) {
-  // state
-  const [open, setOpen] = useState(false);
+export default function DeleteProductForm({
+  id,
+  query,
+  compact = false,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
+}: {
+  id: string;
+  query: UseQueryResult;
+  compact?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
+}) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
 
   // toast
   const { toast } = useToast()
@@ -48,9 +64,17 @@ export default function DeleteProductForm({ id, query }: { id: string, query: Us
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant={"destructive"}>Delete</Button>
-      </AlertDialogTrigger>
+      {!hideTrigger && (
+        <AlertDialogTrigger asChild>
+          {compact ? (
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" title="Delete">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button variant="destructive" size="sm">Delete</Button>
+          )}
+        </AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-primary">Are you absolutely sure?</AlertDialogTitle>

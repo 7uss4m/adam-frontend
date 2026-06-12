@@ -72,10 +72,21 @@ export type Product = {
   prices: Price[]
   type: "one" | "bundle"
   quantity: number
-  categories: { name: string }
+  categories: { id?: number; name: string }
+  categoryId?: number | string
+  source?: string | null
   mainPrice: string
   price: string
   order: string
+  offer_active?: boolean
+  offer_type?: "percent" | "fixed" | null
+  discount_percent?: number | null
+  offer_price?: number | null
+  offer_start_at?: string | null
+  offer_end_at?: string | null
+  originalPrice?: number | null
+  originalMainPrice?: number | null
+  hasOffer?: boolean
   requires: {
     id: number
     name: string
