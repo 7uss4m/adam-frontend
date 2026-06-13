@@ -179,6 +179,13 @@ export default function UserRowActions({ user, query }: UserRowActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem asChild>
+            <Link to={`/${import.meta.env.VITE_DASHBOARD}/notes?user=${user.id}`} className="flex items-center gap-2">
+              <Wallet className="h-4 w-4" />
+              {t("user_deposits")}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
             <Link to={`${user.id}/orders`} className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4" />
               {t("orders")}

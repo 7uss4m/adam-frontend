@@ -108,16 +108,22 @@ export default function UserCard({ user, query }: UserCardProps) {
         </p>
       )}
 
-      <div className="relative mt-4 flex gap-2 border-t border-border/40 pt-3">
+      <div className="relative mt-4 grid grid-cols-3 gap-2 border-t border-border/40 pt-3">
         <Link
           to={`${user.id}/orders`}
-          className="flex-1 rounded-lg border border-border/50 py-2 text-center text-xs font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+          className="rounded-lg border border-border/50 py-2 text-center text-xs font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
         >
           {t("orders")}
         </Link>
         <Link
+          to={`/${import.meta.env.VITE_DASHBOARD}/notes?user=${user.id}`}
+          className="rounded-lg border border-border/50 py-2 text-center text-xs font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+        >
+          {t("user_deposits")}
+        </Link>
+        <Link
           to={`${user.id}/debits`}
-          className="flex-1 rounded-lg border border-border/50 py-2 text-center text-xs font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+          className="rounded-lg border border-border/50 py-2 text-center text-xs font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
         >
           {t("debts")}
         </Link>

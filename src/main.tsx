@@ -73,6 +73,7 @@ import { I18nextProvider, initReactI18next } from "react-i18next";
 import DashboardChargeBoxes from "./dashboard/charge-boxes/page";
 import BoxPage from "./add-balance/box-page/page";
 import DashboardNotes from "./dashboard/notes/page";
+import DashboardReconciliation from "./dashboard/reconciliation/page";
 import ChargePage from "./add-balance/charge-page/page";
 import DashboardInfo from "./dashboard/info/page";
 import Products from "./products/page";
@@ -305,6 +306,10 @@ const router = createBrowserRouter([
       {
         path: "notes",
         element: <DashboardNotes />,
+      },
+      {
+        path: "reconciliation",
+        element: <DashboardReconciliation />,
       },
       {
         path: "info",

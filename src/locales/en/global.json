@@ -392,5 +392,19 @@
   "note_empty_hint": "Try changing filters or wait for new recharge requests",
   "search_notes": "Search by user, email, or request ID...",
   "currency": "Currency",
-  "created_at": "Created at"
+  "created_at": "Created at",
+  "filter_by_date": "Filter by date",
+  "export_excel": "Export Excel",
+  "export_done": "Export completed",
+  "daily_reconciliation": "Daily reconciliation",
+  "daily_reconciliation_subtitle": "Deposits and orders for the selected day in one view",
+  "note_user_filter": "Showing deposits for user",
+  "clear_user_filter": "Clear user filter",
+  "user_deposits": "Deposits",
+  "note_deposits_day": "Deposits today",
+  "note_success_amount_day": "Successful deposit amount",
+  "orders_day": "Orders today",
+  "orders_paid_day": "Paid only",
+  "orders_total_day": "Orders total",
+  "reconciliation_footer": "Daily audit — deposits and orders for the same date"
 }

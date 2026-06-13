@@ -10,13 +10,20 @@ export type NoteStats = {
   todayPending: number;
 };
 
-export default function getNoteStats(token: string) {
+export default function getNoteStats(
+  token: string,
+  params?: { dateFrom?: string; dateTo?: string }
+) {
   const apiUrl = `${import.meta.env.VITE_API_URL}notes/stats`;
   return axios
     .get<{ result: NoteStats }>(apiUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
         "x-api-key": import.meta.env.VITE_API_KEY,
+      },
+      params: {
+        dateFrom: params?.dateFrom || undefined,
+        dateTo: params?.dateTo || undefined,
       },
     })
     .then((res) => res);

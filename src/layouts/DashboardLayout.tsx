@@ -16,6 +16,7 @@ import { MdAdminPanelSettings, MdInventory } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import {
   BarChart3,
+  Calendar as CalendarIcon,
   Coins,
   HandCoins,
   LayoutDashboard,
@@ -118,6 +119,7 @@ function buildAdminNav(d: string): NavGroup[] {
         { to: `/${d}/reports`, labelKey: "reports", icon: <BarChart3 className="h-4 w-4" /> },
         { to: `/${d}/boxes`, labelKey: "charge_boxes", icon: <FaBox className="h-4 w-4" /> },
         { to: `/${d}/notes`, labelKey: "notes", icon: <FaStickyNote className="h-4 w-4" /> },
+        { to: `/${d}/reconciliation`, labelKey: "daily_reconciliation", icon: <CalendarIcon className="h-4 w-4" /> },
         { to: `/${d}/notifications`, labelKey: "notifications", icon: <IoNotifications className="h-4 w-4" /> },
         { to: `/${d}/info`, labelKey: "info", icon: <FaInfo className="h-4 w-4" /> },
       ],
@@ -160,6 +162,7 @@ const PAGE_TITLE_KEYS: Record<string, string> = {
   "/reports": "reports",
   "/boxes": "charge_boxes",
   "/notes": "notes",
+  "/reconciliation": "daily_reconciliation",
   "/notifications": "notifications",
   "/info": "info",
 };

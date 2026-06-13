@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
 import {
+  Calendar as CalendarIcon,
   CheckCircle2,
   Clock,
   Coins,
+  Download,
   LayoutGrid,
   List,
   RefreshCw,
@@ -21,13 +25,21 @@ import getNoteStats from "../../api/getNoteStats";
 import Spinner from "../../components/Spinner";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
+import { Calendar } from "../../components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../components/ui/popover";
 import Pagination from "../../components/Pagination";
 import { cn } from "../../lib/utils";
+import { exportNotesToExcel } from "../../lib/export-excel";
 import { createColumns } from "./columns";
 import { DataTable } from "./data-table";
 import NoteCard from "./note-card";
 import type { DashboardNote, NoteFilterKey } from "./note-utils";
 import { fmtCoins, mapNote } from "./note-utils";
+import { useToast } from "../../components/ui/use-toast";
 
 const SEARCH_DEBOUNCE_MS = 400;
 
@@ -128,9 +140,23 @@ export default function DashboardNotes() {
   const page = Number(params.get("page") || 1);
   const searchQuery = params.get("search") || "";
   const filter = (params.get("filter") as NoteFilterKey) || "all";
+  const userId = params.get("user") || "";
+  const dateFromParam = params.get("dateFrom") || "";
+  const dateToParam = params.get("dateTo") || "";
 
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
   const [searchInput, setSearchInput] = useState(searchQuery);
+  const [exporting, setExporting] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
+    if (!dateFromParam) return undefined;
+    return {
+      from: new Date(dateFromParam),
+      to: dateToParam ? new Date(dateToParam) : new Date(dateFromParam),
+    };
+  });
+
+  const { toast } = useToast();
+  const dashboardBase = import.meta.env.VITE_DASHBOARD;
 
   useEffect(() => {
     setSearchInput(searchQuery);
@@ -164,12 +190,38 @@ export default function DashboardNotes() {
     [navigate, pathname, search]
   );
 
+  const applyDateRange = useCallback(
+    (range: DateRange | undefined) => {
+      setDateRange(range);
+      const next = new URLSearchParams(search);
+      if (range?.from) {
+        next.set("dateFrom", format(range.from, "yyyy-MM-dd"));
+        next.set(
+          "dateTo",
+          format(range.to ?? range.from, "yyyy-MM-dd")
+        );
+      } else {
+        next.delete("dateFrom");
+        next.delete("dateTo");
+      }
+      next.set("page", "1");
+      navigate({ pathname, search: next.toString() }, { replace: true });
+    },
+    [navigate, pathname, search]
+  );
+
+  const dateFrom = dateFromParam;
+  const dateTo = dateToParam || dateFromParam;
+
   const token = localStorage.getItem("token") as string;
 
   const statsQuery = useQuery({
-    queryKey: ["note-stats"],
+    queryKey: ["note-stats", dateFrom, dateTo],
     queryFn: async () => {
-      const res = await getNoteStats(token);
+      const res = await getNoteStats(token, {
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
+      });
       return res.data.result;
     },
     staleTime: 30_000,
@@ -177,13 +229,16 @@ export default function DashboardNotes() {
   });
 
   const notesQuery = useQuery({
-    queryKey: ["notes", page, filter, searchQuery],
+    queryKey: ["notes", page, filter, searchQuery, userId, dateFrom, dateTo],
     queryFn: async () => {
       const response = await getNotes({
         token,
         page: String(page),
         filter,
         search: searchQuery,
+        userId: userId || undefined,
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
       });
       const notes = ((response.data.result?.notes as DashboardNote[]) || []).map(mapNote);
       return {
@@ -208,11 +263,46 @@ export default function DashboardNotes() {
   const notes = notesQuery.data?.notes ?? [];
   const stats = statsQuery.data;
   const totalPages = notesQuery.data?.totalPages ?? 1;
-  const activeFilters = (searchQuery ? 1 : 0) + (filter !== "all" ? 1 : 0);
+  const activeFilters =
+    (searchQuery ? 1 : 0) +
+    (filter !== "all" ? 1 : 0) +
+    (userId ? 1 : 0) +
+    (dateFrom ? 1 : 0);
 
   const clearFilters = () => {
     setSearchInput("");
+    setDateRange(undefined);
     navigate({ pathname, search: "" }, { replace: true });
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const response = await getNotes({
+        token,
+        filter,
+        search: searchQuery,
+        userId: userId || undefined,
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
+        exportAll: true,
+      });
+      const rows = ((response.data.result?.notes as DashboardNote[]) || []).map(mapNote);
+      if (!rows.length) {
+        toast({ title: t("no_results"), variant: "destructive" });
+        return;
+      }
+      exportNotesToExcel(
+        rows,
+        `deposits-${format(new Date(), "yyyy-MM-dd")}.xlsx`,
+        i18n.language
+      );
+      toast({ title: t("export_done") });
+    } catch {
+      toast({ title: t("error") || "Error", variant: "destructive" });
+    } finally {
+      setExporting(false);
+    }
   };
 
   if (notesQuery.isLoading && !notesQuery.data) {
@@ -243,18 +333,33 @@ export default function DashboardNotes() {
               <p className="text-sm text-muted-foreground">{t("notes_page_subtitle")}</p>
             </div>
           </div>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="shrink-0 gap-2 self-start"
-            onClick={refetchAll}
-            disabled={notesQuery.isFetching}
-          >
-            <RefreshCw
-              className={cn("h-4 w-4", notesQuery.isFetching && "animate-spin")}
-            />
-            {t("refresh")}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 self-start">
+            <Button variant="outline" size="sm" className="gap-2" asChild>
+              <Link to={`/${dashboardBase}/reconciliation`}>{t("daily_reconciliation")}</Link>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={handleExport}
+              disabled={exporting}
+            >
+              <Download className="h-4 w-4" />
+              {exporting ? t("loading") : t("export_excel")}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="gap-2"
+              onClick={refetchAll}
+              disabled={notesQuery.isFetching}
+            >
+              <RefreshCw
+                className={cn("h-4 w-4", notesQuery.isFetching && "animate-spin")}
+              />
+              {t("refresh")}
+            </Button>
+          </div>
         </div>
       </motion.section>
 
@@ -298,16 +403,73 @@ export default function DashboardNotes() {
         />
       </section>
 
+      {userId && (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm">
+          <span>
+            {t("note_user_filter")} <strong>#{userId}</strong>
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1"
+            onClick={() => {
+              const next = new URLSearchParams(search);
+              next.delete("user");
+              navigate({ pathname, search: next.toString() }, { replace: true });
+            }}
+          >
+            <X className="h-3.5 w-3.5" />
+            {t("clear_user_filter")}
+          </Button>
+        </div>
+      )}
+
       <section className="space-y-4 rounded-2xl border border-border/50 bg-card/60 p-4 backdrop-blur-sm sm:p-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative max-w-md flex-1">
-            <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t("search_notes")}
-              className="ps-9"
-            />
+          <div className="flex flex-1 flex-col gap-3 sm:flex-row">
+            <div className="relative max-w-md flex-1">
+              <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder={t("search_notes")}
+                className="ps-9"
+              />
+            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "justify-start gap-2 font-normal sm:w-[260px]",
+                    !dateRange?.from && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="h-4 w-4" />
+                  {dateRange?.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "LLL dd, y")} –{" "}
+                        {format(dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    t("filter_by_date")
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={applyDateRange}
+                  numberOfMonths={1}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="flex rounded-xl border border-border/50 bg-background/50 p-1">
             <Button

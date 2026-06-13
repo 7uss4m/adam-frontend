@@ -394,5 +394,19 @@
   "note_empty_hint": "جرّب تغيير الفلاتر أو انتظر طلبات شحن جديدة",
   "search_notes": "بحث بالمستخدم أو الإيميل أو رقم الطلب...",
   "currency": "العملة",
-  "created_at": "تاريخ الإنشاء"
+  "created_at": "تاريخ الإنشاء",
+  "filter_by_date": "فلترة حسب التاريخ",
+  "export_excel": "تصدير Excel",
+  "export_done": "تم التصدير بنجاح",
+  "daily_reconciliation": "جرد يومي",
+  "daily_reconciliation_subtitle": "إيداعات وطلبات اليوم المحدد في مكان واحد",
+  "note_user_filter": "عرض إيداعات المستخدم",
+  "clear_user_filter": "إلغاء فلتر المستخدم",
+  "user_deposits": "إيداعاته",
+  "note_deposits_day": "إيداعات اليوم",
+  "note_success_amount_day": "مبلغ الإيداعات الناجحة",
+  "orders_day": "طلبات اليوم",
+  "orders_paid_day": "مدفوعة فقط",
+  "orders_total_day": "إجمالي الطلبات",
+  "reconciliation_footer": "جرد يومي — الإيداعات والطلبات لنفس التاريخ"
 }
