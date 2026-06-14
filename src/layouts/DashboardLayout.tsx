@@ -17,6 +17,7 @@ import { IoNotifications } from "react-icons/io5";
 import {
   BarChart3,
   Calendar as CalendarIcon,
+  ClipboardList,
   Coins,
   HandCoins,
   LayoutDashboard,
@@ -120,6 +121,7 @@ function buildAdminNav(d: string): NavGroup[] {
         { to: `/${d}/boxes`, labelKey: "charge_boxes", icon: <FaBox className="h-4 w-4" /> },
         { to: `/${d}/notes`, labelKey: "notes", icon: <FaStickyNote className="h-4 w-4" /> },
         { to: `/${d}/reconciliation`, labelKey: "daily_reconciliation", icon: <CalendarIcon className="h-4 w-4" /> },
+        { to: `/${d}/activity-logs`, labelKey: "activity_log", icon: <ClipboardList className="h-4 w-4" /> },
         { to: `/${d}/notifications`, labelKey: "notifications", icon: <IoNotifications className="h-4 w-4" /> },
         { to: `/${d}/info`, labelKey: "info", icon: <FaInfo className="h-4 w-4" /> },
       ],
@@ -163,6 +165,7 @@ const PAGE_TITLE_KEYS: Record<string, string> = {
   "/boxes": "charge_boxes",
   "/notes": "notes",
   "/reconciliation": "daily_reconciliation",
+  "/activity-logs": "activity_log",
   "/notifications": "notifications",
   "/info": "info",
 };

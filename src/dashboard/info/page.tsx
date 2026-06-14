@@ -1,192 +1,239 @@
 import { useQuery } from "@tanstack/react-query";
-import { columns } from "./columns";
-import { DataTable } from "./data-table";
-
-// assets
-import Spinner from "../../components/Spinner";
-
+import { motion } from "framer-motion";
+import {
+  Banknote,
+  BookOpen,
+  DollarSign,
+  Facebook,
+  Info,
+  Mail,
+  MessageCircle,
+  Phone,
+  RefreshCw,
+  Send,
+  Shield,
+  Wallet,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
-import getInfo from "../../api/getInfo";
-import getMoonPay from "../../api/getMoonPay";
+
+import Spinner from "../../components/Spinner";
+import { Button } from "../../components/ui/button";
+import { cn } from "../../lib/utils";
+import { fetchSiteSettings } from "./info-utils";
+import SettingFieldCard from "./setting-field-card";
+
+function SectionBlock({
+  title,
+  subtitle,
+  children,
+  delay = 0,
+}: {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+  delay?: number;
+}) {
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.3 }}
+      className="space-y-4"
+    >
+      <div>
+        <h2 className="text-lg font-bold text-foreground">{title}</h2>
+        {subtitle && (
+          <p className="text-xs text-muted-foreground sm:text-sm">{subtitle}</p>
+        )}
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{children}</div>
+    </motion.section>
+  );
+}
 
 export default function DashboardInfo() {
-  // query
-  const getDollarQuery = useQuery({
-    queryKey: ["dollar_exchange"],
-    queryFn: async () => {
-      const response = await getInfo(
-        localStorage.getItem("token") as string,
-        "dollar_exchange"
-      );
-
-      return response.data.date as { dollar_exchange: string | null };
-    },
-    refetchOnWindowFocus: false,
-  });
-  const getEmailQuery = useQuery({
-    queryKey: ["email"],
-    queryFn: async () => {
-      const response = await getInfo(
-        localStorage.getItem("token") as string,
-        "email"
-      );
-
-      return response.data.date as { email: string | null };
-    },
-    refetchOnWindowFocus: false,
-  });
-  const getPhoneQuery = useQuery({
-    queryKey: ["phone"],
-    queryFn: async () => {
-      const response = await getInfo(
-        localStorage.getItem("token") as string,
-        "phone"
-      );
-
-      return response.data.date as { phone: string | null };
-    },
-    refetchOnWindowFocus: false,
-  });
-  const getPrivacyQuery = useQuery({
-    queryKey: ["privacy"],
-    queryFn: async () => {
-      const response = await getInfo(
-        localStorage.getItem("token") as string,
-        "privacy"
-      );
-
-      return response.data.date as { privacy: string | null };
-    },
-    refetchOnWindowFocus: false,
-  });
-  const getAboutUsQuery = useQuery({
-    queryKey: ["aboutus"],
-    queryFn: async () => {
-      const response = await getInfo(
-        localStorage.getItem("token") as string,
-        "aboutus"
-      );
-
-      return response.data.date as { aboutus: string | null };
-    },
-    refetchOnWindowFocus: false,
-  });
-  const getWhatsappQuery = useQuery({
-    queryKey: ["whatsup"],
-    queryFn: async () => {
-      const response = await getInfo(
-        localStorage.getItem("token") as string,
-        "whatsup"
-      );
-
-      return response.data.date as { whatsup: string | null };
-    },
-    refetchOnWindowFocus: false,
-  });
-  const getFacebookQuery = useQuery({
-    queryKey: ["facebook"],
-    queryFn: async () => {
-      const response = await getInfo(
-        localStorage.getItem("token") as string,
-        "facebook"
-      );
-
-      return response.data.date as { facebook: string | null };
-    },
-    refetchOnWindowFocus: false,
-  });
-  const getTelegramQuery = useQuery({
-    queryKey: ["telegram"],
-    queryFn: async () => {
-      const response = await getInfo(
-        localStorage.getItem("token") as string,
-        "telegram"
-      );
-
-      return response.data.date as { telegram: string | null };
-    },
-    refetchOnWindowFocus: false,
-  });
-  const getPayMoonQuery = useQuery({
-    queryKey: ["moonpay"],
-    queryFn: async () => {
-      const response = await getMoonPay(
-        localStorage.getItem("token") as string
-      );
-      return response.data as { date: string };
-    },
-  });
-
-  // translation
   const [t, i18n] = useTranslation("global");
+  const token = localStorage.getItem("token") || "";
+
+  const settingsQuery = useQuery({
+    queryKey: ["site-settings"],
+    queryFn: () => fetchSiteSettings(token),
+    enabled: Boolean(token),
+    refetchOnWindowFocus: false,
+  });
+
+  const refetch = () => settingsQuery.refetch();
+
+  if (settingsQuery.isLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (settingsQuery.isError || !settingsQuery.data) {
+    return (
+      <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4">
+        <p className="text-muted-foreground">{t("something_went_wrong")}</p>
+        <Button variant="outline" onClick={() => refetch()} className="gap-2">
+          <RefreshCw className="h-4 w-4" />
+          {t("refresh")}
+        </Button>
+      </div>
+    );
+  }
+
+  const s = settingsQuery.data;
+
   return (
-    <section
-      dir={i18n.language == "en" ? "ltr" : "rtl"}
-      className="container mx-auto py-10 space-y-10"
+    <div
+      dir={i18n.language === "en" ? "ltr" : "rtl"}
+      className="space-y-8 pb-10"
     >
-      <header className="flex justify-between items-center">
-        <p className="text-2xl md:text-6xl">{t("info")}</p>
-      </header>
-      {getEmailQuery.isFetching ||
-      getDollarQuery.isFetching ||
-      getPhoneQuery.isFetching ||
-      getTelegramQuery.isFetching ||
-      getFacebookQuery.isFetching ||
-      getWhatsappQuery.isFetching ||
-      getAboutUsQuery.isFetching ||
-      getPrivacyQuery.isFetching ||
-      getPayMoonQuery.isFetching ? (
-        <div className="min-h-svh flex justify-center items-center">
-          <Spinner />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+            <Info className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="font-orbitron text-xl font-bold text-foreground sm:text-2xl">
+              {t("info")}
+            </h1>
+            <p className="text-xs text-muted-foreground sm:text-sm">
+              {t("info_page_subtitle")}
+            </p>
+          </div>
         </div>
-      ) : getEmailQuery.isSuccess &&
-        getEmailQuery.data &&
-        getTelegramQuery.isSuccess &&
-        getTelegramQuery.data &&
-        getWhatsappQuery.isSuccess &&
-        getWhatsappQuery.data &&
-        getFacebookQuery.isSuccess &&
-        getFacebookQuery.data &&
-        getPrivacyQuery.isSuccess &&
-        getPrivacyQuery.data &&
-        getPhoneQuery.isSuccess &&
-        getPhoneQuery.data &&
-        getAboutUsQuery.isSuccess &&
-        getAboutUsQuery.data &&
-        getPayMoonQuery.isSuccess &&
-        getPayMoonQuery.data ? (
-        <>
-          <DataTable
-            getDollarQuery={getDollarQuery}
-            getEmailQuery={getEmailQuery}
-            getPhoneQuery={getPhoneQuery}
-            getPrivacyQuery={getPrivacyQuery}
-            getAboutUsQuery={getAboutUsQuery}
-            getWhatsappQuery={getWhatsappQuery}
-            getFacebookQuery={getFacebookQuery}
-            getTelegramQuery={getTelegramQuery}
-            getPayMoonQuery={getPayMoonQuery}
-            columns={columns}
-            data={[
-              {
-                email: getEmailQuery.data.email,
-                phone: getPhoneQuery.data?.phone,
-                privacy: getPrivacyQuery.data?.privacy,
-                aboutus: getAboutUsQuery.data?.aboutus,
-                whatsup: getWhatsappQuery.data?.whatsup,
-                facebook: getFacebookQuery.data?.facebook,
-                telegram: getTelegramQuery.data?.telegram,
-                code: getPayMoonQuery.data.date,
-                dollar_exchange: getDollarQuery.data?.dollar_exchange as string,
-              },
-            ]}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          disabled={settingsQuery.isFetching}
+          className="gap-2 self-end sm:self-auto"
+        >
+          <RefreshCw
+            className={cn("h-4 w-4", settingsQuery.isFetching && "animate-spin")}
           />
-        </>
-      ) : (
-        <div className="flex justify-center items-center min-h-[30vh]">
-          <p>{t("something_went_wrong")}</p>
+          {t("refresh")}
+        </Button>
+      </div>
+
+      <SectionBlock
+        title={t("info_finance_section")}
+        subtitle={t("info_finance_section_hint")}
+        delay={0.05}
+      >
+        <SettingFieldCard
+          label={t("info_dollar_exchange")}
+          value={s.dollar_exchange}
+          fieldKey="dollar_exchange"
+          type="number"
+          icon={<DollarSign className="h-4 w-4" />}
+          onSaved={refetch}
+        />
+        <SettingFieldCard
+          label={t("info_tr_exchange")}
+          value={s.tr_exchange}
+          fieldKey="tr_exchange"
+          type="number"
+          icon={<Banknote className="h-4 w-4" />}
+          onSaved={refetch}
+        />
+        <SettingFieldCard
+          label={t("info_dash_exchange")}
+          value={s.dash_exchange}
+          fieldKey="dash_exchange"
+          type="number"
+          icon={<Banknote className="h-4 w-4" />}
+          onSaved={refetch}
+        />
+        <SettingFieldCard
+          label={t("wallet_address")}
+          value={s.moonPay_code}
+          fieldKey="moonPay_code"
+          icon={<Wallet className="h-4 w-4" />}
+          copyable
+          onSaved={refetch}
+        />
+      </SectionBlock>
+
+      <SectionBlock
+        title={t("info_contact_section")}
+        subtitle={t("info_contact_section_hint")}
+        delay={0.1}
+      >
+        <SettingFieldCard
+          label={t("email")}
+          value={s.email}
+          fieldKey="email"
+          icon={<Mail className="h-4 w-4" />}
+          onSaved={refetch}
+        />
+        <SettingFieldCard
+          label={t("info_phone")}
+          value={s.phone}
+          fieldKey="phone"
+          icon={<Phone className="h-4 w-4" />}
+          onSaved={refetch}
+        />
+      </SectionBlock>
+
+      <SectionBlock
+        title={t("info_social_section")}
+        subtitle={t("info_social_section_hint")}
+        delay={0.15}
+      >
+        <SettingFieldCard
+          label={t("info_telegram")}
+          value={s.telegram}
+          fieldKey="telegram"
+          icon={<Send className="h-4 w-4" />}
+          onSaved={refetch}
+        />
+        <SettingFieldCard
+          label={t("info_whatsapp")}
+          value={s.whatsup}
+          fieldKey="whatsup"
+          icon={<MessageCircle className="h-4 w-4" />}
+          onSaved={refetch}
+        />
+        <SettingFieldCard
+          label={t("info_facebook")}
+          value={s.facebook}
+          fieldKey="facebook"
+          icon={<Facebook className="h-4 w-4" />}
+          onSaved={refetch}
+        />
+      </SectionBlock>
+
+      <SectionBlock
+        title={t("info_content_section")}
+        subtitle={t("info_content_section_hint")}
+        delay={0.2}
+      >
+        <div className="sm:col-span-2 xl:col-span-3">
+          <SettingFieldCard
+            label={t("about_us")}
+            value={s.aboutus}
+            fieldKey="aboutus"
+            type="textarea"
+            icon={<BookOpen className="h-4 w-4" />}
+            onSaved={refetch}
+          />
         </div>
-      )}
-    </section>
+        <div className="sm:col-span-2 xl:col-span-3">
+          <SettingFieldCard
+            label={t("info_privacy")}
+            value={s.privacy}
+            fieldKey="privacy"
+            type="textarea"
+            icon={<Shield className="h-4 w-4" />}
+            onSaved={refetch}
+          />
+        </div>
+      </SectionBlock>
+    </div>
   );
 }

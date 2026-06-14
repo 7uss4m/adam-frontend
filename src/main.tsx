@@ -74,6 +74,7 @@ import DashboardChargeBoxes from "./dashboard/charge-boxes/page";
 import BoxPage from "./add-balance/box-page/page";
 import DashboardNotes from "./dashboard/notes/page";
 import DashboardReconciliation from "./dashboard/reconciliation/page";
+import DashboardActivityLogs from "./dashboard/activity-logs/page";
 import ChargePage from "./add-balance/charge-page/page";
 import DashboardInfo from "./dashboard/info/page";
 import Products from "./products/page";
@@ -310,6 +311,10 @@ const router = createBrowserRouter([
       {
         path: "reconciliation",
         element: <DashboardReconciliation />,
+      },
+      {
+        path: "activity-logs",
+        element: <DashboardActivityLogs />,
       },
       {
         path: "info",
