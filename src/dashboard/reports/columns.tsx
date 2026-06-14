@@ -1,27 +1,34 @@
+import { ColumnDef } from "@tanstack/react-table";
+import { TFunction } from "i18next";
+import { Report } from "../../types/types";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Report } from "../../types/types"
-
-
-
-
-export const columns: ColumnDef<Report>[] = [
-
-
-  {
-    accessorKey: "categoryId",
-    header: localStorage.getItem("lng") == "en" ? "Category Id" : "معرف التصنيف",
-  },
-  {
-    accessorKey: "categoryName",
-    header: localStorage.getItem("lng") == "en" ? "Category Name" : "اسم التصنيف",
-  },
-  {
-    accessorKey: "totalQuantity",
-    header: localStorage.getItem("lng") == "en" ? "Total Quantity" : "الكمية الكلية",
-  },
-  {
-    accessorKey: "totalPrice",
-    header: localStorage.getItem("lng") == "en" ? "Total Price" : "السعر الكلي",
-  },
-]
+export function createColumns(t: TFunction): ColumnDef<Report>[] {
+  return [
+    {
+      accessorKey: "categoryId",
+      header: t("reports_category_id"),
+    },
+    {
+      accessorKey: "categoryName",
+      header: t("reports_category_name"),
+    },
+    {
+      accessorKey: "totalQuantity",
+      header: t("reports_total_quantity"),
+      cell: ({ row }) => (
+        <span className="font-semibold tabular-nums">
+          {row.original.totalQuantity}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "totalPrice",
+      header: t("reports_total_price"),
+      cell: ({ row }) => (
+        <span className="font-semibold tabular-nums text-primary">
+          {row.original.totalPrice}
+        </span>
+      ),
+    },
+  ];
+}

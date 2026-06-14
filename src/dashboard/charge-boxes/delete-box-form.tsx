@@ -16,8 +16,18 @@ import { AxiosError } from "axios";
 import { Button } from "../../components/ui/button";
 import deleteBox from "../../api/deleteBox";
 import { useTranslation } from "react-i18next";
+import { Trash2 } from "lucide-react";
+import { cn } from "../../lib/utils";
 
-export default function DeleteBoxForm({ id, query }: { id: string, query: UseQueryResult }) {
+export default function DeleteBoxForm({
+  id,
+  query,
+  compact = false,
+}: {
+  id: string;
+  query: UseQueryResult;
+  compact?: boolean;
+}) {
   // state
   const [open, setOpen] = useState(false);
 
@@ -55,7 +65,20 @@ export default function DeleteBoxForm({ id, query }: { id: string, query: UseQue
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant={"destructive"}>{t("delete")}</Button>
+        {compact ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn(
+              "gap-1.5 border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            )}
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            {t("delete")}
+          </Button>
+        ) : (
+          <Button variant="destructive">{t("delete")}</Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent dir={i18n.language == "en" ? "ltr" : "rtl"}>
         <AlertDialogHeader>

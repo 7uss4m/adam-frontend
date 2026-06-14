@@ -13,7 +13,7 @@ export function Toaster() {
   const { toasts } = useToast()
 
   return (
-    <ToastProvider>
+    <ToastProvider duration={5000} swipeDirection="right">
       {toasts.map(function ({ id, title, description, action, variant, ...props }) {
         const isDestructive = variant === "destructive"
 

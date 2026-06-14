@@ -56,6 +56,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { cn } from "../lib/utils";
+import { restoreBodyPointerEvents } from "../lib/restore-body-pointer-events";
 
 type NavItem = {
   to: string;
@@ -407,6 +408,11 @@ export default function DashboardLayout() {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [mobileOpen]);
+
+  useEffect(() => {
+    const timer = window.setInterval(restoreBodyPointerEvents, 800);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const logout = () => {
     localStorage.clear();
