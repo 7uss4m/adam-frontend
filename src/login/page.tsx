@@ -27,6 +27,7 @@ import getUser from "../api/getUser";
 import GoogleOAuth from "../components/GoogleAuth";
 import Spinner from "../components/Spinner";
 import { ThemeProvider, useTheme } from "../components/theme-provider";
+import MaintenanceGate from "../components/maintenance-gate";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
 import {
@@ -437,7 +438,9 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <LoginContent />
+      <MaintenanceGate>
+        <LoginContent />
+      </MaintenanceGate>
     </ThemeProvider>
   );
 }

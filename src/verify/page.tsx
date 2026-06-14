@@ -9,6 +9,7 @@ import logo from "../assets/logo.webp";
 import postVerifyEmail from "../api/postVerifyEmail";
 
 import { ThemeProvider } from "../components/theme-provider";
+import MaintenanceGate from "../components/maintenance-gate";
 import { useTranslation } from "react-i18next";
 import { ChevronRight, ShieldCheck, Mail, Sparkles } from "lucide-react";
 import { toast } from "../components/ui/use-toast";
@@ -88,6 +89,7 @@ export default function VerifyEmailPage() {
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <MaintenanceGate>
       <main
         dir={i18n.language === "ar" ? "rtl" : "ltr"}
         className="relative flex min-h-screen items-center justify-center bg-background px-4 overflow-hidden"
@@ -301,6 +303,7 @@ export default function VerifyEmailPage() {
           </motion.div>
         </motion.div>
       </main>
+      </MaintenanceGate>
     </ThemeProvider>
   );
 }

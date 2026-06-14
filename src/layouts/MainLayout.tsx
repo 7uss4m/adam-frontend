@@ -22,6 +22,7 @@ import postFcmToken from "../api/postFcmToken";
 // import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { CurrencyProvider } from "../context/CurrencyContext";
 import Footer from "./Footer";
+import MaintenanceGate from "../components/maintenance-gate";
 
 const AUTH_REQUIRED_PAGES = [
   "/security",
@@ -139,78 +140,18 @@ export default function MainLayout() {
   //   }
   // }, [params, showPurchaseSuccess]);
   return (
-    <>
-        <main
-          dir={i18n.language == "ar" ? "rtl" : "ltr"}
-          className="main bg-background area relative min-h-[90vh] sm:min-h-[100vh] "
-        >
-          <CurrencyProvider>
-            <Header />
+    <MaintenanceGate>
+      <main
+        dir={i18n.language == "ar" ? "rtl" : "ltr"}
+        className="main bg-background area relative min-h-[90vh] sm:min-h-[100vh] "
+      >
+        <CurrencyProvider>
+          <Header />
 
-            {/* {pathname.split("/").length == 4 &&
-            pathname.split("/")[3] == "box" ? null : getAdsQuery.data &&
-              !LOCATIONS_WITHOUT_BANNER.includes(pathname) ? (
-              <div
-                className="banners flex flex-col gap-5 relative container max-w-[100%] md:max-w-[90%] lg:max-w-[70%] w-full mb-10 p-1"
-                dir="ltr"
-              >
-                <div className="w-full md:h-[350px] shadow-2xl shadow-background flex flex-col justify-center items-center gap-20 md:items-start rounded-xl overflow-hidden">
-                  <div className="relative flex w-full h-full rounded-xl ">
-                    <Carousel
-                      opts={{ loop: true }}
-                      plugins={[
-                        Autoplay({
-                          delay: 4000,
-                          playOnInit: true,
-                          stopOnFocusIn: false,
-                          stopOnInteraction: false,
-                          stopOnLastSnap: false,
-                          stopOnMouseEnter: false,
-                        }),
-                      ]}
-                      className="size-full"
-                    >
-                      <CarouselContent className="size-full">
-                        {getAdsQuery.data.map((ad) => (
-                          <CarouselItem key={ad.id} className="size-full">
-                            <a
-                              rel="noopener noreferrer"
-                              target="_blank"
-                              href={toExternalUrl(String(ad.title))}
-                            >
-                              <img
-                                key={ad.id}
-                                alt={ad.description}
-                                src={ad.image as string}
-                                width={1000}
-                                height={1000}
-                                className="size-full"
-                              />
-                            </a>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                    </Carousel>
-                  </div>
-                </div>
-                <div className="text-lg w-full m-auto h-[45px] flex items-center py-2 bottom-0 md:bottom-0 bg-secondary shadow-xl text-accent capitalize rounded overflow-x-hidden">
-                  {getAdsQuery.data.length > 0 && (
-                    <span
-                      key={`text-${currentTextId}`}
-                      id={`text-${currentTextId}`}
-                      className="block min-w-[500px] translate-x-[-100%] animate-slideIn text-nowrap whitespace-nowrap text-sm sm:text-lg"
-                    >
-                      {getAdsQuery.data[currentTextId].description}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ) : null} */}
-
-            <Outlet />
-            <Footer />
-          </CurrencyProvider>
-        </main>
-    </>
+          <Outlet />
+          <Footer />
+        </CurrencyProvider>
+      </main>
+    </MaintenanceGate>
   );
 }

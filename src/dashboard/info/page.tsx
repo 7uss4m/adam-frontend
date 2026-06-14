@@ -21,6 +21,7 @@ import { Button } from "../../components/ui/button";
 import { cn } from "../../lib/utils";
 import { fetchSiteSettings } from "./info-utils";
 import SettingFieldCard from "./setting-field-card";
+import MaintenanceModeCard from "./maintenance-mode-card";
 
 function SectionBlock({
   title,
@@ -119,6 +120,14 @@ export default function DashboardInfo() {
           {t("refresh")}
         </Button>
       </div>
+
+      <SectionBlock
+        title={t("maintenance_section")}
+        subtitle={t("maintenance_section_hint")}
+        delay={0.02}
+      >
+        <MaintenanceModeCard />
+      </SectionBlock>
 
       <SectionBlock
         title={t("info_finance_section")}

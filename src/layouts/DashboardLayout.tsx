@@ -57,6 +57,12 @@ import {
 } from "../components/ui/dropdown-menu";
 import { cn } from "../lib/utils";
 import { restoreBodyPointerEvents } from "../lib/restore-body-pointer-events";
+import { useMaintenanceMode } from "../hooks/useMaintenanceMode";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "../components/ui/sheet";
 
 type NavItem = {
   to: string;
@@ -225,13 +231,20 @@ function SidebarNav({
   groups,
   t,
   onClickLink,
+  className,
 }: {
   groups: NavGroup[];
   t: (k: string) => string;
   onClickLink?: () => void;
+  className?: string;
 }) {
   return (
-    <nav className="dashboard-nav-scroll flex-1 space-y-5 overflow-y-auto px-3 py-4">
+    <nav
+      className={cn(
+        "dashboard-nav-scroll flex-1 space-y-5 overflow-y-auto overscroll-contain px-3 py-4",
+        className
+      )}
+    >
       {groups.map((group, gi) => (
         <div key={gi} className="space-y-1">
           {group.labelKey && (
@@ -367,7 +380,6 @@ export default function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const mobileNavRef = useRef<HTMLElement>(null);
 
   const getUserQuery = useQuery({
     queryKey: ["user"],
@@ -399,6 +411,19 @@ export default function DashboardLayout() {
       });
     },
   });
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const closeOnDesktop = () => {
+      if (mq.matches) setMobileOpen(false);
+    };
+    mq.addEventListener("change", closeOnDesktop);
+    return () => mq.removeEventListener("change", closeOnDesktop);
+  }, []);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -437,27 +462,51 @@ export default function DashboardLayout() {
 
   const pageTitle = resolvePageTitle(pathname, d, t);
   const isHome = pathname === dashPath || pathname === `${dashPath}/`;
+  const { data: maintenanceActive } = useMaintenanceMode({ refetchInterval: 20_000 });
 
-  const sidebarContent = (onClickLink?: () => void) => (
-    <>
+  const sidebarContent = (onClickLink?: () => void, mobile = false) => (
+    <div
+      className={cn(
+        "flex min-h-0 flex-1 flex-col",
+        mobile && "h-full max-h-[100dvh] overflow-hidden"
+      )}
+    >
       <Link
         to={dashPath}
         onClick={onClickLink}
-        className="flex shrink-0 items-center gap-3 border-b border-border/50 px-4 py-5"
+        className="relative flex shrink-0 items-center gap-3 border-b border-border/50 px-4 py-5"
       >
         <img src={logo} alt="AdamZone" className="h-10 w-10 rounded-xl object-contain" />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-black text-foreground">AdamZone</p>
           <p className="truncate text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             {t("dashboard") || "Dashboard"}
           </p>
         </div>
+        {mobile && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileOpen(false);
+            }}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary/80 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            aria-label="Close menu"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </Link>
 
-      <SidebarNav groups={navGroups} t={t} onClickLink={onClickLink} />
+      <SidebarNav
+        groups={navGroups}
+        t={t}
+        onClickLink={onClickLink}
+        className={mobile ? "min-h-0 touch-pan-y" : undefined}
+      />
 
       {user && (
-        <div className="mx-3 mb-2 rounded-xl border border-border/40 bg-secondary/30 px-3 py-2.5">
+        <div className="mx-3 mb-2 shrink-0 rounded-xl border border-border/40 bg-secondary/30 px-3 py-2.5">
           <p className="truncate text-xs font-bold text-foreground">
             {user.user_name || user.name}
           </p>
@@ -471,10 +520,10 @@ export default function DashboardLayout() {
         isAdmin={isAdmin}
         onLogout={logout}
         onLangChange={changeLang}
-        setSmallNav={setMobileOpen}
-        small={!!onClickLink}
+        setSmallNav={mobile ? setMobileOpen : undefined}
+        small={mobile}
       />
-    </>
+    </div>
   );
 
   return (
@@ -492,41 +541,35 @@ export default function DashboardLayout() {
             isPending={adminLoginMutation.isPending}
           />
         ) : isAdmin || isOrders ? (
-          <div className="flex min-h-screen">
+          <div className="flex min-h-screen md:h-screen md:overflow-hidden">
             {/* Desktop sidebar */}
-            <aside className="hidden w-[260px] shrink-0 flex-col border-e border-border/50 bg-card/50 backdrop-blur-xl md:flex">
+            <aside className="hidden h-screen w-[260px] shrink-0 flex-col border-e border-border/50 bg-card/50 backdrop-blur-xl md:flex">
               {sidebarContent()}
             </aside>
 
-            {/* Mobile overlay */}
-            {mobileOpen && (
-              <div
-                className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
-                onClick={() => setMobileOpen(false)}
-              />
-            )}
-
-            {/* Mobile sidebar */}
-            <aside
-              ref={mobileNavRef}
-              className={cn(
-                "fixed inset-y-0 start-0 z-50 flex w-[280px] max-w-[85vw] flex-col border-e border-border/50 bg-card shadow-2xl transition-transform duration-300 md:hidden",
-                mobileOpen ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
-              )}
-            >
-              <button
-                type="button"
-                onClick={() => setMobileOpen(false)}
-                className="absolute end-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg bg-secondary/80 text-muted-foreground"
-                aria-label="Close menu"
+            {/* Mobile drawer — portal fixed, لا يتحرك مع scroll الصفحة */}
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetContent
+                side={i18n.language === "ar" ? "right" : "left"}
+                dir={i18n.language === "en" ? "ltr" : "rtl"}
+                className={cn(
+                  "flex w-[min(288px,88vw)] max-w-none flex-col gap-0 border-border/50 bg-card p-0 pb-[env(safe-area-inset-bottom)] shadow-2xl",
+                  "h-[100dvh] max-h-[100dvh] overscroll-none",
+                  "[&>button]:hidden"
+                )}
+                onCloseAutoFocus={(e) => {
+                  e.preventDefault();
+                  restoreBodyPointerEvents();
+                }}
+                onOpenAutoFocus={(e) => e.preventDefault()}
               >
-                <X className="h-4 w-4" />
-              </button>
-              {sidebarContent(() => setMobileOpen(false))}
-            </aside>
+                <SheetTitle className="sr-only">{t("dashboard")}</SheetTitle>
+                {sidebarContent(() => setMobileOpen(false), true)}
+              </SheetContent>
+            </Sheet>
 
             {/* Main column */}
-            <div className="flex min-w-0 flex-1 flex-col">
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               {/* Top bar */}
               <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border/50 bg-background/80 px-4 backdrop-blur-xl md:h-16 md:px-6">
                 <Button
@@ -563,8 +606,14 @@ export default function DashboardLayout() {
                 </div>
               </header>
 
-              {/* Page content */}
-              <main className="dashboard-content dashboard-mesh-bg flex-1 overflow-x-hidden">
+              {maintenanceActive && (
+                <div className="shrink-0 border-b border-amber-500/30 bg-amber-500/10 px-4 py-2 text-center text-xs font-semibold text-amber-700 dark:text-amber-300 md:text-sm">
+                  {t("maintenance_dashboard_banner")}
+                </div>
+              )}
+
+              {/* Page content — scroll مستقل عن الـ drawer */}
+              <main className="dashboard-content dashboard-mesh-bg min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain">
                 <Outlet />
               </main>
             </div>

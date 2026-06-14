@@ -4,6 +4,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useTranslation } from "react-i18next";
 
 import {
   Table,
@@ -13,77 +14,55 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { UseQueryResult } from "@tanstack/react-query";
-import { Charge } from "../../types/types";
-import { useTranslation } from "react-i18next";
+import { DashboardCharge } from "./charge-utils";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  query: UseQueryResult;
+interface DataTableProps {
+  columns: ColumnDef<DashboardCharge>[];
+  data: DashboardCharge[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable({ columns, data }: DataTableProps) {
+  const [t, i18n] = useTranslation("global");
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  // translation
-  const [t, i18n] = useTranslation("global");
-
   return (
-    <div dir={i18n.language == "en" ? "ltr" : "rtl"} className="rounded-md border">
+    <div
+      dir={i18n.language === "en" ? "ltr" : "rtl"}
+      className="overflow-hidden rounded-2xl border border-border/50 bg-card/50"
+    >
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead className="text-start" key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  </TableHead>
-                );
-              })}
+            <TableRow key={headerGroup.id} className="hover:bg-transparent">
+              {headerGroup.headers.map((header) => (
+                <TableHead className="text-start" key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
+              <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {cell.column.id == "created_at"
-                      ? (row.original as Charge).created_at.slice(0, 10)
-                      : cell.column.id == "user"
-                        ? (row.original as Charge).user?.email
-                          ? (row.original as Charge).user?.email
-                          : t("deleted")
-                        : flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
-                <TableCell className="flex items-center justify-center gap-5"></TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground">
                 {t("no_results")}
               </TableCell>
             </TableRow>

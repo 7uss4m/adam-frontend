@@ -28,6 +28,7 @@ import getUser from "../api/getUser";
 import GoogleOAuth from "../components/GoogleAuth";
 import Spinner from "../components/Spinner";
 import { ThemeProvider, useTheme } from "../components/theme-provider";
+import MaintenanceGate from "../components/maintenance-gate";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -438,7 +439,9 @@ function RegisterContent() {
 export default function RegisterPage() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <RegisterContent />
+      <MaintenanceGate>
+        <RegisterContent />
+      </MaintenanceGate>
     </ThemeProvider>
   );
 }

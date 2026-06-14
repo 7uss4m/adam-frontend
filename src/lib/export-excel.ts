@@ -1,6 +1,8 @@
 import { utils, writeFile } from "xlsx";
 
 import type { DailyReconciliation } from "../api/getDailyReconciliation";
+import type { DashboardCharge } from "../dashboard/chargings/charge-utils";
+import { formatChargeDate } from "../dashboard/chargings/charge-utils";
 import type { DashboardNote } from "../dashboard/notes/note-utils";
 import { formatNoteDate } from "../dashboard/notes/note-utils";
 import { getBoxName } from "./payment-note-display";
@@ -47,6 +49,50 @@ export function exportNotesToExcel(
   const ws = utils.json_to_sheet(rows);
   const wb = utils.book_new();
   utils.book_append_sheet(wb, ws, ar ? "الإيداعات" : "Deposits");
+  writeFile(wb, filename);
+}
+
+export function exportChargesToExcel(
+  charges: DashboardCharge[],
+  filename: string,
+  locale: string = "ar"
+) {
+  const ar = locale === "ar";
+  const label = (key: "admin" | "online" | "done" | "pending") => {
+    const map = {
+      admin: { ar: "يدوي (أدمن)", en: "Manual (admin)" },
+      online: { ar: "أونلاين", en: "Online" },
+      done: { ar: "مكتمل", en: "Completed" },
+      pending: { ar: "معلق", en: "Pending" },
+    };
+    return map[key][ar ? "ar" : "en"];
+  };
+
+  const rows = charges.map((c) =>
+    ar
+      ? {
+          المعرف: c.id,
+          المستخدم: c.user?.user_name ?? "—",
+          الايميل: c.user?.email ?? "—",
+          المبلغ: c.coins,
+          النوع: c.type === "online" ? label("online") : label("admin"),
+          الحالة: c.done ? label("done") : label("pending"),
+          التاريخ: formatChargeDate(c.created_at, locale),
+        }
+      : {
+          ID: c.id,
+          User: c.user?.user_name ?? "—",
+          Email: c.user?.email ?? "—",
+          Amount: c.coins,
+          Type: c.type === "online" ? label("online") : label("admin"),
+          Status: c.done ? label("done") : label("pending"),
+          Date: formatChargeDate(c.created_at, locale),
+        }
+  );
+
+  const ws = utils.json_to_sheet(rows);
+  const wb = utils.book_new();
+  utils.book_append_sheet(wb, ws, ar ? "الشحنات" : "Charges");
   writeFile(wb, filename);
 }
 

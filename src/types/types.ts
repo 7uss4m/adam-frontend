@@ -178,9 +178,19 @@ export type Order = {
 
 export type Charge = {
   id: string
-  coins: string
+  coins: string | number
+  type?: string
+  done?: boolean
+  userId?: string | null
   created_at: string
-  user: User
+  user?: {
+    email?: string | null
+    user_name?: string | null
+  } | null
+  charged_by?: {
+    email?: string | null
+    user_name?: string | null
+  } | null
 }
 
 export type Client = {
