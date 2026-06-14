@@ -254,9 +254,15 @@ export type Note = {
   created_at: string
   currencies: {
     name: string
-    boxes: {
-      name: string
-    }
+    boxes?: {
+      name?: string | null
+      box_name?: string | null
+      account_name?: string | null
+    } | {
+      name?: string | null
+      box_name?: string | null
+      account_name?: string | null
+    }[] | null
   }
   user: {
     id: string,

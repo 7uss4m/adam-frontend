@@ -3,6 +3,7 @@ import { utils, writeFile } from "xlsx";
 import type { DailyReconciliation } from "../api/getDailyReconciliation";
 import type { DashboardNote } from "../dashboard/notes/note-utils";
 import { formatNoteDate } from "../dashboard/notes/note-utils";
+import { getBoxName } from "./payment-note-display";
 
 function statusLabel(status: string, ar: boolean) {
   if (status === "pinding") return ar ? "معلق" : "Pending";
@@ -65,7 +66,7 @@ export function exportReconciliationToExcel(
           الايميل: n.user?.email ?? "—",
           المبلغ: Number(n.coins),
           العملة: n.currencies?.name ?? "—",
-          الصندوق: n.currencies?.boxes?.name ?? "—",
+          الصندوق: getBoxName(n.currencies) || "—",
           الحالة: statusLabel(n.status, true),
           التاريخ: formatNoteDate(n.created_at, locale),
         }
@@ -75,7 +76,7 @@ export function exportReconciliationToExcel(
           Email: n.user?.email ?? "—",
           Amount: Number(n.coins),
           Currency: n.currencies?.name ?? "—",
-          Box: n.currencies?.boxes?.name ?? "—",
+          Box: getBoxName(n.currencies) || "—",
           Status: statusLabel(n.status, false),
           Date: formatNoteDate(n.created_at, locale),
         }

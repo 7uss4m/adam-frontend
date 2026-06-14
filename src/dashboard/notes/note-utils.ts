@@ -1,4 +1,5 @@
 import type { Note } from "../../types/types";
+import { getBoxName, getCurrencyName, parseNoteDate } from "../../lib/payment-note-display";
 
 export type NoteFilterKey = "all" | "pinding" | "success" | "reject";
 
@@ -35,15 +36,16 @@ export function noteStatusKey(status: string): NoteFilterKey | "unknown" {
 export function mapNote(raw: Note): DashboardNote {
   return {
     ...raw,
-    boxName: raw.currencies?.boxes?.name ?? "",
-    currencyName: raw.currencies?.name ?? "",
+    boxName: getBoxName(raw.currencies),
+    currencyName: getCurrencyName(raw.currencies),
     email: raw.user?.email ?? "",
     username: raw.user?.user_name ?? "—",
   };
 }
 
-export function formatNoteDate(dateStr: string, locale: string) {
-  const date = new Date(dateStr);
+export function formatNoteDate(dateStr: unknown, locale: string) {
+  const date = parseNoteDate(dateStr);
+  if (!date) return "—";
   return date.toLocaleString(locale === "ar" ? "ar-SY" : "en-US", {
     year: "numeric",
     month: "short",
@@ -53,8 +55,9 @@ export function formatNoteDate(dateStr: string, locale: string) {
   });
 }
 
-export function relativeNoteTime(dateStr: string, locale: string) {
-  const date = new Date(dateStr);
+export function relativeNoteTime(dateStr: unknown, locale: string) {
+  const date = parseNoteDate(dateStr);
+  if (!date) return "—";
   const diffMs = Date.now() - date.getTime();
   const diffMin = Math.floor(diffMs / 60000);
   if (diffMin < 1) return locale === "ar" ? "الآن" : "Just now";

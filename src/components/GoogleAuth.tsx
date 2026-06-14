@@ -7,68 +7,24 @@ import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useTranslation } from "react-i18next";
+import { cn } from "../lib/utils";
+import { Loader2 } from "lucide-react";
 
-// import { useMutation } from "@tanstack/react-query";
-// import { googleSign } from "../api/googleSign";
-// import { useContext } from "react";
-// import AuthContext from "../context/AuthProvider";
-// import { jwtDecode } from "jwt-decode";
-// import getUser from "../api/getUser";
-import { useLocation } from "react-router-dom";
-function GoogleOAuth() {
-  // translation
+type GoogleOAuthProps = {
+  redirectTo?: string;
+  buttonClassName?: string;
+  disabled?: boolean;
+};
+
+function GoogleOAuth({
+  redirectTo = "/",
+  buttonClassName,
+  disabled = false,
+}: GoogleOAuthProps) {
   const [t] = useTranslation("global");
-  // toast
   const { toast } = useToast();
-  // navigaton
   const navigate = useNavigate();
-  const location = useLocation();
-  // const getUserQuery = useMutation({
-  //   mutationFn: async (obj) => {
-  //     const data = await getUser(obj.token);
-  //     return { user: data.data, token: obj.token };
-  //   },
-  //   onSuccess: (data) => {
-  //     if (data.user.phone) {
-  //       setAuth(() => {
-  //         return {
-  //           id: data.user.id,
-  //           user: data.user.first_name + " " + data.user.last_name,
-  //           token: data.token,
-  //         };
-  //       });
-  //       localStorage.setItem("token", data.token);
-  //       localStorage.setItem("id", data.user.id);
-  //       localStorage.setItem(
-  //         "user",
-  //         data.user.first_name + " " + data.user.last_name
-  //       );
 
-  //       localStorage.setItem("postal", data.user.postal_code);
-  //       setIsModalOpen(false);
-  //       setLoggedMsg(true);
-  //     } else {
-  //       setCompleteSignup(() => {
-  //         return { info: data.user, open: true, token: data.token };
-  //       });
-  //       setGoogleLoading(false);
-  //     }
-  //   },
-  // });
-
-  // const googleMutation = useMutation({
-  //   mutationFn: async (token) => {
-  //     const res = await googleSign(token);
-  //     return res;
-  //   },
-  //   onSuccess: (data) => {
-  //     const newToken = data.token;
-  //     const user = jwtDecode(newToken);
-  //     getUserQuery.mutate({ id: user.id, token: newToken });
-  //   },
-  // });
-
-  // mutation
   const googleSign = useMutation({
     mutationFn: async (token: string) => {
       const fp = await FingerprintJS.load();
@@ -77,63 +33,63 @@ function GoogleOAuth() {
       return { token: resposne.data.token, message: resposne.data?.result };
     },
     onSuccess: (data) => {
-      toast({
-        title: t("welcome_back"),
-        className: "bg-accent text-white fixed top-10 right-10 w-[40%]",
-      });
+      toast({ title: t("welcome_back") });
       localStorage.setItem("token", data.token);
-
-      if (location.pathname === "/") {
-        window.location.reload(); // force refresh if already on home
-      } else {
-        navigate("/");
-      }
+      navigate(redirectTo, { replace: true });
     },
     onError: () => {
       toast({
         title: t("something_wrong_happened"),
-        className: "bg-accent text-white fixed top-10 right-10 w-[40%]",
+        variant: "destructive",
       });
     },
   });
-  return (
-    <>
-      <div className="w-full">
-        <Button
-          type="button"
-          size={"sm"}
-          className="w-full flex justify-center items-center gap-2 bg-accent text-accent-foreground hover:bg-white hover:opacity-80 transition-all h-9 sm:h-10 sm:px-5 px-3 text-xs sm:text-sm rounded-full"
-          onClick={(e) => {
-            const btn = e.currentTarget.nextElementSibling?.firstElementChild
-              ?.firstElementChild?.firstElementChild
-              ?.firstElementChild as HTMLElement;
-            btn.click();
-          }}
-        >
-          <span>{t("login_with")}</span> <FaGoogle />
-        </Button>
 
-        <div className="hidden justify-center items-center">
-          <GoogleLogin
-            shape="rectangular"
-            size="large"
-            ux_mode="popup"
-            text="signin"
-            theme="outline"
-            auto_select={false}
-            onSuccess={(credentialResponse) => {
-              googleSign.mutate(credentialResponse.credential as string);
-            }}
-            onError={() => {
-              toast({
-                title: t("something_wrong_happened"),
-              });
-              console.error("error");
-            }}
-          />
-        </div>
+  return (
+    <div className="w-full">
+      <Button
+        type="button"
+        variant="outline"
+        disabled={disabled || googleSign.isPending}
+        className={cn(
+          "h-11 w-full gap-2 rounded-xl border-border/70 font-bold",
+          buttonClassName
+        )}
+        onClick={(e) => {
+          const btn = e.currentTarget.nextElementSibling?.firstElementChild
+            ?.firstElementChild?.firstElementChild
+            ?.firstElementChild as HTMLElement;
+          btn?.click();
+        }}
+      >
+        {googleSign.isPending ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <FaGoogle className="h-4 w-4" />
+        )}
+        <span>{t("login_with")} Google</span>
+      </Button>
+
+      <div className="hidden">
+        <GoogleLogin
+          shape="rectangular"
+          size="large"
+          ux_mode="popup"
+          text="signin"
+          theme="outline"
+          auto_select={false}
+          onSuccess={(credentialResponse) => {
+            googleSign.mutate(credentialResponse.credential as string);
+          }}
+          onError={() => {
+            toast({
+              title: t("something_wrong_happened"),
+              variant: "destructive",
+            });
+          }}
+        />
       </div>
-    </>
+    </div>
   );
 }
 export default GoogleOAuth;
