@@ -19,7 +19,7 @@ const Index = () => {
     queryKey: ["categories-count"],
     queryFn: async () => {
       const res = await getCategories();
-      return (res.data?.result ?? res.data) as Category[];
+      return ((res.data?.result ?? res.data) as Category[]) || [];
     },
     staleTime: 120_000,
   });
