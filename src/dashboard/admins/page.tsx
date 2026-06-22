@@ -31,7 +31,7 @@ export default function DashboardAdmins() {
   return (
     <section className="container mx-auto py-10 space-y-10" dir={i18n.language == "en" ? "ltr" : "rtl"}>
       <header className="flex justify-between items-center" >
-        <p className="text-2xl md:text-6xl">{t("admins")}</p>
+        <p className="text-2xl md:text-6xl">{t("employees")}</p>
         <AddAdminForm query={getAdminsQuery} />
       </header>
       {getAdminsQuery.isFetching ? (

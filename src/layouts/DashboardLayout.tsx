@@ -31,7 +31,6 @@ import logo from "../assets/logo.webp";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
@@ -41,6 +40,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import getUser from "../api/getUser";
 import Spinner from "../components/Spinner";
 import postAdminLogin from "../api/postAdminLogin";
+import postAdminVerify from "../api/postAdminVerify";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { AxiosError } from "axios";
 import { useToast } from "../components/ui/use-toast";
@@ -92,7 +92,7 @@ function buildAdminNav(d: string): NavGroup[] {
       labelKey: "management",
       items: [
         { to: `/${d}/clients`, labelKey: "clients", icon: <HandCoins className="h-4 w-4" /> },
-        { to: `/${d}/admins`, labelKey: "admins", icon: <MdAdminPanelSettings className="h-4 w-4" /> },
+        { to: `/${d}/admins`, labelKey: "employees", icon: <MdAdminPanelSettings className="h-4 w-4" /> },
         { to: `/${d}/users`, labelKey: "users", icon: <FaRegUser className="h-4 w-4" /> },
       ],
     },
@@ -319,12 +319,22 @@ function LoginCard({
   passwordRef,
   onLogin,
   isPending,
+  show2FA,
+  codeRef,
+  onVerify,
+  isVerifying,
+  onBack,
 }: {
   t: (k: string) => string;
   emailRef: React.RefObject<HTMLInputElement>;
   passwordRef: React.RefObject<HTMLInputElement>;
   onLogin: () => void;
   isPending: boolean;
+  show2FA: boolean;
+  codeRef: React.RefObject<HTMLInputElement>;
+  onVerify: () => void;
+  isVerifying: boolean;
+  onBack: () => void;
 }) {
   return (
     <section className="dashboard-mesh-bg flex min-h-screen items-center justify-center p-4">
@@ -332,35 +342,71 @@ function LoginCard({
         <div className="pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-br from-primary/30 via-accent/20 to-transparent blur-xl" />
         <Card className="relative border-border/60 bg-card/90 shadow-2xl backdrop-blur-md">
           <CardHeader className="items-center space-y-4 pb-2 text-center">
-            <img src={logo} alt="AdamZone" className="h-16 w-16 rounded-2xl object-contain" />
-            <CardTitle className="text-xl">{t("admin_login")}</CardTitle>
+            <img src={logo} alt="UBBA" className="h-16 w-16 rounded-2xl object-contain" />
+            <CardTitle className="text-xl">
+              {show2FA ? t("verify_code") || "التحقق من الرمز" : t("admin_login")}
+            </CardTitle>
+            {show2FA && (
+              <p className="text-sm text-muted-foreground">
+                {t("code_sent_to_email") || "تم إرسال رمز التحقق إلى بريدك الإلكتروني"}
+              </p>
+            )}
           </CardHeader>
           <CardContent>
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <div className="space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input ref={emailRef} id="email" className="bg-background/60" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="password">{t("password")}</Label>
-                <Input
-                  ref={passwordRef}
-                  id="password"
-                  type="password"
-                  className="bg-background/60"
-                />
-              </div>
-            </form>
+            {!show2FA ? (
+              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); onLogin(); }}>
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">Email</Label>
+                  <Input ref={emailRef} id="email" className="bg-background/60" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="password">{t("password")}</Label>
+                  <Input
+                    ref={passwordRef}
+                    id="password"
+                    type="password"
+                    className="bg-background/60"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full gradient-primary font-bold"
+                  disabled={isPending}
+                >
+                  {isPending ? t("logging") : t("login")}
+                </Button>
+              </form>
+            ) : (
+              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); onVerify(); }}>
+                <div className="space-y-1.5">
+                  <Label htmlFor="code">{t("verification_code") || "رمز التحقق"}</Label>
+                  <Input
+                    ref={codeRef}
+                    id="code"
+                    className="bg-background/60 text-center text-2xl tracking-[0.5em] font-mono"
+                    placeholder="------"
+                    maxLength={6}
+                    autoFocus
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full gradient-primary font-bold"
+                  disabled={isVerifying}
+                >
+                  {isVerifying ? t("verifying") || "جاري التحقق..." : t("verify") || "تحقق"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full text-muted-foreground"
+                  onClick={onBack}
+                >
+                  {t("back") || "رجوع"}
+                </Button>
+              </form>
+            )}
           </CardContent>
-          <CardFooter>
-            <Button
-              className="w-full gradient-primary font-bold"
-              disabled={isPending}
-              onClick={onLogin}
-            >
-              {isPending ? t("logging") : t("login")}
-            </Button>
-          </CardFooter>
         </Card>
       </div>
     </section>
@@ -378,8 +424,11 @@ export default function DashboardLayout() {
   const { pathname } = useLocation();
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [show2FA, setShow2FA] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const codeRef = useRef<HTMLInputElement>(null);
 
   const getUserQuery = useQuery({
     queryKey: ["user"],
@@ -391,22 +440,76 @@ export default function DashboardLayout() {
     refetchOnWindowFocus: false,
   });
 
+  const translateServerError = (msg: string) => {
+    const key = `server_${msg.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}`;
+    const translated = t(key);
+    return translated !== key ? translated : msg;
+  };
+
+  const handleLogin = () => {
+    const email = emailRef.current?.value?.trim();
+    const password = passwordRef.current?.value;
+    if (!email || !password) {
+      toast({
+        title: t("error"),
+        description: t("fill_all_fields"),
+        variant: "destructive",
+      });
+      return;
+    }
+    adminLoginMutation.mutate();
+  };
+
   const adminLoginMutation = useMutation({
     mutationFn: async () => {
+      const email = emailRef.current?.value as string;
       const response = await postAdminLogin(
-        emailRef.current?.value as string,
+        email,
         passwordRef.current?.value as string
+      );
+      return { ...response, email };
+    },
+    onSuccess: (data) => {
+      if (data.data.requires2FA) {
+        setLoginEmail(data.email);
+        setShow2FA(true);
+        toast({
+          title: t("verify_code"),
+          description: t("code_sent_to_email"),
+        });
+        return;
+      }
+      localStorage.setItem("token", data.data.token);
+      navigate(0);
+    },
+    onError: (error: AxiosError) => {
+      const msg = (error.response?.data as { error: string })?.error || "";
+      toast({
+        title: t("error"),
+        description: translateServerError(msg),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const verifyMutation = useMutation({
+    mutationFn: async () => {
+      const response = await postAdminVerify(
+        loginEmail,
+        codeRef.current?.value as string
       );
       return response;
     },
     onSuccess: (data) => {
       localStorage.setItem("token", data.data.token);
+      setShow2FA(false);
       navigate(0);
     },
     onError: (error: AxiosError) => {
+      const msg = (error.response?.data as { error: string })?.error || "";
       toast({
-        title: "Error!",
-        description: (error.response?.data as { error: string }).error,
+        title: t("error"),
+        description: translateServerError(msg),
         variant: "destructive",
       });
     },
@@ -452,13 +555,54 @@ export default function DashboardLayout() {
 
   const userType = getUserQuery.data?.type;
   const isAdmin = userType === "admin";
-  const isOrders = userType === "orders";
+  const isEmployee = userType === "employee" || userType === "orders";
   const user = getUserQuery.data;
+  const userPermissions = user?.permissions || (userType === "orders" ? ["orders"] : []);
 
-  const navGroups = useMemo(
-    () => (isOrders ? buildOrdersNav(d) : buildAdminNav(d)),
-    [d, isOrders]
-  );
+  const ROUTE_PERMISSION_MAP: Record<string, string> = {
+    "/clients": "clients",
+    "/admins": "admins",
+    "/users": "users",
+    "/categories": "categories",
+    "/categories/sub": "categories",
+    "/products": "products",
+    "/orders": "orders",
+    "/charges": "charges",
+    "/debts": "debts",
+    "/ads": "ads",
+    "/levels": "levels",
+    "/currencies": "currencies",
+    "/inventory": "inventory",
+    "/reports": "reports",
+    "/boxes": "boxes",
+    "/notes": "notes",
+    "/reconciliation": "reconciliation",
+    "/activity-logs": "activity_logs",
+    "/notifications": "notifications",
+    "/info": "info",
+  };
+
+  const buildFilteredNav = (groups: NavGroup[], permissions: string[]): NavGroup[] => {
+    return groups
+      .map((group) => {
+        const filteredItems = group.items.filter((item) => {
+          const relativePath = item.to.replace(`/${d}`, "") || "/";
+          if (relativePath === "/" || relativePath === "") return true;
+          const requiredPermission = ROUTE_PERMISSION_MAP[relativePath];
+          if (!requiredPermission) return true;
+          return permissions.includes(requiredPermission);
+        });
+        if (filteredItems.length === 0) return null;
+        return { ...group, items: filteredItems };
+      })
+      .filter((g): g is NavGroup => g !== null);
+  };
+
+  const navGroups = useMemo(() => {
+    if (isAdmin) return buildAdminNav(d);
+    if (isEmployee) return buildFilteredNav(buildAdminNav(d), userPermissions);
+    return buildAdminNav(d);
+  }, [d, isAdmin, isEmployee, userPermissions]);
 
   const pageTitle = resolvePageTitle(pathname, d, t);
   const isHome = pathname === dashPath || pathname === `${dashPath}/`;
@@ -476,9 +620,9 @@ export default function DashboardLayout() {
         onClick={onClickLink}
         className="relative flex shrink-0 items-center gap-3 border-b border-border/50 px-4 py-5"
       >
-        <img src={logo} alt="AdamZone" className="h-10 w-10 rounded-xl object-contain" />
+        <img src={logo} alt="UBBA" className="h-10 w-10 rounded-xl object-contain" />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-black text-foreground">AdamZone</p>
+          <p className="truncate text-sm font-black text-foreground">UBBA</p>
           <p className="truncate text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             {t("dashboard") || "Dashboard"}
           </p>
@@ -517,7 +661,7 @@ export default function DashboardLayout() {
       <SidebarFooter
         t={t}
         i18n={i18n}
-        isAdmin={isAdmin}
+        isAdmin={isAdmin || isEmployee}
         onLogout={logout}
         onLangChange={changeLang}
         setSmallNav={mobile ? setMobileOpen : undefined}
@@ -537,10 +681,15 @@ export default function DashboardLayout() {
             t={t}
             emailRef={emailRef}
             passwordRef={passwordRef}
-            onLogin={() => adminLoginMutation.mutate()}
+            onLogin={handleLogin}
             isPending={adminLoginMutation.isPending}
+            show2FA={show2FA}
+            codeRef={codeRef}
+            onVerify={() => verifyMutation.mutate()}
+            isVerifying={verifyMutation.isPending}
+            onBack={() => setShow2FA(false)}
           />
-        ) : isAdmin || isOrders ? (
+        ) : isAdmin || isEmployee ? (
           <div className="flex min-h-screen md:h-screen md:overflow-hidden">
             {/* Desktop sidebar */}
             <aside className="hidden h-screen w-[260px] shrink-0 flex-col border-e border-border/50 bg-card/50 backdrop-blur-xl md:flex">
@@ -623,8 +772,13 @@ export default function DashboardLayout() {
             t={t}
             emailRef={emailRef}
             passwordRef={passwordRef}
-            onLogin={() => adminLoginMutation.mutate()}
+            onLogin={handleLogin}
             isPending={adminLoginMutation.isPending}
+            show2FA={show2FA}
+            codeRef={codeRef}
+            onVerify={() => verifyMutation.mutate()}
+            isVerifying={verifyMutation.isPending}
+            onBack={() => setShow2FA(false)}
           />
         )}
 

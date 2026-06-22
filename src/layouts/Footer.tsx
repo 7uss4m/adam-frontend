@@ -19,7 +19,7 @@ const Footer = () => {
       <div className="container mx-auto grid gap-10 px-4 py-12 md:grid-cols-4">
         {/* Brand */}
         <div className="md:col-span-1">
-          <img src={logo} alt="AdamZone" className="h-10 object-contain" />
+          <img src={logo} alt="UBBA" className="h-10 object-contain" />
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
             متجرك الرقمي لشحن الألعاب والاشتراكات والبطاقات بسرعة وأمان، مع دعم
             مباشر وتجربة شراء سهلة.
@@ -93,11 +93,11 @@ const Footer = () => {
         <div>
           <div className="flex flex-col gap-3 text-sm text-muted-foreground">
             <a
-              href="mailto:support@adamzone.com"
+              href="mailto:support@ubba.com"
               className="flex items-center gap-2 transition-colors hover:text-primary"
             >
               <Mail className="h-4 w-4 text-primary" />
-              support@adamzone.com
+              support@ubba.com
             </a>
 
             <a
@@ -155,7 +155,7 @@ const Footer = () => {
       {/* Bottom bar */}
       <div className="border-t border-border">
         <div className="container mx-auto flex flex-col items-center justify-between gap-3 px-4 py-6 text-center text-xs text-muted-foreground sm:flex-row sm:text-left">
-          <p>© {year} AdamZone. جميع الحقوق محفوظة.</p>
+          <p>© {year} UBBA. جميع الحقوق محفوظة.</p>
           <div className="flex items-center gap-3">
             <span className="rounded-md bg-secondary px-2 py-1">
               {`USD / SYP`}

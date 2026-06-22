@@ -19,10 +19,11 @@ import {
   TableRow,
 } from "../../components/ui/table";
 
-import {  User } from "../../types/types";
+import { User } from "../../types/types";
 import { UseQueryResult } from "@tanstack/react-query";
 import { useState } from "react";
 import DeleteAdminForm from "./delete-admin-form";
+import EditPermissionsForm from "./edit-permissions-form";
 import { useTranslation } from "react-i18next";
 
 
@@ -91,6 +92,9 @@ export function DataTable<TData, TValue>({
                     </TableHead>
                   );
                 })}
+                <TableHead className="text-start">
+                  {t("actions") || (i18n.language === "en" ? "Actions" : "الإجراءات")}
+                </TableHead>
               </TableRow>
             ))}
           </TableHeader>
@@ -110,14 +114,17 @@ export function DataTable<TData, TValue>({
                       )}
                     </TableCell>
                   ))}
-                  <TableCell className="flex gap-5 items-center">
-                    <DeleteAdminForm query={query} userId={(row.original as User).id.toString()} />
+                  <TableCell>
+                    <div className="flex gap-2 items-center">
+                      <EditPermissionsForm user={row.original as User} query={query} />
+                      <DeleteAdminForm query={query} userId={(row.original as User).id.toString()} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length + 1} className="h-24 text-center">
                   {t("no_results")}
                 </TableCell>
               </TableRow>

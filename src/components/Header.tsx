@@ -232,7 +232,7 @@ export default function Header() {
           </button>
 
           <Link to="/" className="absolute left-1/2 -translate-x-1/2">
-            <img src={logo} alt="AdamZone" className="h-8 object-contain" />
+            <img src={logo} alt="UBBA" className="h-8 object-contain" />
           </Link>
 
           <div className="flex items-center gap-1">

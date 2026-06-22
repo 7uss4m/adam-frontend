@@ -8,6 +8,7 @@ export type User = {
   balance: number
   user_name: string
   type: string
+  permissions?: string[]
   progress: number
   bonus: number
   level: {

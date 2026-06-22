@@ -174,7 +174,7 @@ export default function MobileNavSheet({
         className="flex w-[min(100vw,360px)] flex-col gap-0 overflow-hidden p-0 sm:max-w-sm"
       >
         <SheetHeader className="border-b border-border/50 px-5 py-4 text-start">
-          <SheetTitle className="text-base font-black">AdamZone</SheetTitle>
+          <SheetTitle className="text-base font-black">UBBA</SheetTitle>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-4 py-4">

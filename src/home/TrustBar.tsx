@@ -50,7 +50,7 @@ export default function TrustBar() {
         className="mb-6 flex items-center justify-center gap-2"
       >
         <ShieldCheck className="h-5 w-5 text-cyan-400" />
-        <h2 className="text-lg font-black text-foreground">لماذا AdamZone؟</h2>
+        <h2 className="text-lg font-black text-foreground">لماذا UBBA؟</h2>
       </motion.div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
