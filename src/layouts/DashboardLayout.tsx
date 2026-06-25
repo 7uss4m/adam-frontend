@@ -136,22 +136,6 @@ function buildAdminNav(d: string): NavGroup[] {
   ];
 }
 
-function buildOrdersNav(d: string): NavGroup[] {
-  return [
-    {
-      items: [
-        {
-          to: `/${d}`,
-          labelKey: "dashboard_overview",
-          icon: <LayoutDashboard className="h-4 w-4" />,
-          end: true,
-        },
-        { to: `/${d}/clients`, labelKey: "clients", icon: <HandCoins className="h-4 w-4" /> },
-        { to: `/${d}/orders`, labelKey: "orders", icon: <BsCartCheck className="h-4 w-4" /> },
-      ],
-    },
-  ];
-}
 
 const PAGE_TITLE_KEYS: Record<string, string> = {
   "/": "dashboard_overview",
@@ -277,7 +261,7 @@ function SidebarFooter({
   isAdmin: boolean;
   onLogout: () => void;
   onLangChange: (v: string) => void;
-  setSmallNav?: (v: boolean) => void;
+  setSmallNav?: React.Dispatch<React.SetStateAction<boolean>>;
   small?: boolean;
 }) {
   return (
@@ -557,7 +541,13 @@ export default function DashboardLayout() {
   const isAdmin = userType === "admin";
   const isEmployee = userType === "employee" || userType === "orders";
   const user = getUserQuery.data;
-  const userPermissions = user?.permissions || (userType === "orders" ? ["orders"] : []);
+  const userPermissions: string[] = (() => {
+    if (user?.permissions) {
+      if (Array.isArray(user.permissions)) return user.permissions;
+      try { return JSON.parse(user.permissions as string); } catch { return []; }
+    }
+    return userType === "orders" ? ["orders"] : [];
+  })();
 
   const ROUTE_PERMISSION_MAP: Record<string, string> = {
     "/clients": "clients",
@@ -652,7 +642,7 @@ export default function DashboardLayout() {
       {user && (
         <div className="mx-3 mb-2 shrink-0 rounded-xl border border-border/40 bg-secondary/30 px-3 py-2.5">
           <p className="truncate text-xs font-bold text-foreground">
-            {user.user_name || user.name}
+            {user.user_name || (user as any).name}
           </p>
           <p className="truncate text-[10px] text-muted-foreground">{user.email}</p>
         </div>

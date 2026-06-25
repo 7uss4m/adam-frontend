@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 const OLD_DOMAIN = "https://omc.weisro.com/omcard";
-const NEW_DOMAIN = "https://adam.ak-store.digital/adam";
+const NEW_DOMAIN = (import.meta.env.VITE_PUBLIC_DOMAIN || "https://adam.ak-store.digital/adam").replace(/\/$/, "");
 
 export function fixImageUrl(url?: string | null): string {
   if (!url) return "";

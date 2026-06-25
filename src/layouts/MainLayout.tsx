@@ -22,6 +22,7 @@ import postFcmToken from "../api/postFcmToken";
 // import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { CurrencyProvider } from "../context/CurrencyContext";
 import Footer from "./Footer";
+import BottomNav from "../components/BottomNav";
 import MaintenanceGate from "../components/maintenance-gate";
 
 const AUTH_REQUIRED_PAGES = [
@@ -148,8 +149,11 @@ export default function MainLayout() {
         <CurrencyProvider>
           <Header />
 
-          <Outlet />
+          <div className="pb-16 md:pb-0">
+            <Outlet />
+          </div>
           <Footer />
+          <BottomNav />
         </CurrencyProvider>
       </main>
     </MaintenanceGate>

@@ -140,20 +140,16 @@ function MiniChart({
   );
 }
 
-const ADMIN_ACTIONS = [
-  { to: `/${dash}/products`, icon: Package, labelKey: "products", gradient: "from-violet-500 to-purple-600" },
-  { to: `/${dash}/orders`, icon: ShoppingCart, labelKey: "orders", gradient: "from-cyan-500 to-blue-600" },
-  { to: `/${dash}/users`, icon: FaRegUser, labelKey: "users", gradient: "from-emerald-500 to-teal-600" },
-  { to: `/${dash}/categories`, icon: BiCategoryAlt, labelKey: "categories", gradient: "from-amber-500 to-orange-600" },
-  { to: `/${dash}/charges`, icon: FaCashRegister, labelKey: "charges", gradient: "from-rose-500 to-pink-600" },
-  { to: `/${dash}/reports`, icon: BarChart3, labelKey: "reports", gradient: "from-indigo-500 to-violet-600" },
-  { to: `/${dash}/ads`, icon: Megaphone, labelKey: "ads", gradient: "from-fuchsia-500 to-purple-600" },
-  { to: `/${dash}/info`, icon: Sparkles, labelKey: "info", gradient: "from-slate-500 to-zinc-600" },
-];
-
-const ORDERS_ACTIONS = [
-  { to: `/${dash}/clients`, icon: HandCoins, labelKey: "clients", gradient: "from-cyan-500 to-blue-600" },
-  { to: `/${dash}/orders`, icon: ShoppingCart, labelKey: "orders", gradient: "from-violet-500 to-purple-600" },
+const ALL_ACTIONS = [
+  { to: `/${dash}/products`, icon: Package, labelKey: "products", perm: "products", gradient: "from-violet-500 to-purple-600" },
+  { to: `/${dash}/orders`, icon: ShoppingCart, labelKey: "orders", perm: "orders", gradient: "from-cyan-500 to-blue-600" },
+  { to: `/${dash}/users`, icon: FaRegUser, labelKey: "users", perm: "users", gradient: "from-emerald-500 to-teal-600" },
+  { to: `/${dash}/categories`, icon: BiCategoryAlt, labelKey: "categories", perm: "categories", gradient: "from-amber-500 to-orange-600" },
+  { to: `/${dash}/charges`, icon: FaCashRegister, labelKey: "charges", perm: "charges", gradient: "from-rose-500 to-pink-600" },
+  { to: `/${dash}/reports`, icon: BarChart3, labelKey: "reports", perm: "reports", gradient: "from-indigo-500 to-violet-600" },
+  { to: `/${dash}/ads`, icon: Megaphone, labelKey: "ads", perm: "ads", gradient: "from-fuchsia-500 to-purple-600" },
+  { to: `/${dash}/info`, icon: Sparkles, labelKey: "info", perm: "info", gradient: "from-slate-500 to-zinc-600" },
+  { to: `/${dash}/clients`, icon: HandCoins, labelKey: "clients", perm: "clients", gradient: "from-sky-500 to-cyan-600" },
 ];
 
 function fmtUsd(n: number) {
@@ -184,8 +180,13 @@ export default function DashboardHome() {
   });
 
   const stats = statsQuery.data;
-  const isAdmin = stats?.role === "admin";
   const user = userQuery.data;
+  const isAdmin = user?.type === "admin";
+  const userPerms: string[] = isAdmin
+    ? []
+    : user?.permissions || (user?.type === "orders" ? ["orders", "clients"] : []);
+
+  const hasPerm = (perm: string) => isAdmin || userPerms.includes(perm);
 
   const chartMax = useMemo(() => {
     if (!stats?.chart) return 1;
@@ -229,8 +230,8 @@ export default function DashboardHome() {
   }
 
   const { overview } = stats;
-  const actions = isAdmin ? ADMIN_ACTIONS : ORDERS_ACTIONS;
-  const displayName = user?.user_name || user?.name || user?.email || "";
+  const actions = isAdmin ? ALL_ACTIONS : ALL_ACTIONS.filter((a) => hasPerm(a.perm));
+  const displayName = user?.user_name || user?.email || "";
 
   return (
     <div dir={isRtl ? "rtl" : "ltr"} className="mx-auto max-w-[1600px] space-y-8 px-4 py-6 md:px-6 md:py-8">
@@ -275,23 +276,25 @@ export default function DashboardHome() {
         {/* Inline summary strip */}
         <div className="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: t("orders") || "الطلبات", value: overview.orders.total, icon: ShoppingCart },
-            {
+            hasPerm("orders") && { label: t("orders") || "الطلبات", value: overview.orders.total, icon: ShoppingCart },
+            hasPerm("orders") && {
               label: t("revenue_today") || "إيراد اليوم",
               value: fmtUsd(overview.orders.todayRevenue),
               icon: TrendingUp,
             },
-            {
+            hasPerm("orders") && {
               label: t("pending_orders") || "طلبات معلّقة",
               value: overview.orders.pending,
               icon: Clock,
             },
-            {
-              label: isAdmin ? t("users") || "المستخدمون" : t("clients") || "العملاء",
-              value: isAdmin ? overview.users.total : overview.clients,
-              icon: isAdmin ? Users : HandCoins,
+            hasPerm("users") && { label: t("users") || "المستخدمون", value: overview.users.total, icon: Users },
+            hasPerm("clients") && { label: t("clients") || "العملاء", value: overview.clients, icon: HandCoins },
+            hasPerm("charges") && {
+              label: t("charges") || "الشحنات",
+              value: fmtUsd(overview.charges.totalAmount),
+              icon: Coins,
             },
-          ].map(({ label, value, icon: Icon }) => (
+          ].filter((x): x is { label: string; value: string | number; icon: typeof ShoppingCart } => !!x).slice(0, 4).map(({ label, value, icon: Icon }) => (
             <div
               key={label}
               className="flex items-center gap-3 rounded-2xl border border-white/10 bg-background/40 px-4 py-3 backdrop-blur-sm"
@@ -312,99 +315,91 @@ export default function DashboardHome() {
 
       {/* Stat cards */}
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label={t("total_revenue") || "إجمالي الإيرادات"}
-          value={fmtUsd(overview.orders.totalRevenue)}
-          sub={`${t("month_spending")?.replace("مصروفات", "إيراد") || "هذا الشهر"}: ${fmtUsd(overview.orders.monthRevenue)}`}
-          icon={<TrendingUp className="h-6 w-6" />}
-          gradient="from-emerald-500 to-teal-600"
-          glow="bg-emerald-500/30"
-          delay={0.05}
-        />
-        <StatCard
-          label={t("orders") || "الطلبات"}
-          value={overview.orders.total}
-          sub={`${t("today")}: ${overview.orders.today} · ${overview.orders.pending} ${t("pending") || "معلّق"}`}
-          icon={<ShoppingCart className="h-6 w-6" />}
-          gradient="from-cyan-500 to-blue-600"
-          glow="bg-cyan-500/30"
-          delay={0.1}
-        />
-        {isAdmin ? (
+        {hasPerm("orders") && (
           <>
             <StatCard
-              label={t("users") || "المستخدمون"}
-              value={overview.users.total}
-              sub={`+${overview.users.newThisMonth} ${t("this_month") || "هذا الشهر"}`}
-              icon={<Users className="h-6 w-6" />}
-              gradient="from-violet-500 to-purple-600"
-              glow="bg-violet-500/30"
-              delay={0.15}
-            />
-            <StatCard
-              label={t("products") || "المنتجات"}
-              value={overview.products.total}
-              sub={`${overview.products.active} ${t("active") || "نشط"} · ${overview.products.withOffers} ${t("offers") || "عروض"}`}
-              icon={<Package className="h-6 w-6" />}
-              gradient="from-amber-500 to-orange-600"
-              glow="bg-amber-500/30"
-              delay={0.2}
-            />
-            <StatCard
-              label={t("charges") || "الشحنات"}
-              value={fmtUsd(overview.charges.totalAmount)}
-              sub={`${overview.charges.pending} ${t("pending") || "معلّق"} · ${fmtUsd(overview.charges.monthAmount)} ${t("this_month") || "الشهر"}`}
-              icon={<Coins className="h-6 w-6" />}
-              gradient="from-rose-500 to-pink-600"
-              glow="bg-rose-500/30"
-              delay={0.25}
-            />
-            <StatCard
-              label={t("debts") || "الديون"}
-              value={fmtUsd(overview.debts.totalCoins)}
-              sub={`${overview.debts.usersWithDebt} ${t("users") || "مستخدم"}`}
-              icon={<FaMoneyCheck className="h-5 w-5" />}
-              gradient="from-red-500 to-rose-600"
-              glow="bg-red-500/30"
-              delay={0.3}
-            />
-            <StatCard
-              label={t("categories") || "الأقسام"}
-              value={overview.categories}
-              icon={<Tag className="h-6 w-6" />}
-              gradient="from-indigo-500 to-violet-600"
-              glow="bg-indigo-500/30"
-              delay={0.35}
-            />
-            <StatCard
-              label={t("clients") || "العملاء API"}
-              value={overview.clients}
-              icon={<HandCoins className="h-6 w-6" />}
-              gradient="from-sky-500 to-cyan-600"
-              glow="bg-sky-500/30"
-              delay={0.4}
-            />
-          </>
-        ) : (
-          <>
-            <StatCard
-              label={t("clients") || "العملاء"}
-              value={overview.clients}
-              icon={<HandCoins className="h-6 w-6" />}
-              gradient="from-violet-500 to-purple-600"
-              glow="bg-violet-500/30"
-              delay={0.15}
-            />
-            <StatCard
-              label={t("revenue_month") || "إيراد الشهر"}
-              value={fmtUsd(overview.orders.monthRevenue)}
-              sub={`${overview.orders.thisMonth} ${t("orders") || "طلب"}`}
-              icon={<BarChart3 className="h-6 w-6" />}
+              label={t("total_revenue") || "إجمالي الإيرادات"}
+              value={fmtUsd(overview.orders.totalRevenue)}
+              sub={`${t("revenue_month") || "إيراد الشهر"}: ${fmtUsd(overview.orders.monthRevenue)}`}
+              icon={<TrendingUp className="h-6 w-6" />}
               gradient="from-emerald-500 to-teal-600"
               glow="bg-emerald-500/30"
-              delay={0.2}
+              delay={0.05}
+            />
+            <StatCard
+              label={t("orders") || "الطلبات"}
+              value={overview.orders.total}
+              sub={`${t("today")}: ${overview.orders.today} · ${overview.orders.pending} ${t("pending") || "معلّق"}`}
+              icon={<ShoppingCart className="h-6 w-6" />}
+              gradient="from-cyan-500 to-blue-600"
+              glow="bg-cyan-500/30"
+              delay={0.1}
             />
           </>
+        )}
+        {hasPerm("users") && (
+          <StatCard
+            label={t("users") || "المستخدمون"}
+            value={overview.users.total}
+            sub={`+${overview.users.newThisMonth} ${t("this_month") || "هذا الشهر"}`}
+            icon={<Users className="h-6 w-6" />}
+            gradient="from-violet-500 to-purple-600"
+            glow="bg-violet-500/30"
+            delay={0.15}
+          />
+        )}
+        {hasPerm("products") && (
+          <StatCard
+            label={t("products") || "المنتجات"}
+            value={overview.products.total}
+            sub={`${overview.products.active} ${t("active") || "نشط"} · ${overview.products.withOffers} ${t("offers") || "عروض"}`}
+            icon={<Package className="h-6 w-6" />}
+            gradient="from-amber-500 to-orange-600"
+            glow="bg-amber-500/30"
+            delay={0.2}
+          />
+        )}
+        {hasPerm("charges") && (
+          <StatCard
+            label={t("charges") || "الشحنات"}
+            value={fmtUsd(overview.charges.totalAmount)}
+            sub={`${overview.charges.pending} ${t("pending") || "معلّق"} · ${fmtUsd(overview.charges.monthAmount)} ${t("this_month") || "الشهر"}`}
+            icon={<Coins className="h-6 w-6" />}
+            gradient="from-rose-500 to-pink-600"
+            glow="bg-rose-500/30"
+            delay={0.25}
+          />
+        )}
+        {hasPerm("debts") && (
+          <StatCard
+            label={t("debts") || "الديون"}
+            value={fmtUsd(overview.debts.totalCoins)}
+            sub={`${overview.debts.usersWithDebt} ${t("users") || "مستخدم"}`}
+            icon={<FaMoneyCheck className="h-5 w-5" />}
+            gradient="from-red-500 to-rose-600"
+            glow="bg-red-500/30"
+            delay={0.3}
+          />
+        )}
+        {hasPerm("categories") && (
+          <StatCard
+            label={t("categories") || "الأقسام"}
+            value={overview.categories}
+            icon={<Tag className="h-6 w-6" />}
+            gradient="from-indigo-500 to-violet-600"
+            glow="bg-indigo-500/30"
+            delay={0.35}
+          />
+        )}
+        {hasPerm("clients") && (
+          <StatCard
+            label={t("clients") || "العملاء"}
+            value={overview.clients}
+            icon={<HandCoins className="h-6 w-6" />}
+            gradient="from-sky-500 to-cyan-600"
+            glow="bg-sky-500/30"
+            delay={0.4}
+          />
         )}
       </section>
 
@@ -469,7 +464,7 @@ export default function DashboardHome() {
             />
           </div>
 
-          {isAdmin && (
+          {hasPerm("charges") && (
             <div className="rounded-2xl border border-border/50 bg-card/80 p-5">
               <div className="mb-4 flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-emerald-400" />
@@ -571,7 +566,7 @@ export default function DashboardHome() {
           </div>
         </section>
 
-        {isAdmin && (
+        {hasPerm("charges") && (
           <section className="rounded-2xl border border-border/50 bg-card/80 p-5">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-base font-bold">

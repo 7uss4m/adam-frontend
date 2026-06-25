@@ -206,21 +206,34 @@ export default function MobileNavSheet({
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-border/50 bg-background/60 px-3 py-2">
-                <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <div className="mt-3 rounded-xl border border-border/50 bg-background/60 p-1">
+                <label className="mb-1.5 block px-2 pt-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                   {t("currency")}
                 </label>
-                <select
-                  value={currency}
-                  onChange={(e) =>
-                    onCurrencyChange(e.target.value as "syrian" | "dollar")
-                  }
-                  aria-label={t("currency")}
-                  className="w-full cursor-pointer bg-transparent text-sm font-medium outline-none"
-                >
-                  <option value="syrian">{t("syrian_pound")}</option>
-                  <option value="dollar">{t("usd_dollar")}</option>
-                </select>
+                <div className="grid grid-cols-2 gap-1">
+                  <button
+                    type="button"
+                    onClick={() => onCurrencyChange("syrian")}
+                    className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold transition-all ${
+                      currency === "syrian"
+                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                        : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
+                    }`}
+                  >
+                    {t("syrian_pound")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onCurrencyChange("dollar")}
+                    className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold transition-all ${
+                      currency === "dollar"
+                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                        : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
+                    }`}
+                  >
+                    {t("usd_dollar")}
+                  </button>
+                </div>
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-2">

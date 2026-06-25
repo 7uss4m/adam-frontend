@@ -222,14 +222,24 @@ export default function Header() {
     <>
       <nav className="sticky top-0 z-50 border-b-2 border-primary bg-background">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
-          <button
-            type="button"
-            onClick={() => setMobileOpen(true)}
-            className="p-1 text-foreground"
-            aria-label={isAuthed ? "Profile" : "Menu"}
-          >
-            <FaRegUser className="h-6 w-6" />
-          </button>
+          {isAuthed ? (
+            <button
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              className="p-1 text-foreground"
+              aria-label="Profile"
+            >
+              <FaRegUser className="h-6 w-6" />
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary transition-all hover:bg-primary/20"
+            >
+              <FaRegUser className="h-3.5 w-3.5" />
+              {t("login")}
+            </Link>
+          )}
 
           <Link to="/" className="absolute left-1/2 -translate-x-1/2">
             <img src={logo} alt="UBBA" className="h-8 object-contain" />

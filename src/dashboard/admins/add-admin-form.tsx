@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Dialog,
@@ -27,11 +28,11 @@ import {
 export function AddAdminForm({ query }: { query: UseQueryResult }) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
-
-  const userRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [t, i18n] = useTranslation("global");
   const { toast } = useToast();
@@ -57,37 +58,41 @@ export function AddAdminForm({ query }: { query: UseQueryResult }) {
       const response = await postAdmin(
         localStorage.getItem("token") as string,
         {
-          user_name: userRef.current?.value as string,
-          email: emailRef.current?.value as string,
-          password: passwordRef.current?.value as string,
+          user_name: userName,
+          email: email,
+          password: password,
           permissions: selectedPermissions,
         }
       );
       return response;
     },
     onSuccess: () => {
-      toast({
-        title: t("employee_added"),
-      });
+      toast({ title: t("employee_added") });
       setOpen(false);
-      setStep(1);
-      setSelectedPermissions([]);
+      resetForm();
       query.refetch();
     },
     onError: (error: AxiosError) => {
       toast({
-        title: "Error!",
+        title: t("error"),
         description: (error.response?.data as { error: string }).error,
+        variant: "destructive",
       });
     },
   });
 
+  const resetForm = () => {
+    setStep(1);
+    setSelectedPermissions([]);
+    setUserName("");
+    setEmail("");
+    setPassword("");
+    setShowPassword(false);
+  };
+
   const handleOpenChange = (value: boolean) => {
     setOpen(value);
-    if (!value) {
-      setStep(1);
-      setSelectedPermissions([]);
-    }
+    if (!value) resetForm();
   };
 
   return (
@@ -118,7 +123,8 @@ export function AddAdminForm({ query }: { query: UseQueryResult }) {
                 <Input
                   id="username"
                   className="col-span-3 border-[#1a2a44] bg-[#050B14]"
-                  ref={userRef}
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -129,33 +135,41 @@ export function AddAdminForm({ query }: { query: UseQueryResult }) {
                   id="email"
                   type="text"
                   className="col-span-3 border-[#1a2a44] bg-[#050B14]"
-                  ref={emailRef}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="password" className="text-right">
                   {t("password")}
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  className="col-span-3 border-[#1a2a44] bg-[#050B14]"
-                  ref={passwordRef}
-                />
+                <div className="col-span-3 relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    className="border-[#1a2a44] bg-[#050B14] pe-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 end-0 flex items-center pe-3 text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
             </div>
             <DialogFooter>
               <Button
                 variant="default"
                 onClick={() => {
-                  if (
-                    !userRef.current?.value ||
-                    !emailRef.current?.value ||
-                    !passwordRef.current?.value
-                  ) {
+                  if (!userName || !email || !password) {
                     toast({
-                      title: "Error!",
-                      description: t("fill_all_fields") || "Please fill all fields",
+                      title: t("error"),
+                      description: t("fill_all_fields"),
+                      variant: "destructive",
                     });
                     return;
                   }
