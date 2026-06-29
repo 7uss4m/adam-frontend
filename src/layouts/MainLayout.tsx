@@ -23,6 +23,7 @@ import postFcmToken from "../api/postFcmToken";
 import { CurrencyProvider } from "../context/CurrencyContext";
 import Footer from "./Footer";
 import BottomNav from "../components/BottomNav";
+import ScrollToTop from "../components/ScrollToTop";
 import MaintenanceGate from "../components/maintenance-gate";
 
 const AUTH_REQUIRED_PAGES = [
@@ -147,6 +148,7 @@ export default function MainLayout() {
         className="main bg-background area relative min-h-[90vh] sm:min-h-[100vh] "
       >
         <CurrencyProvider>
+          <ScrollToTop />
           <Header />
 
           <div className="pb-16 md:pb-0">
