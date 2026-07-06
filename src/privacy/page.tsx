@@ -89,7 +89,7 @@ export default function PrivacyPage() {
                 سياسة الخصوصية
               </h1>
               <p className="max-w-3xl text-sm text-muted-foreground sm:text-base leading-7">
-                نحن في UBBA نلتزم بحماية خصوصية مستخدمينا وضمان أمن معلوماتهم
+                نحن في AdamZone نلتزم بحماية خصوصية مستخدمينا وضمان أمن معلوماتهم
                 الشخصية. تحدد هذه السياسة كيفية جمع، استخدام، وحماية بياناتك عند
                 استخدام خدماتنا.
               </p>

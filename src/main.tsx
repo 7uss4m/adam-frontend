@@ -4,7 +4,7 @@ import axios from "axios";
 
 // Fix old image URLs from old server
 const OLD_DOMAIN = "https://omc.weisro.com/omcard";
-const NEW_DOMAIN = (import.meta.env.VITE_PUBLIC_DOMAIN || "https://adam.ak-store.digital/adam").replace(/\/$/, "");
+const NEW_DOMAIN = (import.meta.env.VITE_PUBLIC_DOMAIN || "https://api.ubba-stoer.com/adam").replace(/\/$/, "");
 
 function fixUrls(obj: unknown): unknown {
   if (typeof obj === "string") {

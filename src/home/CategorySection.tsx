@@ -1,56 +1,102 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import {
+  Sparkles,
+  LayoutGrid,
+  Gamepad2,
+  MessageCircle,
+  Crown,
+  Globe,
+  DollarSign,
+  Send,
+  CreditCard,
+  Gift,
+  Zap,
+  Tv,
+  HandHeart,
+  type LucideIcon,
+} from "lucide-react";
 import getCategories from "../api/getCategories";
 import type { Category } from "../types/types";
-import logo from "../assets/logo.webp";
 import SectionHeader from "./SectionHeader";
 import { safeOrder } from "./home-utils";
 
-const CARD_GRADIENTS = [
-  "from-cyan-500/15 via-blue-500/5 to-transparent",
-  "from-violet-500/15 via-purple-500/5 to-transparent",
-  "from-rose-500/15 via-pink-500/5 to-transparent",
-  "from-amber-500/15 via-orange-500/5 to-transparent",
-  "from-emerald-500/15 via-teal-500/5 to-transparent",
-  "from-sky-500/15 via-indigo-500/5 to-transparent",
+/* map category name → line icon (matches the outline style) */
+const ICON_RULES: { icon: LucideIcon; keys: string[] }[] = [
+  { icon: Gamepad2, keys: ["لعب", "العاب", "ألعاب", "game", "pubg", "ببجي"] },
+  { icon: MessageCircle, keys: ["دردش", "شات", "chat", "محادث"] },
+  { icon: Crown, keys: ["اشتراك", "sub", "بريميوم", "premium"] },
+  { icon: Globe, keys: ["سوشال", "social", "تواصل", "مواقع"] },
+  { icon: DollarSign, keys: ["حوال", "مالي", "مال", "money", "dollar", "بنك", "دفع"] },
+  { icon: Send, keys: ["تيلجرام", "تلجرام", "telegram"] },
+  { icon: CreditCard, keys: ["بطاق", "card", "فيزا", "visa"] },
+  { icon: Gift, keys: ["هدايا", "هدية", "gift"] },
+  { icon: Tv, keys: ["مشاهد", "نتفلكس", "netflix", "بث", "tv", "شاهد"] },
+  { icon: Zap, keys: ["شحن", "رصيد", "recharge"] },
+  { icon: HandHeart, keys: ["اخرى", "أخرى", "متنوع", "other"] },
 ];
 
-function CategoryCard({ cat, index }: { cat: Category; index: number }) {
-  const [imgSrc, setImgSrc] = useState(cat.image || logo);
-  const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+function iconFor(name: string): LucideIcon {
+  const n = (name || "").toLowerCase();
+  for (const rule of ICON_RULES) {
+    if (rule.keys.some((k) => n.includes(k.toLowerCase()))) return rule.icon;
+  }
+  return Sparkles;
+}
+
+function CategoryItem({
+  cat,
+  index,
+  active,
+}: {
+  cat: Category;
+  index: number;
+  active: boolean;
+}) {
+  const Icon = iconFor(cat.name);
 
   return (
-    <Link to={`/categories/${cat.id}/subs`}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.04, duration: 0.4 }}
-        viewport={{ once: true }}
-        whileHover={{ y: -6, scale: 1.03 }}
-        className={`group relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br ${gradient} from-[#0a1628] to-[#0a1628] shadow-lg transition-all duration-300 hover:border-cyan-500/40 hover:shadow-cyan-500/10`}
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.3 }}
+      viewport={{ once: true }}
+      className="shrink-0"
+    >
+      <Link
+        to={`/categories/${cat.id}/subs`}
+        className="group flex flex-col items-center gap-2"
       >
-        <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none">
-          <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+        <div
+          className={
+            active
+              ? "flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-background shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.7)] transition-all"
+              : "flex h-12 w-12 items-center justify-center rounded-2xl text-primary transition-all group-hover:-translate-y-1 group-hover:bg-primary/10"
+          }
+        >
+          <Icon className="h-7 w-7" strokeWidth={1.75} />
         </div>
-
-        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-muted/50 p-4">
-          <img
-            src={imgSrc}
-            alt={cat.name}
-            className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110"
-            loading="lazy"
-            onError={() => setImgSrc(logo)}
-          />
-        </div>
-
-        <div className="border-t border-border/60 px-3 py-3 text-center">
-          <p className="line-clamp-1 text-sm font-bold text-foreground">{cat.name}</p>
-        </div>
-      </motion.div>
-    </Link>
+        <span
+          className={
+            active
+              ? "text-xs font-black text-foreground"
+              : "text-xs font-bold text-muted-foreground transition-colors group-hover:text-primary"
+          }
+        >
+          {cat.name}
+        </span>
+        {/* active underline */}
+        <span
+          className={
+            active
+              ? "h-0.5 w-8 rounded-full bg-primary"
+              : "h-0.5 w-8 rounded-full bg-transparent"
+          }
+        />
+      </Link>
+    </motion.div>
   );
 }
 
@@ -71,53 +117,58 @@ export default function CategorySection() {
       .sort((a, b) => safeOrder(a.order) - safeOrder(b.order));
   }, [categoriesQuery.data]);
 
-  const categories = allCategories.slice(0, 12);
+  const categories = allCategories.slice(0, 8);
 
   return (
     <section className="py-4">
       <SectionHeader
         icon={Sparkles}
-        title="الأقسام الرئيسية"
+        title="الأقسام"
         subtitle="تصفّح حسب نوع المنتج"
         viewAllHref="/categories"
         accent="text-cyan-400"
       />
 
       {categoriesQuery.isLoading ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="overflow-hidden rounded-2xl border border-border bg-card"
-            >
-              <div className="aspect-[4/3] animate-pulse bg-muted" />
-              <div className="border-t border-border px-3 py-3">
-                <div className="mx-auto h-3 w-3/4 animate-pulse rounded-full bg-[#1a2a44]" />
-              </div>
+        <div className="flex gap-6 overflow-x-auto pb-2">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="flex shrink-0 flex-col items-center gap-2">
+              <div className="h-12 w-12 animate-pulse rounded-2xl bg-muted" />
+              <div className="h-2.5 w-10 animate-pulse rounded-full bg-[#1a2a44]" />
             </div>
           ))}
         </div>
       ) : categories.length ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+        <div className="dashboard-nav-scroll flex items-start gap-6 overflow-x-auto pb-2 sm:justify-between sm:gap-3">
           {categories.map((cat, i) => (
-            <CategoryCard key={cat.id} cat={cat} index={i} />
+            <CategoryItem key={cat.id} cat={cat} index={i} active={i === 0} />
           ))}
+
+          {/* View all */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: categories.length * 0.05, duration: 0.3 }}
+            viewport={{ once: true }}
+            className="shrink-0"
+          >
+            <Link
+              to="/categories"
+              className="group flex flex-col items-center gap-2"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/40 text-primary transition-all group-hover:-translate-y-1 group-hover:bg-primary/10">
+                <LayoutGrid className="h-6 w-6" strokeWidth={1.75} />
+              </div>
+              <span className="text-xs font-bold text-muted-foreground transition-colors group-hover:text-primary">
+                عرض الكل
+              </span>
+              <span className="h-0.5 w-8 rounded-full bg-transparent" />
+            </Link>
+          </motion.div>
         </div>
       ) : (
         <div className="rounded-2xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">
           لا يوجد أقسام حالياً
-        </div>
-      )}
-
-      {allCategories.length > 12 && (
-        <div className="mt-6 text-center">
-          <Link
-            to="/categories"
-            className="inline-flex items-center gap-2 rounded-2xl border border-border px-6 py-2.5 text-sm font-semibold text-cyan-400 transition-colors hover:border-cyan-500/40 hover:bg-cyan-500/5"
-          >
-            عرض كل الأقسام ({allCategories.length})
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
         </div>
       )}
     </section>

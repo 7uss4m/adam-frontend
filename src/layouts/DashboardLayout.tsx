@@ -326,7 +326,7 @@ function LoginCard({
         <div className="pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-br from-primary/30 via-accent/20 to-transparent blur-xl" />
         <Card className="relative border-border/60 bg-card/90 shadow-2xl backdrop-blur-md">
           <CardHeader className="items-center space-y-4 pb-2 text-center">
-            <img src={logo} alt="UBBA" className="h-16 w-16 rounded-2xl object-contain" />
+            <img src={logo} alt="AdamZone" className="h-16 w-16 rounded-2xl object-contain" />
             <CardTitle className="text-xl">
               {show2FA ? t("verify_code") || "التحقق من الرمز" : t("admin_login")}
             </CardTitle>
@@ -610,9 +610,9 @@ export default function DashboardLayout() {
         onClick={onClickLink}
         className="relative flex shrink-0 items-center gap-3 border-b border-border/50 px-4 py-5"
       >
-        <img src={logo} alt="UBBA" className="h-10 w-10 rounded-xl object-contain" />
+        <img src={logo} alt="AdamZone" className="h-10 w-10 rounded-xl object-contain" />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-black text-foreground">UBBA</p>
+          <p className="truncate text-sm font-black text-foreground">AdamZone</p>
           <p className="truncate text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             {t("dashboard") || "Dashboard"}
           </p>

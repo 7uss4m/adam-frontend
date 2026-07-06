@@ -23,6 +23,7 @@ import postFcmToken from "../api/postFcmToken";
 import { CurrencyProvider } from "../context/CurrencyContext";
 import Footer from "./Footer";
 import BottomNav from "../components/BottomNav";
+import SupportFAB from "../components/SupportFAB";
 import ScrollToTop from "../components/ScrollToTop";
 import MaintenanceGate from "../components/maintenance-gate";
 
@@ -155,6 +156,7 @@ export default function MainLayout() {
             <Outlet />
           </div>
           <Footer />
+          <SupportFAB />
           <BottomNav />
         </CurrencyProvider>
       </main>

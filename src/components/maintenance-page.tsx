@@ -38,7 +38,7 @@ export default function MaintenancePage({ onRetry, isRetrying }: MaintenancePage
         className="relative z-10 w-full max-w-lg text-center"
       >
         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-border/50 bg-card/80 shadow-xl backdrop-blur-sm">
-          <img src={logo} alt="UBBA" className="h-14 w-14 rounded-xl object-contain" />
+          <img src={logo} alt="AdamZone" className="h-14 w-14 rounded-xl object-contain" />
         </div>
 
         <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400">

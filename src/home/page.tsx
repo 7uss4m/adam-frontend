@@ -1,12 +1,8 @@
-﻿import { useQuery } from "@tanstack/react-query";
-import { Flame, Crown, Sparkles } from "lucide-react";
-import getCategories from "../api/getCategories";
-import type { Category } from "../types/types";
+﻿import { Flame, Crown, Sparkles } from "lucide-react";
 
 import HeroBanner from "./HeroBanner";
 import SearchBar from "./SearchBar";
 import QuickAccessBar from "./QuickAccessBar";
-import PlatformStats from "./PlatformStats";
 import CategorySection from "./CategorySection";
 import ProductCarousel from "./ProductCarousel";
 import TopUpSection from "./TopUpSection";
@@ -15,17 +11,6 @@ import TrustBar from "./TrustBar";
 import PromoCTA from "./PromoCTA";
 
 const Index = () => {
-  const categoriesQuery = useQuery({
-    queryKey: ["categories-count"],
-    queryFn: async () => {
-      const res = await getCategories();
-      return ((res.data?.result ?? res.data) as Category[]) || [];
-    },
-    staleTime: 120_000,
-  });
-
-  const categoryCount = categoriesQuery.data?.length ?? 0;
-
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background">
       {/* Background */}
@@ -44,8 +29,15 @@ const Index = () => {
         {/* Logged-in dashboard strip */}
         <QuickAccessBar />
 
-        {/* Live platform stats */}
-        <PlatformStats categoryCount={categoryCount} />
+        {/* Featured products */}
+        <ProductCarousel
+          title="منتجات مميزة"
+          subtitle="الأكثر طلباً هذا الأسبوع"
+          icon={Crown}
+          accent="text-amber-400"
+          params={{ status: "active", sort: "order_asc" }}
+          limit={14}
+        />
 
         {/* Categories */}
         <CategorySection />
@@ -58,16 +50,6 @@ const Index = () => {
           accent="text-rose-400"
           params={{ status: "active", offer: "offer", sort: "order_asc" }}
           limit={12}
-        />
-
-        {/* Featured products */}
-        <ProductCarousel
-          title="منتجات مميزة"
-          subtitle="الأكثر طلباً هذا الأسبوع"
-          icon={Crown}
-          accent="text-amber-400"
-          params={{ status: "active", sort: "order_asc" }}
-          limit={14}
         />
 
         {/* New arrivals */}

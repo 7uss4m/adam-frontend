@@ -114,6 +114,11 @@ export default function Header() {
 
   const isAuthed = !!getUserQuery.data && getUserQuery.isSuccess;
 
+  const balanceLabel =
+    currency === "syrian"
+      ? `${getUserQuery.data?.balance?.toFixed(0) ?? 0} SYP`
+      : `$${getUserQuery.data?.balance?.toFixed(2) ?? "0.00"}`;
+
   const handleLogout = () => {
     localStorage.removeItem("user_name");
     localStorage.removeItem("token");
@@ -220,56 +225,81 @@ export default function Header() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b-2 border-primary bg-background">
-        <div className="container mx-auto flex items-center justify-between px-4 py-3">
-          {isAuthed ? (
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              className="p-1 text-foreground"
-              aria-label="Profile"
-            >
-              <FaRegUser className="h-6 w-6" />
-            </button>
-          ) : (
-            <Link
-              to="/login"
-              className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary transition-all hover:bg-primary/20"
-            >
-              <FaRegUser className="h-3.5 w-3.5" />
-              {t("login")}
-            </Link>
-          )}
+      <nav className="sticky top-0 z-50 border-b border-primary/15 bg-background/80 backdrop-blur-xl">
+        {/* glow line */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
 
-          <Link to="/" className="absolute left-1/2 -translate-x-1/2">
-            <img src={logo} alt="UBBA" className="h-8 object-contain" />
+        <div className="container mx-auto flex items-center justify-between px-4 py-2.5">
+          {/* Left */}
+          <div className="flex items-center gap-2">
+            {isAuthed ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen(true)}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border/60 bg-secondary/50 text-foreground transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                  aria-label="Profile"
+                >
+                  <FaRegUser className="h-[18px] w-[18px]" />
+                </button>
+                {getUserQuery.data && (
+                  <div className="flex items-center gap-1.5 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5">
+                    <Wallet className="h-3.5 w-3.5 text-emerald-400" />
+                    <span className="text-xs font-black tabular-nums text-emerald-400">
+                      {balanceLabel}
+                    </span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center gap-1.5 rounded-2xl border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-black text-primary transition-all hover:-translate-y-0.5 hover:bg-primary/20 hover:shadow-[0_6px_18px_-6px_hsl(var(--primary)/0.7)]"
+              >
+                <FaRegUser className="h-3.5 w-3.5" />
+                {t("login")}
+              </Link>
+            )}
+          </div>
+
+          {/* Center logo */}
+          <Link
+            to="/"
+            className="absolute left-1/2 -translate-x-1/2"
+            aria-label="AdamZone"
+          >
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-0 rounded-full bg-primary/25 blur-lg" />
+              <img src={logo} alt="AdamZone" className="relative h-9 object-contain" />
+            </div>
           </Link>
 
-          <div className="flex items-center gap-1">
+          {/* Right */}
+          <div className="flex items-center gap-1.5">
             <motion.button
               type="button"
               whileTap={{ scale: 0.9 }}
               onClick={() => setTheme(isDark ? "light" : "dark")}
-              className="rounded-full p-2 text-foreground transition-colors hover:bg-secondary"
+              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border/60 bg-secondary/50 text-foreground transition-all hover:border-primary/40 hover:bg-primary/10"
               aria-label="Toggle theme"
             >
               {isDark ? (
-                <Sun className="h-5 w-5 text-yellow-400" />
+                <Sun className="h-[18px] w-[18px] text-yellow-400" />
               ) : (
-                <Moon className="h-5 w-5 text-primary" />
+                <Moon className="h-[18px] w-[18px] text-primary" />
               )}
             </motion.button>
 
             <button
               type="button"
               onClick={() => setMobileOpen((v) => !v)}
-              className="p-1 text-foreground"
+              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border/60 bg-secondary/50 text-foreground transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
               aria-label="Menu"
             >
               {mobileOpen ? (
-                <X className="h-6 w-6" />
+                <X className="h-[18px] w-[18px]" />
               ) : (
-                <Menu className="h-6 w-6" />
+                <Menu className="h-[18px] w-[18px]" />
               )}
             </button>
           </div>

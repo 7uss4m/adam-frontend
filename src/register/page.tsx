@@ -216,7 +216,7 @@ function RegisterContent() {
           >
             <div className="space-y-8 pe-4">
               <div className="space-y-4">
-                <img src={logo} alt="UBBA" className="h-14 object-contain" />
+                <img src={logo} alt="AdamZone" className="h-14 object-contain" />
                 <div className="space-y-2">
                   <h1 className="text-3xl font-black tracking-tight text-foreground xl:text-4xl">
                     {t("create_new_account")}
@@ -260,7 +260,7 @@ function RegisterContent() {
               <div className="border-b border-border/50 bg-gradient-to-br from-accent/10 via-transparent to-primary/10 px-5 py-5 text-center sm:px-8 sm:py-6">
                 <img
                   src={logo}
-                  alt="UBBA"
+                  alt="AdamZone"
                   className="mx-auto mb-3 h-10 object-contain lg:hidden"
                 />
                 <h2 className="text-2xl font-black text-foreground">

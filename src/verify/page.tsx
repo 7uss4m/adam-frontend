@@ -149,7 +149,7 @@ export default function VerifyEmailPage() {
             </motion.div>
             <img
               src={logo}
-              alt="UBBA"
+              alt="AdamZone"
               className="h-24 object-contain drop-shadow-lg relative z-10"
             />
           </motion.div>

@@ -24,7 +24,7 @@ export default function Spinner() {
         {/* logo */}
         <motion.img
           src={logo}
-          alt="UBBA"
+          alt="AdamZone"
           className="relative h-12 w-12 object-contain"
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
