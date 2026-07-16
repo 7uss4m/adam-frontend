@@ -367,6 +367,10 @@ function LoginCard({
                   <Input
                     ref={codeRef}
                     id="code"
+                    name="otp"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
                     className="bg-background/60 text-center text-2xl tracking-[0.5em] font-mono"
                     placeholder="------"
                     maxLength={6}
