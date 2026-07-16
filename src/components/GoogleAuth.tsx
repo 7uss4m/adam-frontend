@@ -2,7 +2,6 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useToast } from "./ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import postGoogleSignin from "../api/postGoogleSignin";
-import { Button } from "./ui/button";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
@@ -29,38 +28,39 @@ function GoogleOAuth({
     mutationFn: async (token: string) => {
       const fp = await FingerprintJS.load();
       const result = await fp.get();
-      const resposne = await postGoogleSignin(token, result.visitorId);
-      return { token: resposne.data.token, message: resposne.data?.result };
+      const response = await postGoogleSignin(token, result.visitorId);
+      if (response?.response?.data?.error) {
+        throw new Error(response.response.data.error);
+      }
+      if (!response?.data?.token) {
+        throw new Error(t("something_wrong_happened"));
+      }
+      return { token: response.data.token, message: response.data?.result };
     },
     onSuccess: (data) => {
       toast({ title: t("welcome_back") });
       localStorage.setItem("token", data.token);
       navigate(redirectTo, { replace: true });
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast({
-        title: t("something_wrong_happened"),
+        title: error?.message || t("something_wrong_happened"),
         variant: "destructive",
       });
     },
   });
 
+  const isBusy = disabled || googleSign.isPending;
+
   return (
-    <div className="w-full">
-      <Button
-        type="button"
-        variant="outline"
-        disabled={disabled || googleSign.isPending}
+    <div className="relative w-full">
+      {/* Visual button (what the user sees) */}
+      <div
         className={cn(
-          "h-11 w-full gap-2 rounded-xl border-border/70 font-bold",
+          "flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-border/70 bg-background font-bold text-foreground",
+          isBusy && "opacity-60",
           buttonClassName
         )}
-        onClick={(e) => {
-          const btn = e.currentTarget.nextElementSibling?.firstElementChild
-            ?.firstElementChild?.firstElementChild
-            ?.firstElementChild as HTMLElement;
-          btn?.click();
-        }}
       >
         {googleSign.isPending ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -68,27 +68,33 @@ function GoogleOAuth({
           <FaGoogle className="h-4 w-4" />
         )}
         <span>{t("login_with")} Google</span>
-      </Button>
-
-      <div className="hidden">
-        <GoogleLogin
-          shape="rectangular"
-          size="large"
-          ux_mode="popup"
-          text="signin"
-          theme="outline"
-          auto_select={false}
-          onSuccess={(credentialResponse) => {
-            googleSign.mutate(credentialResponse.credential as string);
-          }}
-          onError={() => {
-            toast({
-              title: t("something_wrong_happened"),
-              variant: "destructive",
-            });
-          }}
-        />
       </div>
+
+      {/* Real Google button overlaid transparently on top — captures the click */}
+      {!isBusy && (
+        <div className="absolute inset-0 z-10 overflow-hidden opacity-[0.001]">
+          <div className="scale-[3] origin-top-left">
+            <GoogleLogin
+              shape="rectangular"
+              size="large"
+              ux_mode="popup"
+              text="signin"
+              theme="outline"
+              width="400"
+              auto_select={false}
+              onSuccess={(credentialResponse) => {
+                googleSign.mutate(credentialResponse.credential as string);
+              }}
+              onError={() => {
+                toast({
+                  title: t("something_wrong_happened"),
+                  variant: "destructive",
+                });
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

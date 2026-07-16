@@ -1,10 +1,12 @@
 ﻿import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { ShoppingCart, Tag, Zap } from "lucide-react";
 import { Product } from "../types/types";
+import { useCurrency } from "../context/CurrencyContext";
+import getDollar from "../api/getDollar";
 import {
-  formatUsd,
   getProductImageUrl,
   getProductPath,
   isOfferActive,
@@ -17,6 +19,26 @@ type ProductCardProps = {
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [imgSrc, setImgSrc] = useState(getProductImageUrl(product.image));
+  const { currency } = useCurrency();
+
+  const { data: usdToSyp = 0 } = useQuery({
+    queryKey: ["static", "dollar_exchange"],
+    queryFn: async () => {
+      const res = await getDollar();
+      return Number(res.data.date.dollar_exchange || 0);
+    },
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+
+  const formatMoney = (usd: number | string) => {
+    const n = Number(usd);
+    if (currency === "syrian" && usdToSyp > 0) {
+      return `${(n * usdToSyp).toFixed(0)} ل.س`;
+    }
+    return `$${n.toFixed(2)}`;
+  };
+
   const price = Number(product.price);
   const mainPrice = Number(product.mainPrice || 0);
   const hasDiscount =
@@ -74,11 +96,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           <div className="mt-auto flex items-end justify-between gap-2 pt-1">
             <div>
               <p className="text-lg font-black tabular-nums text-cyan-400">
-                {formatUsd(price)}
+                {formatMoney(price)}
               </p>
               {originalPrice && Number(originalPrice) > price && (
                 <p className="text-xs tabular-nums text-muted-foreground line-through">
-                  {formatUsd(originalPrice)}
+                  {formatMoney(originalPrice)}
                 </p>
               )}
             </div>

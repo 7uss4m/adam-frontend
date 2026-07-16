@@ -64,6 +64,21 @@ function looksLikeEmail(value: string) {
 
 function LoginContent() {
   const [t, i18n] = useTranslation("global");
+
+  const translateLoginError = (msg?: string) => {
+    if (!msg) return t("something_wrong_happened");
+    const map: Record<string, string> = {
+      "User is linked with google": "server_user_is_linked_with_google",
+      "User Not Found": "server_user_not_found",
+      "Admin Not Found": "server_admin_not_found",
+      "Password Not Correct": "server_password_not_correct",
+    };
+    const key = map[msg];
+    if (!key) return msg;
+    const translated = t(key);
+    return translated === key ? msg : translated;
+  };
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { resolvedTheme, setTheme } = useTheme();
@@ -133,7 +148,7 @@ function LoginContent() {
         navigate(`/verify?email=${encodeURIComponent(email.trim())}`);
         return;
       }
-      toast({ title: msg, variant: "destructive" });
+      toast({ title: translateLoginError(msg), variant: "destructive" });
     },
   });
 

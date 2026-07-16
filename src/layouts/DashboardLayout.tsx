@@ -361,7 +361,10 @@ function LoginCard({
                 </Button>
               </form>
             ) : (
-              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); onVerify(); }}>
+              <form className="space-y-4" autoComplete="off" onSubmit={(e) => { e.preventDefault(); onVerify(); }}>
+                {/* fake fields to absorb Chrome autofill */}
+                <input type="text" name="username" autoComplete="username" className="hidden" tabIndex={-1} aria-hidden="true" />
+                <input type="password" name="password" autoComplete="current-password" className="hidden" tabIndex={-1} aria-hidden="true" />
                 <div className="space-y-1.5">
                   <Label htmlFor="code">{t("verification_code") || "رمز التحقق"}</Label>
                   <Input
@@ -371,10 +374,11 @@ function LoginCard({
                     type="text"
                     inputMode="numeric"
                     autoComplete="one-time-code"
+                    readOnly
+                    onFocus={(e) => e.currentTarget.removeAttribute("readonly")}
                     className="bg-background/60 text-center text-2xl tracking-[0.5em] font-mono"
                     placeholder="------"
                     maxLength={6}
-                    autoFocus
                   />
                 </div>
                 <Button

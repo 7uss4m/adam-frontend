@@ -8,6 +8,7 @@ export type User = {
   balance: number
   user_name: string
   type: string
+  provider?: "email" | "google"
   permissions?: string[]
   progress: number
   bonus: number

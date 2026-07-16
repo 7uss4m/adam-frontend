@@ -112,6 +112,19 @@ export default function Header() {
     refetchOnWindowFocus: false,
   });
 
+  const getPhoneQuery = useQuery({
+    queryKey: ["info", "phone"],
+    queryFn: async () => {
+      const res = await getInfo(
+        localStorage.getItem("token") as string,
+        "phone"
+      );
+      return res.data.date as { phone: string | null };
+    },
+    enabled: !!token,
+    refetchOnWindowFocus: false,
+  });
+
   const isAuthed = !!getUserQuery.data && getUserQuery.isSuccess;
 
   const balanceLabel =
@@ -319,6 +332,12 @@ export default function Header() {
         onEditProfile={() => setEditUser(true)}
         onLogout={handleLogout}
         socialReady={socialReady}
+        social={{
+          facebook: getFacebookQuery.data?.facebook,
+          telegram: getTelegramQuery.data?.telegram,
+          whatsup: getWhatsappQuery.data?.whatsup,
+          phone: getPhoneQuery.data?.phone,
+        }}
       />
 
       <Dialog open={editUser} onOpenChange={setEditUser}>

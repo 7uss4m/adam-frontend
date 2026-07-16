@@ -6,7 +6,6 @@ import {
 } from "lucide-react";
 import {
   FaFacebook,
-  FaInstagram,
   FaRegUser,
   FaTelegram,
   FaWhatsapp,
@@ -59,7 +58,21 @@ type MobileNavSheetProps = {
   onEditProfile: () => void;
   onLogout: () => void;
   socialReady: boolean;
+  social?: {
+    facebook?: string | null;
+    telegram?: string | null;
+    whatsup?: string | null;
+    phone?: string | null;
+  };
 };
+
+/** Normalize a stored value into an href. Phone → tel:, others assumed URLs. */
+function socialHref(value: string | null | undefined, kind: "url" | "phone") {
+  const v = (value || "").trim();
+  if (!v) return null;
+  if (kind === "phone") return `tel:${v}`;
+  return /^https?:\/\//i.test(v) ? v : `https://${v}`;
+}
 
 function NavGridCard({
   link,
@@ -150,6 +163,7 @@ export default function MobileNavSheet({
   onEditProfile,
   onLogout,
   socialReady,
+  social,
 }: MobileNavSheetProps) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -157,6 +171,13 @@ export default function MobileNavSheet({
   const isRtl = i18n.language === "ar";
 
   const close = () => onOpenChange(false);
+
+  const socialLinks = [
+    { href: socialHref(social?.facebook, "url"), icon: <FaFacebook className="h-5 w-5 text-blue-500" /> },
+    { href: socialHref(social?.telegram, "url"), icon: <FaTelegram className="h-5 w-5 text-blue-300" /> },
+    { href: socialHref(social?.whatsup, "url"), icon: <FaWhatsapp className="h-5 w-5 text-green-500" /> },
+    { href: socialHref(social?.phone, "phone"), icon: <FaPhone className="h-5 w-5 text-foreground" /> },
+  ].filter((s) => s.href);
 
   const gridLinks = navItems.filter((x) => x.to !== "/about-us");
   const aboutLink = navItems.find((x) => x.to === "/about-us");
@@ -315,43 +336,19 @@ export default function MobileNavSheet({
             </div>
           )}
 
-          {socialReady && (
+          {socialLinks.length > 0 && (
             <div className="mt-5 flex items-center justify-center gap-4 border-t border-border/40 pt-4">
-              <Link
-                to="https://www.facebook.com/share/18sYGZ5Lfk/"
-                target="_blank"
-                rel="noreferrer"
-                onClick={close}
-              >
-                <FaFacebook className="h-5 w-5 text-blue-500" />
-              </Link>
-              <Link
-                to="https://www.instagram.com/ak_store500?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-                target="_blank"
-                rel="noreferrer"
-                onClick={close}
-              >
-                <FaInstagram className="h-5 w-5 text-orange-500" />
-              </Link>
-              <Link
-                to="https://t.me/AK15Store"
-                target="_blank"
-                rel="noreferrer"
-                onClick={close}
-              >
-                <FaTelegram className="h-5 w-5 text-blue-300" />
-              </Link>
-              <Link
-                to="https://whatsapp.com/channel/0029VaxeYmZHwXbJDYfOWG3S"
-                target="_blank"
-                rel="noreferrer"
-                onClick={close}
-              >
-                <FaWhatsapp className="h-5 w-5 text-green-500" />
-              </Link>
-              <Link to="tel:+963962113050" onClick={close}>
-                <FaPhone className="h-5 w-5 text-foreground" />
-              </Link>
+              {socialLinks.map((s, i) => (
+                <Link
+                  key={i}
+                  to={s.href as string}
+                  target={s.href?.startsWith("tel:") ? undefined : "_blank"}
+                  rel="noreferrer"
+                  onClick={close}
+                >
+                  {s.icon}
+                </Link>
+              ))}
             </div>
           )}
 

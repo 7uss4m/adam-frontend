@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, BadgeCheck, ShieldAlert } from "lucide-react";
+import { ArrowUpDown, BadgeCheck, ShieldAlert, Mail, CalendarClock } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import { UseQueryResult } from "@tanstack/react-query";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
@@ -99,6 +100,57 @@ export function createColumns(
           <span className="font-orbitron text-sm font-bold text-rose-400">
             {fmtUsd(debit)}
           </span>
+        );
+      },
+    },
+    {
+      id: "provider",
+      header: t("account_type") || "نوع الحساب",
+      cell: ({ row }) => {
+        const provider = (row.original as User & { provider?: string }).provider;
+        return provider === "google" ? (
+          <Badge variant="outline" className="gap-1 border-border/60 font-bold">
+            <FcGoogle className="h-3.5 w-3.5" />
+            Google
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="gap-1 border-border/60 font-bold text-muted-foreground">
+            <Mail className="h-3 w-3" />
+            {t("email") || "البريد"}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: "created_at",
+      accessorFn: (row) => (row as User & { created_at?: string }).created_at,
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-ms-3"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          {t("join_date") || "تاريخ الانضمام"}
+          <ArrowUpDown className="ms-2 h-3.5 w-3.5" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const raw = (row.original as User & { created_at?: string }).created_at;
+        if (!raw) return <span className="text-xs text-muted-foreground">—</span>;
+        const d = new Date(raw);
+        return (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <CalendarClock className="h-3.5 w-3.5 shrink-0" />
+            <div className="min-w-0">
+              <p className="font-medium text-foreground">
+                {d.toLocaleDateString("en-GB")}
+              </p>
+              <p className="text-[10px]">
+                {d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+              </p>
+            </div>
+          </div>
         );
       },
     },
