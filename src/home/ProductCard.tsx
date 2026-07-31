@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { ShoppingCart, Tag, Zap } from "lucide-react";
 import { Product } from "../types/types";
 import { useCurrency } from "../context/CurrencyContext";
@@ -17,9 +18,25 @@ type ProductCardProps = {
   index?: number;
 };
 
+/** Format a number with just enough decimals so a positive value never rounds to 0. */
+function smartNumber(v: number, baseDecimals: number) {
+  if (!Number.isFinite(v) || v === 0) return "0";
+  let d = baseDecimals;
+  while (d < 6 && Number(v.toFixed(d)) === 0) d++;
+  return v.toFixed(d);
+}
+
+/** True when the product's price depends on a quantity the customer enters. */
+function isQuantityBased(product: Product) {
+  return (product.requires || []).some(
+    (r) => r.type === "quantity" || r.type === "amount" || r.type === "selectQty"
+  );
+}
+
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [imgSrc, setImgSrc] = useState(getProductImageUrl(product.image));
   const { currency } = useCurrency();
+  const [t] = useTranslation("global");
 
   const { data: usdToSyp = 0 } = useQuery({
     queryKey: ["static", "dollar_exchange"],
@@ -34,11 +51,12 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const formatMoney = (usd: number | string) => {
     const n = Number(usd);
     if (currency === "syrian" && usdToSyp > 0) {
-      return `${(n * usdToSyp).toFixed(0)} ل.س`;
+      return `${smartNumber(n * usdToSyp, 0)} ل.س`;
     }
-    return `$${n.toFixed(2)}`;
+    return `$${smartNumber(n, 2)}`;
   };
 
+  const quantityBased = isQuantityBased(product);
   const price = Number(product.price);
   const mainPrice = Number(product.mainPrice || 0);
   const hasDiscount =
@@ -95,13 +113,21 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
 
           <div className="mt-auto flex items-end justify-between gap-2 pt-1">
             <div>
-              <p className="text-lg font-black tabular-nums text-cyan-400">
-                {formatMoney(price)}
-              </p>
-              {originalPrice && Number(originalPrice) > price && (
-                <p className="text-xs tabular-nums text-muted-foreground line-through">
-                  {formatMoney(originalPrice)}
+              {quantityBased ? (
+                <p className="text-sm font-black text-cyan-400">
+                  {t("price_by_quantity")}
                 </p>
+              ) : (
+                <>
+                  <p className="text-lg font-black tabular-nums text-cyan-400">
+                    {formatMoney(price)}
+                  </p>
+                  {originalPrice && Number(originalPrice) > price && (
+                    <p className="text-xs tabular-nums text-muted-foreground line-through">
+                      {formatMoney(originalPrice)}
+                    </p>
+                  )}
+                </>
               )}
             </div>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-foreground shadow-lg shadow-cyan-500/20 transition-transform group-hover:scale-110">

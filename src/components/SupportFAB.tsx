@@ -1,27 +1,60 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { Headphones, X } from "lucide-react";
-import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
+import { FaWhatsapp, FaTelegramPlane, FaPhone } from "react-icons/fa";
+import getInfo from "../api/getInfo";
 
-const CHANNELS = [
-  {
-    label: "واتساب",
-    href: "https://whatsapp.com/channel/0029VaxeYmZHwXbJDYfOWG3S",
-    icon: FaWhatsapp,
-    color: "from-green-500 to-emerald-600",
-    ring: "shadow-[0_8px_24px_-6px_rgba(34,197,94,0.7)]",
-  },
-  {
-    label: "تيليجرام",
-    href: "https://t.me/AK15Store",
-    icon: FaTelegramPlane,
-    color: "from-sky-500 to-blue-600",
-    ring: "shadow-[0_8px_24px_-6px_rgba(14,165,233,0.7)]",
-  },
-];
+function toHref(value: unknown, kind: "url" | "phone") {
+  const v = (value == null ? "" : String(value)).trim();
+  if (!v) return null;
+  if (kind === "phone") return `tel:${v}`;
+  return /^https?:\/\//i.test(v) ? v : `https://${v}`;
+}
 
 export default function SupportFAB() {
   const [open, setOpen] = useState(false);
+  const token = localStorage.getItem("token") || "";
+
+  const { data: whatsup } = useQuery({
+    queryKey: ["info", "whatsup"],
+    queryFn: async () => (await getInfo(token, "whatsup")).data.date as { whatsup: string | null },
+    refetchOnWindowFocus: false,
+  });
+  const { data: telegram } = useQuery({
+    queryKey: ["info", "telegram"],
+    queryFn: async () => (await getInfo(token, "telegram")).data.date as { telegram: string | null },
+    refetchOnWindowFocus: false,
+  });
+  const { data: phone } = useQuery({
+    queryKey: ["info", "phone"],
+    queryFn: async () => (await getInfo(token, "phone")).data.date as { phone: string | null },
+    refetchOnWindowFocus: false,
+  });
+
+  const CHANNELS = [
+    {
+      label: "واتساب",
+      href: toHref(whatsup?.whatsup, "url"),
+      icon: FaWhatsapp,
+      color: "from-green-500 to-emerald-600",
+      ring: "shadow-[0_8px_24px_-6px_rgba(34,197,94,0.7)]",
+    },
+    {
+      label: "تيليجرام",
+      href: toHref(telegram?.telegram, "url"),
+      icon: FaTelegramPlane,
+      color: "from-sky-500 to-blue-600",
+      ring: "shadow-[0_8px_24px_-6px_rgba(14,165,233,0.7)]",
+    },
+    {
+      label: "اتصال",
+      href: toHref(phone?.phone, "phone"),
+      icon: FaPhone,
+      color: "from-primary to-accent",
+      ring: "shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.7)]",
+    },
+  ].filter((c) => c.href);
 
   return (
     <div className="fixed bottom-20 z-[60] flex flex-col items-end gap-3 md:bottom-6 ltr:right-5 rtl:left-5">
@@ -45,8 +78,8 @@ export default function SupportFAB() {
             {CHANNELS.map((c, i) => (
               <motion.a
                 key={c.label}
-                href={c.href}
-                target="_blank"
+                href={c.href as string}
+                target={c.href?.startsWith("tel:") ? undefined : "_blank"}
                 rel="noreferrer"
                 initial={{ opacity: 0, y: 20, scale: 0.5 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}

@@ -67,8 +67,8 @@ type MobileNavSheetProps = {
 };
 
 /** Normalize a stored value into an href. Phone → tel:, others assumed URLs. */
-function socialHref(value: string | null | undefined, kind: "url" | "phone") {
-  const v = (value || "").trim();
+function socialHref(value: unknown, kind: "url" | "phone") {
+  const v = (value == null ? "" : String(value)).trim();
   if (!v) return null;
   if (kind === "phone") return `tel:${v}`;
   return /^https?:\/\//i.test(v) ? v : `https://${v}`;

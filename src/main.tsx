@@ -83,6 +83,7 @@ import CategoriesPage from "./categories/page";
 import LoginPage from "./login/page";
 import RegisterPage from "./register/page";
 import VerifyEmailPage from "./verify/page";
+import ResetPasswordPage from "./reset-password/page";
 import DashboardProducts from "./dashboard/products/page";
 import DashboardHome from "./dashboard/page";
 import DashboardClients from "./dashboard/clients/page";
@@ -338,6 +339,10 @@ const router = createBrowserRouter([
   {
     path: "/verify",
     element: <VerifyEmailPage />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPasswordPage />,
   },
 ]);
 // language

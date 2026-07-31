@@ -13,6 +13,7 @@ import {
   Zap,
   Loader2,
   Star,
+  AlertCircle,
   CheckCircle2,
   ChevronLeft,
   Hash,
@@ -47,6 +48,7 @@ import getAllSub from "../api/getAllSub";
 import getProducts from "../api/getProducts";
 import getDollar from "../api/getDollar";
 import postOrder from "../api/postOrder";
+import getUser from "../api/getUser";
 
 import { useTranslation } from "react-i18next";
 import { toast } from "../components/ui/use-toast";
@@ -54,6 +56,14 @@ import { useCurrency } from "../context/CurrencyContext";
 
 type Area = { id: string; name: string };
 type ProductWithAreas = Product & { areas?: Area[] };
+
+/** Format with just enough decimals so a positive value never rounds to 0. */
+function smartNumber(v: number, baseDecimals: number) {
+  if (!Number.isFinite(v) || v === 0) return "0";
+  let d = baseDecimals;
+  while (d < 6 && Number(v.toFixed(d)) === 0) d++;
+  return v.toFixed(d);
+}
 
 function formatMoney({
   currency,
@@ -64,8 +74,8 @@ function formatMoney({
   usd: number;
   usdToSyp: number;
 }) {
-  if (currency === "dollar") return `$${usd.toFixed(2)}`;
-  return `${(usd * usdToSyp).toFixed(0)} ل.س`;
+  if (currency === "dollar") return `$${smartNumber(usd, 2)}`;
+  return `${smartNumber(usd * usdToSyp, 0)} ل.س`;
 }
 
 /* ── Styled field wrapper ── */
@@ -147,6 +157,17 @@ export default function Purchase() {
       const response = await getDollar();
       return Number(response.data.date.dollar_exchange || 0);
     },
+    refetchOnWindowFocus: false,
+  });
+
+  const token = localStorage.getItem("token") || "";
+  const getUserBalanceQuery = useQuery({
+    queryKey: ["user", "id"],
+    queryFn: async () => {
+      const res = await getUser(token);
+      return res.data.result as { balance: number };
+    },
+    enabled: !!token,
     refetchOnWindowFocus: false,
   });
 
@@ -262,14 +283,22 @@ export default function Purchase() {
             ? t("login_first")
             : msg === "[object Object]"
             ? t("try_again_later")
+            : msg === "There are not enough coins to order this product" ||
+              msg === "There are not enough coins for your api to order this product"
+            ? t("insufficient_balance")
             : msg,
       });
     },
   });
 
+  const userBalance = getUserBalanceQuery.data?.balance;
+  const insufficientBalance =
+    typeof userBalance === "number" && userBalance < totalPriceUSD;
+
   const disableBuy =
     postOrderMutation.isPending ||
     postOrderMutation.isSuccess ||
+    insufficientBalance ||
     (min !== undefined && quantity < min) ||
     (max !== undefined && quantity > max) ||
     (hasText && !playerId) ||
@@ -586,6 +615,14 @@ export default function Purchase() {
                     </SelectContent>
                   </Select>
                 </Field>
+              )}
+
+              {/* Insufficient balance warning */}
+              {insufficientBalance && (
+                <div className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm font-bold text-rose-400">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  {t("insufficient_balance")}
+                </div>
               )}
 
               {/* Buy button */}

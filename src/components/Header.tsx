@@ -275,10 +275,10 @@ export default function Header() {
             )}
           </div>
 
-          {/* Center logo */}
+          {/* Center logo — hidden on mobile */}
           <Link
             to="/"
-            className="absolute left-1/2 -translate-x-1/2"
+            className="absolute left-1/2 hidden -translate-x-1/2 md:block"
             aria-label="AdamZone"
           >
             <div className="relative">

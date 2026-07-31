@@ -3,7 +3,6 @@ import {
   Mail,
   Phone,
   MessageCircle,
-  Instagram,
   Facebook,
   Send,
   ShieldCheck,
@@ -13,7 +12,36 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import logo from "../assets/logo.webp";
+import getInfo from "../api/getInfo";
+
+function toHref(value: unknown, kind: "url" | "phone" | "mail") {
+  const v = (value == null ? "" : String(value)).trim();
+  if (!v) return null;
+  if (kind === "phone") return `tel:${v}`;
+  if (kind === "mail") return `mailto:${v}`;
+  return /^https?:\/\//i.test(v) ? v : `https://${v}`;
+}
+
+function useInfoField(field: string) {
+  const token = localStorage.getItem("token") || "";
+  // Shared query key ["info", field]: other consumers (Header/SupportFAB) cache
+  // the whole { [field]: value } object, so normalize whatever shape we read.
+  const cached = useQuery({
+    queryKey: ["info", field],
+    queryFn: async () => {
+      const res = await getInfo(token, field);
+      return res.data.date ?? null;
+    },
+    refetchOnWindowFocus: false,
+  }).data as unknown;
+
+  if (cached && typeof cached === "object") {
+    return (cached as Record<string, unknown>)[field] ?? null;
+  }
+  return cached ?? null;
+}
 
 const quickLinks = [
   { to: "/about-us", label: "من نحن" },
@@ -27,27 +55,6 @@ const policyLinks = [
   { to: "/faqs", label: "الأسئلة الشائعة" },
   { to: "/privacy", label: "سياسة الخصوصية" },
   { to: "/terms", label: "شروط الاستخدام" },
-];
-
-const contacts = [
-  { href: "mailto:support@adam-zone.com", icon: Mail, label: "support@adam-zone.com" },
-  { href: "tel:+963962113050", icon: Phone, label: "+963 962 113 050" },
-  { href: "https://t.me/AK15Store", icon: Send, label: "Telegram", external: true },
-  {
-    href: "https://whatsapp.com/channel/0029VaxeYmZHwXbJDYfOWG3S",
-    icon: MessageCircle,
-    label: "واتساب (قناة الدعم)",
-    external: true,
-  },
-];
-
-const socials = [
-  { href: "https://www.facebook.com/share/18sYGZ5Lfk/", icon: Facebook, label: "Facebook" },
-  {
-    href: "https://www.instagram.com/ak_store500?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
-    icon: Instagram,
-    label: "Instagram",
-  },
 ];
 
 const trustBadges = [
@@ -83,6 +90,23 @@ function LinkList({ title, links }: { title: string; links: { to: string; label:
 
 const Footer = () => {
   const year = new Date().getFullYear();
+
+  const email = useInfoField("email");
+  const phone = useInfoField("phone");
+  const telegram = useInfoField("telegram");
+  const whatsup = useInfoField("whatsup");
+  const facebook = useInfoField("facebook");
+
+  const contacts = [
+    { href: toHref(email, "mail"), icon: Mail, label: email, external: false },
+    { href: toHref(phone, "phone"), icon: Phone, label: phone, external: false },
+    { href: toHref(telegram, "url"), icon: Send, label: "Telegram", external: true },
+    { href: toHref(whatsup, "url"), icon: MessageCircle, label: "واتساب", external: true },
+  ].filter((c) => c.href);
+
+  const socials = [
+    { href: toHref(facebook, "url"), icon: Facebook, label: "Facebook" },
+  ].filter((s) => s.href);
 
   return (
     <footer className="relative mt-16 overflow-hidden border-t border-primary/15 bg-gradient-to-b from-card/40 via-background to-background">

@@ -12,81 +12,28 @@ function safeOrder(v: unknown) {
   return Number.isFinite(n) ? n : 999999;
 }
 
-const CARD_GRADIENTS = [
-  "from-violet-500/20 via-purple-500/10 to-transparent",
-  "from-cyan-500/20 via-blue-500/10 to-transparent",
-  "from-rose-500/20 via-pink-500/10 to-transparent",
-  "from-amber-500/20 via-orange-500/10 to-transparent",
-  "from-emerald-500/20 via-teal-500/10 to-transparent",
-  "from-sky-500/20 via-indigo-500/10 to-transparent",
-  "from-fuchsia-500/20 via-pink-500/10 to-transparent",
-  "from-lime-500/20 via-green-500/10 to-transparent",
-];
-
-const GLOW_COLORS = [
-  "group-hover:shadow-violet-500/30",
-  "group-hover:shadow-cyan-500/30",
-  "group-hover:shadow-rose-500/30",
-  "group-hover:shadow-amber-500/30",
-  "group-hover:shadow-emerald-500/30",
-  "group-hover:shadow-sky-500/30",
-  "group-hover:shadow-fuchsia-500/30",
-  "group-hover:shadow-lime-500/30",
-];
-
-const BORDER_COLORS = [
-  "group-hover:border-violet-500/60",
-  "group-hover:border-cyan-500/60",
-  "group-hover:border-rose-500/60",
-  "group-hover:border-amber-500/60",
-  "group-hover:border-emerald-500/60",
-  "group-hover:border-sky-500/60",
-  "group-hover:border-fuchsia-500/60",
-  "group-hover:border-lime-500/60",
-];
-
 function CategoryCard({ cat, index }: { cat: Category; index: number }) {
-  const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-  const glow = GLOW_COLORS[index % GLOW_COLORS.length];
-  const border = BORDER_COLORS[index % BORDER_COLORS.length];
   const [imgSrc, setImgSrc] = useState(cat.image || logo);
 
   return (
     <Link to={`/categories/${cat.id}/subs`}>
-      <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ delay: index * 0.03, duration: 0.4 }}
-        viewport={{ once: true }}
-        whileHover={{ y: -6, scale: 1.03 }}
-        className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${gradient} backdrop-blur-sm transition-all duration-300 shadow-lg ${glow} hover:shadow-xl ${border} cursor-pointer`}
-      >
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none overflow-hidden rounded-2xl">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-        </div>
-
+      <div className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-200 hover:border-primary/40 cursor-pointer">
         <div className="relative aspect-square overflow-hidden">
           <img
             src={imgSrc}
             alt={cat.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
             onError={() => setImgSrc(logo)}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          <motion.div
-            className="absolute top-3 right-3 p-1.5 rounded-full bg-white/10 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          >
-            <ArrowLeft className="w-4 h-4 text-white rotate-180" />
-          </motion.div>
         </div>
 
-        <div className="px-3 py-3">
-          <p className="text-sm font-bold text-white line-clamp-1 text-center tracking-wide drop-shadow">
+        <div className="px-3 py-2.5">
+          <p className="text-sm font-bold text-foreground line-clamp-1 text-center">
             {cat.name}
           </p>
         </div>
-      </motion.div>
+      </div>
     </Link>
   );
 }

@@ -23,6 +23,7 @@ import { useTranslation } from "react-i18next";
 
 import logo from "../assets/logo.webp";
 import postLogin from "../api/postLogin";
+import postForgotPassword from "../api/postForgotPassword";
 import getUser from "../api/getUser";
 import GoogleOAuth from "../components/GoogleAuth";
 import Spinner from "../components/Spinner";
@@ -177,13 +178,28 @@ function LoginContent() {
     postLoginMutation.mutate();
   };
 
+  const forgotMutation = useMutation({
+    mutationFn: async () => {
+      const res = await postForgotPassword({ email: email.trim() });
+      return res;
+    },
+    onSuccess: () => {
+      setForgotOpen(false);
+      toast({ title: t("reset_code_sent") });
+      navigate(`/reset-password?email=${encodeURIComponent(email.trim())}`);
+    },
+    onError: (error: AxiosError) => {
+      const msg = (error.response?.data as { error: string })?.error;
+      toast({ title: translateLoginError(msg), variant: "destructive" });
+    },
+  });
+
   const handleForgotVerify = () => {
-    setForgotOpen(false);
-    if (looksLikeEmail(email)) {
-      navigate(`/verify?email=${encodeURIComponent(email.trim())}`);
+    if (!looksLikeEmail(email)) {
+      toast({ title: t("missing_email"), variant: "destructive" });
       return;
     }
-    toast({ title: t("missing_email"), variant: "destructive" });
+    forgotMutation.mutate();
   };
 
   if (checkingSession) {
@@ -442,7 +458,9 @@ function LoginContent() {
             <Button variant="outline" onClick={() => setForgotOpen(false)}>
               {t("cancel")}
             </Button>
-            <Button onClick={handleForgotVerify}>{t("go_to_verify")}</Button>
+            <Button onClick={handleForgotVerify} disabled={forgotMutation.isPending}>
+              {forgotMutation.isPending ? t("saving") : t("send_reset_code")}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

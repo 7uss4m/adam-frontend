@@ -1,11 +1,25 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRouteError, isRouteErrorResponse } from "react-router-dom";
 import { AlertTriangle, Home, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function ErrorPage() {
   const navigate = useNavigate();
   const [t, i18n] = useTranslation("global");
+  const routeError = useRouteError();
+
+  // Surface the real error to the console for diagnosis
+  if (routeError) console.error("[ErrorPage] route error:", routeError);
+
+  const is404 = isRouteErrorResponse(routeError) && routeError.status === 404;
+  const errorMessage =
+    routeError instanceof Error
+      ? routeError.message
+      : isRouteErrorResponse(routeError)
+      ? `${routeError.status} ${routeError.statusText}`
+      : routeError
+      ? String(routeError)
+      : "";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -112,7 +126,7 @@ export default function ErrorPage() {
           variants={itemVariants}
           className="inline-flex items-center gap-2 rounded-full bg-destructive/10 border border-destructive/30 px-6 py-3"
         >
-          <span className="text-lg font-bold text-destructive">404</span>
+          <span className="text-lg font-bold text-destructive">{is404 ? "404" : "Error"}</span>
         </motion.div>
 
         {/* Error Description */}
@@ -124,6 +138,17 @@ export default function ErrorPage() {
             ? "عذراً، الصفحة التي تبحث عنها غير موجودة أو قد تم حذفها."
             : "Sorry, the page you're looking for doesn't exist or has been removed."}
         </motion.p>
+
+        {/* Real error message (for diagnosis) */}
+        {errorMessage && !is404 && (
+          <motion.pre
+            variants={itemVariants}
+            dir="ltr"
+            className="mx-auto max-w-md overflow-x-auto whitespace-pre-wrap break-words rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-start text-xs text-destructive"
+          >
+            {errorMessage}
+          </motion.pre>
+        )}
 
         {/* Action Buttons */}
         <motion.div variants={itemVariants} className="space-y-3 pt-4">
