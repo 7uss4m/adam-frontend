@@ -7,6 +7,7 @@ import getTrendingProducts from "../api/getTrendingProducts";
 import type { Product } from "../types/types";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
+import { getProductPath } from "./home-utils";
 
 interface TrendingProduct extends Product {
   image?: string;
@@ -83,7 +84,7 @@ export default function TrendingSection() {
                   className="select-none h-full"
                 >
                   <Link
-                    to={`/categories/${product.categoryId}/subs/${product.categoryId}/product/${product.id}`}
+                    to={getProductPath(product)}
                     className="block h-full overflow-hidden rounded-2xl border border-white/5 bg-card transition-transform hover:scale-105"
                   >
                     <div className="aspect-square w-full bg-secondary">

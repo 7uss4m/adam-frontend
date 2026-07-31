@@ -45,6 +45,7 @@ import {
 } from "../components/ui/alert-dialog";
 
 import getAllSub from "../api/getAllSub";
+import getCategories from "../api/getCategories";
 import getProducts from "../api/getProducts";
 import getDollar from "../api/getDollar";
 import postOrder from "../api/postOrder";
@@ -137,6 +138,10 @@ export default function Purchase() {
   const navigate = useNavigate();
 
   const { id, subId, productId } = useParams();
+  const categoryKey = (subId || id) as string;
+  const categoryProductsPath = subId
+    ? `/categories/${id}/subs/${subId}`
+    : `/categories/${id}/subs`;
   const [t] = useTranslation("global");
   const { currency } = useCurrency();
 
@@ -171,23 +176,28 @@ export default function Purchase() {
     refetchOnWindowFocus: false,
   });
 
-  const getAllSubQuery = useQuery({
-    queryKey: ["sub", id, subId],
+  const getCategoryMetaQuery = useQuery({
+    queryKey: ["purchase-category-meta", id, subId],
     queryFn: async () => {
-      const response = await getAllSub();
-      const category = (response.data.result as Category[]).find(
-        (c) => c.id.toString() === String(subId)
+      if (subId) {
+        const response = await getAllSub();
+        return (response.data.result as Category[]).find(
+          (c) => c.id.toString() === String(subId)
+        );
+      }
+      const response = await getCategories();
+      return (response.data.result as Category[]).find(
+        (c) => c.id.toString() === String(id)
       );
-      return category as Category | undefined;
     },
     refetchOnWindowFocus: false,
   });
 
   const getProductQuery = useQuery({
-    queryKey: ["getProduct", "purchase", subId, productId],
+    queryKey: ["getProduct", "purchase", categoryKey, productId],
     queryFn: async () => {
       const response = await getProducts(
-        subId as string,
+        categoryKey,
         localStorage.getItem("token") as string
       );
       const products = response.data.result as Product[];
@@ -214,6 +224,7 @@ export default function Purchase() {
 
       return product as Product;
     },
+    enabled: Boolean(categoryKey && productId),
     refetchOnWindowFocus: false,
   });
 
@@ -304,7 +315,7 @@ export default function Purchase() {
     (hasText && !playerId) ||
     (hasQuantityOptions && !currQuantityOption);
 
-  if (getAllSubQuery.isLoading || getProductQuery.isLoading || getDolla.isLoading) {
+  if (getCategoryMetaQuery.isLoading || getProductQuery.isLoading || getDolla.isLoading) {
     return (
       <section className="min-h-[60vh] flex justify-center items-center bg-background">
         <Spinner />
@@ -337,10 +348,10 @@ export default function Purchase() {
           <Link to="/" className="hover:text-cyan-400 transition-colors">الرئيسية</Link>
           <ChevronLeft className="w-3 h-3" />
           <Link to={`/categories/${id}/subs`} className="hover:text-cyan-400 transition-colors">
-            {getAllSubQuery.data?.name || "القسم"}
+            {getCategoryMetaQuery.data?.name || "القسم"}
           </Link>
           <ChevronLeft className="w-3 h-3" />
-          <Link to={`/categories/${id}/subs/${subId}`} className="hover:text-cyan-400 transition-colors">
+          <Link to={categoryProductsPath} className="hover:text-cyan-400 transition-colors">
             المنتجات
           </Link>
           <ChevronLeft className="w-3 h-3" />
@@ -367,10 +378,10 @@ export default function Purchase() {
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
               {/* category pill */}
-              {getAllSubQuery.data?.name && (
+              {getCategoryMetaQuery.data?.name && (
                 <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-background/80 px-3 py-1 backdrop-blur-md">
                   <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  <span className="text-xs font-semibold text-cyan-300">{getAllSubQuery.data.name}</span>
+                  <span className="text-xs font-semibold text-cyan-300">{getCategoryMetaQuery.data.name}</span>
                 </div>
               )}
 
@@ -449,7 +460,7 @@ export default function Purchase() {
               <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-48 -translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl" />
 
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                {getAllSubQuery.data?.name || "المنتج"}
+                {getCategoryMetaQuery.data?.name || "المنتج"}
               </p>
               <h2 className="mt-1 text-lg font-black text-foreground">{product.name}</h2>
 
@@ -729,7 +740,7 @@ export default function Purchase() {
         {/* Back */}
         <div className="mt-12 border-t border-border pt-6">
           <Link
-            to={`/categories/${id}/subs/${subId}`}
+            to={categoryProductsPath}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-cyan-400"
           >
             <ArrowRight className="h-4 w-4" />

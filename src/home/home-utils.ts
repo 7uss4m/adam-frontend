@@ -19,10 +19,10 @@ export function isOfferActive(product: Product) {
 }
 
 export function getProductPath(product: Product) {
-  const subId = product.categoryId ?? product.categories?.id;
-  const parentId = product.categories?.parent_id ?? subId;
-  if (!subId) return "/categories";
-  return `/categories/${parentId}/subs/${subId}/product/${product.id}`;
+  const categoryId = product.categoryId ?? product.categories?.id;
+  if (!categoryId) return "/categories";
+  // Products belong to parent categories; direct purchase URL
+  return `/categories/${categoryId}/product/${product.id}`;
 }
 
 export function formatUsd(price: number | string) {

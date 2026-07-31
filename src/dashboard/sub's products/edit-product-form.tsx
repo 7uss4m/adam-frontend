@@ -24,10 +24,11 @@ import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
 import { Category, Product, Require } from "../../types/types";
 import { useToast } from "../../components/ui/use-toast";
 import { AxiosError } from "axios";
-import getAllSub from "../../api/getAllSub";
+import getCategories from "../../api/getCategories";
 import putProduct from "../../api/putProduct";
 import { RequireInput } from "../products/requires-input";
 import AddRequireForm from "../products/add-require-form";
+import { useTranslation } from "react-i18next";
 
 export default function EditProductForm({
   id,
@@ -50,19 +51,25 @@ export default function EditProductForm({
   const activeRef = useRef<HTMLButtonElement>(null);
   // toast
   const { toast } = useToast();
+  const [t] = useTranslation("global");
   // state
   const [price, setPrice] = useState(product.price);
   const [mainPrice, setMainPrice] = useState(product.mainPrice);
   const [description, setDescription] = useState(product.description);
   const [categoryId, setCategoryId] = useState<string | undefined>(undefined);
   const [order, setOrder] = useState<string | undefined>(product.order);
-  const getAllSubQuery = useQuery({
-    queryKey: ["subs"],
+  const getAllCategoriesQuery = useQuery({
+    queryKey: ["categories"],
     queryFn: async () => {
-      const response = await getAllSub();
+      const response = await getCategories();
       return response.data.result as Category[];
     },
   });
+
+  const parentCategories = getAllCategoriesQuery.data || [];
+  const selectedCategory = parentCategories.find(
+    (cat) => cat.id.toString() === categoryId
+  );
 
   // mutation
   const putProductMutation = useMutation({
@@ -111,15 +118,28 @@ export default function EditProductForm({
 
   // effect
   useEffect(() => {
-    if (getAllSubQuery.isSuccess) {
-      const categoryId = getAllSubQuery.data?.filter((sub) => {
-        if (sub.name == product.categories?.name) {
-          return sub.id;
-        }
-      })[0]?.id;
-      setCategoryId(categoryId ? categoryId.toString() : undefined);
+    if (!getAllCategoriesQuery.isSuccess) return;
+    const productCategoryId = product.categoryId ?? product.categories?.id;
+    if (productCategoryId != null) {
+      const found = parentCategories.find(
+        (cat) => cat.id.toString() === String(productCategoryId)
+      );
+      if (found) {
+        setCategoryId(found.id.toString());
+        return;
+      }
     }
-  }, [getAllSubQuery.isSuccess]);
+    const byName = parentCategories.find(
+      (cat) => cat.name === product.categories?.name
+    );
+    if (byName) setCategoryId(byName.id.toString());
+  }, [
+    getAllCategoriesQuery.isSuccess,
+    parentCategories,
+    product.categoryId,
+    product.categories?.id,
+    product.categories?.name,
+  ]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -168,57 +188,35 @@ export default function EditProductForm({
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="sub" className="text-right">
-              Sub Category
+              {t("category")}
             </Label>
-            {getAllSubQuery.isSuccess && (
+            {getAllCategoriesQuery.isSuccess && (
               <Select
+                value={categoryId}
                 onValueChange={(value) => {
                   setCategoryId(value);
                 }}
               >
                 <SelectTrigger id="sub" className="w-[280px]">
-                  <SelectValue
-                    placeholder={
+                  <SelectValue placeholder={t("select_parent_category")}>
+                    {selectedCategory ? selectedCategory.name : undefined}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {parentCategories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()}>
                       <div className="flex items-center gap-5">
                         <img
                           src={`${import.meta.env.VITE_PUBLIC_DOMAIN}${
-                            getAllSubQuery.data?.filter((sub) => {
-                              if (sub.name == product.categories?.name) {
-                                return sub.image;
-                              }
-                            })[0]?.image
+                            cat.image
                           }`}
-                          alt={product.name}
+                          alt={cat.name}
                           className="size-[30px] rounded"
                         />
-                        <span>
-                          {getAllSubQuery.data?.map((sub) => {
-                            if (sub.name == product.categories?.name) {
-                              return sub.name;
-                            }
-                          })}
-                        </span>
+                        <span>{cat.name}</span>
                       </div>
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {getAllSubQuery.isSuccess &&
-                    getAllSubQuery.data &&
-                    getAllSubQuery.data.map((sub) => (
-                      <SelectItem key={sub.id} value={sub.id.toString()}>
-                        <div className="flex items-center gap-5">
-                          <img
-                            src={`${import.meta.env.VITE_PUBLIC_DOMAIN}${
-                              sub.image
-                            }`}
-                            alt={sub.name}
-                            className="size-[30px] rounded"
-                          />
-                          <span>{sub.name}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}

@@ -18,10 +18,10 @@ import { Category, Require } from "../../types/types";
 import postProduct from "../../api/postProduct";
 import { useToast } from "../../components/ui/use-toast";
 import { AxiosError } from "axios";
-import getAllSub from "../../api/getAllSub";
 import { RequireInput } from "./requires-input";
 import AddRequireForm from "./add-require-form";
 import getCategories from "../../api/getCategories";
+import { useTranslation } from "react-i18next";
 
 // Combobox components
 import {
@@ -55,17 +55,11 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
   const areasRef = useRef<HTMLTextAreaElement>(null);
   // toast
   const { toast } = useToast();
+  const [t] = useTranslation("global");
   // state
   const [categoryId, setCategoryId] = useState<string | undefined>(undefined);
   const [categoryOpen, setCategoryOpen] = useState(false);
 
-  const getAllSubQuery = useQuery({
-    queryKey: ["subs"],
-    queryFn: async () => {
-      const response = await getAllSub();
-      return response.data.result as Category[];
-    },
-  });
   const getAllCategoriesQuery = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -74,11 +68,8 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
     },
   });
 
-  // Combine categories and subcategories for the combobox
-  const allCategories = [
-    ...(getAllCategoriesQuery.data || []),
-    ...(getAllSubQuery.data || []),
-  ];
+  // Parent categories only (no subcategories)
+  const allCategories = getAllCategoriesQuery.data || [];
 
   // Find the selected category for display
   const selectedCategory = allCategories.find(
@@ -191,10 +182,10 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
             <Checkbox ref={activeRef} id="active" />
           </div>
 
-          {/* Category Combobox */}
+          {/* Parent category Combobox */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
-              Category
+              {t("category")}
             </Label>
             <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
               <PopoverTrigger asChild>
@@ -216,7 +207,7 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
                       <span>{selectedCategory.name}</span>
                     </div>
                   ) : (
-                    "Select category..."
+                    t("select_parent_category")
                   )}
                   <BiCaretDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -224,11 +215,11 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
               <PopoverContent className="w-[280px] p-0">
                 <Command>
                   <CommandInput
-                    placeholder="Search categories..."
+                    placeholder={t("search_categories")}
                     className="h-9"
                   />
                   <CommandList>
-                    <CommandEmpty>No category found.</CommandEmpty>
+                    <CommandEmpty>{t("no_category_found")}</CommandEmpty>
                     <CommandGroup>
                       {allCategories.map((category) => (
                         <CommandItem

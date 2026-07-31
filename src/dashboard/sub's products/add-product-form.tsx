@@ -25,9 +25,10 @@ import { Category, Require } from "../../types/types";
 import postProduct from "../../api/postProduct";
 import { useToast } from "../../components/ui/use-toast";
 import { AxiosError } from "axios";
-import getAllSub from "../../api/getAllSub";
+import getCategories from "../../api/getCategories";
 import { RequireInput } from "../products/requires-input";
 import AddRequireForm from "../products/add-require-form";
+import { useTranslation } from "react-i18next";
 
 export default function AddProductForm({ query }: { query: UseQueryResult }) {
   // state
@@ -42,13 +43,14 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
   const activeRef = useRef<HTMLButtonElement>(null);
   // toast
   const { toast } = useToast();
+  const [t] = useTranslation("global");
   // state
   const [categoryId, setCategoryId] = useState<string | undefined>(undefined);
 
-  const getAllSubQuery = useQuery({
-    queryKey: ["subs"],
+  const getAllCategoriesQuery = useQuery({
+    queryKey: ["categories"],
     queryFn: async () => {
-      const response = await getAllSub();
+      const response = await getCategories();
       return response.data.result as Category[];
     },
   });
@@ -146,7 +148,7 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="sub" className="text-right">
-              Sub Category
+              {t("category")}
             </Label>
             <Select
               onValueChange={(value) => {
@@ -154,22 +156,22 @@ export default function AddProductForm({ query }: { query: UseQueryResult }) {
               }}
             >
               <SelectTrigger className="w-[280px]">
-                <SelectValue placeholder="Select" />
+                <SelectValue placeholder={t("select_parent_category")} />
               </SelectTrigger>
               <SelectContent>
-                {getAllSubQuery.isSuccess &&
-                  getAllSubQuery.data &&
-                  getAllSubQuery.data.map((sub) => (
-                    <SelectItem key={sub.id} value={sub.id.toString()}>
+                {getAllCategoriesQuery.isSuccess &&
+                  getAllCategoriesQuery.data &&
+                  getAllCategoriesQuery.data.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()}>
                       <div className="flex items-center gap-5">
                         <img
                           src={`${import.meta.env.VITE_PUBLIC_DOMAIN}${
-                            sub.image
+                            cat.image
                           }`}
-                          alt={sub.name}
+                          alt={cat.name}
                           className="size-[30px] rounded"
                         />
-                        <span>{sub.name}</span>
+                        <span>{cat.name}</span>
                       </div>
                     </SelectItem>
                   ))}

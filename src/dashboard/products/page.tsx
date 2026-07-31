@@ -23,7 +23,7 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import getProductsPaginated from "../../api/getProductsPaginated";
 import getProductStats from "../../api/getProductStats";
-import getAllSub from "../../api/getAllSub";
+import getCategories from "../../api/getCategories";
 import { Category, Product } from "../../types/types";
 import AddProductForm from "./add-product-form";
 import ProductCard from "./product-card";
@@ -293,9 +293,9 @@ export default function DashboardProducts() {
   }, [debouncedSearch, statusFilter, offerFilter, categoryFilter, sourceFilter, view]);
 
   const categoriesQuery = useQuery({
-    queryKey: ["subs-filter"],
+    queryKey: ["categories"],
     queryFn: async () => {
-      const response = await getAllSub();
+      const response = await getCategories();
       return response.data.result as Category[];
     },
     staleTime: 5 * 60_000,

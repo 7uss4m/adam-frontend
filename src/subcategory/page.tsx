@@ -144,7 +144,7 @@ function ProductCard({
   if (view === "list") {
     return (
       <Link
-        to={`${parentId}/product/${product.id}`}
+        to={`/categories/${parentId}/product/${product.id}`}
         onClick={(e) => { if (!product.active) e.preventDefault(); }}
       >
         <motion.div
@@ -202,7 +202,7 @@ function ProductCard({
 
   return (
     <Link
-      to={`${parentId}/product/${product.id}`}
+      to={`/categories/${parentId}/product/${product.id}`}
       onClick={(e) => { if (!product.active) e.preventDefault(); }}
     >
       <motion.div

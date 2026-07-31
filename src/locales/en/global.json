@@ -374,6 +374,8 @@
   "image": "Image",
   "source": "Source",
   "category": "Category",
+  "select_parent_category": "Select parent category",
+  "no_category_found": "No category found",
   "all_categories": "All categories",
   "all_sources": "All sources",
   "filters": "Filters",

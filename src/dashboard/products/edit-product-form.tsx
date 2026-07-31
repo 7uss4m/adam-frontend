@@ -17,11 +17,11 @@ import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
 import { Category, Product, Require } from "../../types/types";
 import { useToast } from "../../components/ui/use-toast";
 import { AxiosError } from "axios";
-import getAllSub from "../../api/getAllSub";
 import putProduct from "../../api/putProduct";
 import { RequireInput } from "./requires-input";
 import AddRequireForm from "./add-require-form";
 import getCategories from "../../api/getCategories";
+import { useTranslation } from "react-i18next";
 
 // Combobox components
 import {
@@ -76,6 +76,7 @@ export default function EditProductForm({
   const areasRef = useRef<HTMLTextAreaElement>(null);
   // toast
   const { toast } = useToast();
+  const [t] = useTranslation("global");
   // state
   const [price, setPrice] = useState(product.price);
   const [mainPrice, setMainPrice] = useState(product.mainPrice);
@@ -84,14 +85,6 @@ export default function EditProductForm({
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [order, setOrder] = useState(product.order?.toString() || "");
 
-  const getAllSubQuery = useQuery({
-    queryKey: ["subs"],
-    queryFn: async () => {
-      const response = await getAllSub();
-      return response.data.result as Category[];
-    },
-    enabled: open,
-  });
   const getAllCategoriesQuery = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -101,11 +94,8 @@ export default function EditProductForm({
     enabled: open,
   });
 
-  // Combine categories and subcategories for the combobox
-  const allCategories = [
-    ...(getAllCategoriesQuery.data || []),
-    ...(getAllSubQuery.data || []),
-  ];
+  // Parent categories only (no subcategories)
+  const allCategories = getAllCategoriesQuery.data || [];
 
   // Find the selected category for display
   const selectedCategory = allCategories.find(
@@ -164,21 +154,33 @@ export default function EditProductForm({
     },
   });
 
-  // effect - Set initial category when data loads
+  // effect - Set initial category when parent categories load
   useEffect(() => {
-    if (getAllSubQuery.isSuccess && getAllCategoriesQuery.isSuccess) {
-      // Find category in both categories and subcategories
-      const foundCategory = allCategories.find(
-        (cat) => cat.name === product.categories?.name
+    if (!getAllCategoriesQuery.isSuccess) return;
+
+    const productCategoryId = product.categoryId ?? product.categories?.id;
+    if (productCategoryId != null) {
+      const byId = allCategories.find(
+        (cat) => cat.id.toString() === String(productCategoryId)
       );
-      if (foundCategory) {
-        setCategoryId(foundCategory.id.toString());
+      if (byId) {
+        setCategoryId(byId.id.toString());
+        return;
       }
     }
+
+    const foundCategory = allCategories.find(
+      (cat) => cat.name === product.categories?.name
+    );
+    if (foundCategory) {
+      setCategoryId(foundCategory.id.toString());
+    }
   }, [
-    getAllSubQuery.isSuccess,
     getAllCategoriesQuery.isSuccess,
+    product.categoryId,
+    product.categories?.id,
     product.categories?.name,
+    allCategories,
   ]);
 
   return (
@@ -235,10 +237,10 @@ export default function EditProductForm({
             />
           </div>
 
-          {/* Category Combobox */}
+          {/* Parent category Combobox */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
-              Category
+              {t("category")}
             </Label>
             <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
               <PopoverTrigger asChild>
@@ -260,7 +262,7 @@ export default function EditProductForm({
                       <span>{selectedCategory.name}</span>
                     </div>
                   ) : (
-                    "Select category..."
+                    t("select_parent_category")
                   )}
                   <BiCaretDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -268,11 +270,11 @@ export default function EditProductForm({
               <PopoverContent className="w-[280px] p-0">
                 <Command>
                   <CommandInput
-                    placeholder="Search categories..."
+                    placeholder={t("search_categories")}
                     className="h-9"
                   />
                   <CommandList>
-                    <CommandEmpty>No category found.</CommandEmpty>
+                    <CommandEmpty>{t("no_category_found")}</CommandEmpty>
                     <CommandGroup>
                       {allCategories.map((category) => (
                         <CommandItem

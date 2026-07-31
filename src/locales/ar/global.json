@@ -376,6 +376,8 @@
   "image": "الصورة",
   "source": "المصدر",
   "category": "الفئة",
+  "select_parent_category": "اختر الفئة الرئيسية",
+  "no_category_found": "لا توجد فئة",
   "all_categories": "كل الفئات",
   "all_sources": "كل المصادر",
   "filters": "الفلاتر",
