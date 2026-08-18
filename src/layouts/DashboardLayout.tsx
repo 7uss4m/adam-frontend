@@ -688,7 +688,7 @@ export default function DashboardLayout() {
             onBack={() => setShow2FA(false)}
           />
         ) : isAdmin || isEmployee ? (
-          <div className="flex min-h-screen md:h-screen md:overflow-hidden">
+          <div className="min-h-screen md:flex md:h-screen md:overflow-hidden">
             {/* Desktop sidebar */}
             <aside className="hidden h-screen w-[260px] shrink-0 flex-col border-e border-border/50 bg-card/50 backdrop-blur-xl md:flex">
               {sidebarContent()}
