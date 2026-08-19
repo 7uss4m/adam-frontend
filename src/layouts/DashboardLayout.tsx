@@ -760,7 +760,7 @@ export default function DashboardLayout() {
               )}
 
               {/* Page content — scroll مستقل عن الـ drawer */}
-              <main className="dashboard-content dashboard-mesh-bg min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain">
+              <main className="dashboard-content dashboard-mesh-bg overflow-x-hidden md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-y-contain">
                 <Outlet />
               </main>
             </div>
