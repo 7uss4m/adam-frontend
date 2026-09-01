@@ -7,7 +7,7 @@ import postNtfySubscription from "../api/postNtfySubscription";
 import { NOTIFICATION_PROVIDER } from "./config";
 
 export default function useNotifications(token: string | undefined, ready: boolean) {
-  const { fcmToken } = useFCMToken();
+  const { fcmToken } = useFCMToken(NOTIFICATION_PROVIDER === "firebase");
   const { subscription } = useNtfyPush();
 
   const postFcmTokenMutation = useMutation({

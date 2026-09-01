@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NTFY_VAPID_PUBLIC_KEY } from "../notifications/config";
+import { NOTIFICATION_PROVIDER, NTFY_VAPID_PUBLIC_KEY } from "../notifications/config";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -14,14 +14,19 @@ const useNtfyPush = () => {
 
   useEffect(() => {
     const subscribe = async () => {
-      if (!NTFY_VAPID_PUBLIC_KEY || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+      if (
+        NOTIFICATION_PROVIDER !== "ntfy" ||
+        !NTFY_VAPID_PUBLIC_KEY ||
+        !("serviceWorker" in navigator) ||
+        !("PushManager" in window)
+      ) {
         return;
       }
       try {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") return;
 
-        const registration = await navigator.serviceWorker.register("/ntfy-sw.js");
+        const registration = await navigator.serviceWorker.register("/ntfy-sw.js", { scope: "/ntfy/" });
         const existing = await registration.pushManager.getSubscription();
         const sub =
           existing ||

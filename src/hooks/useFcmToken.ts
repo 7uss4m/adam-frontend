@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { messaging } from "../firebase/firebaseConfig";
 import { getToken } from "firebase/messaging";
 
-const useFCMToken = () => {
+const useFCMToken = (enabled: boolean = true) => {
   const [fcmToken, setFcmToken] = useState<string | null>(null);
   const [permissionGranted, setPermissionGranted] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const requestPermission = async () => {
       try {
         const permission = await Notification.requestPermission();
@@ -25,7 +27,7 @@ const useFCMToken = () => {
     };
 
     requestPermission();
-  }, []);
+  }, [enabled]);
 
 
   return { fcmToken, permissionGranted };
