@@ -432,6 +432,8 @@
   "cat_external_sync": "من API خارجي",
   "cat_source": "المصدر",
   "cat_sort_order": "ترتيب العرض",
+  "cat_margin_percent": "نسبة الهامش %",
+  "cat_margin_hint": "هامش إضافي يُضاف فوق سعر مستوى العميل، مثال: 15 يعني 15%",
   "cat_empty_hint": "جرّب تغيير الفلاتر أو أضف تصنيفاً جديداً",
   "all_subcategories": "كل التصنيفات الفرعية",
   "search_categories": "بحث بالاسم أو المعرف...",

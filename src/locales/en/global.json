@@ -430,6 +430,8 @@
   "cat_external_sync": "synced from API",
   "cat_source": "Source",
   "cat_sort_order": "Sort order",
+  "cat_margin_percent": "Margin %",
+  "cat_margin_hint": "Extra markup applied on top of the customer's level pricing, e.g. 15 for 15%",
   "cat_empty_hint": "Try changing filters or add a new category",
   "all_subcategories": "All subcategories",
   "search_categories": "Search by name or ID...",

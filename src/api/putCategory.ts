@@ -5,6 +5,7 @@ type PutCategoryPayload = {
   order?: number;
   active?: boolean;
   image?: File;
+  profit?: number;
 };
 
 export default function putCategory(
@@ -18,6 +19,7 @@ export default function putCategory(
   if (payload.order !== undefined) form.append("order", String(payload.order));
   if (payload.active !== undefined) form.append("active", String(payload.active));
   if (payload.image) form.append("image", payload.image);
+  if (payload.profit !== undefined) form.append("profit", String(payload.profit));
 
   return axios
     .put(apiUrl, form, {

@@ -36,6 +36,7 @@ export default function EditCategoryForm({
   const open = controlledOpen ?? internalOpen;
   const setOpen = onOpenChange ?? setInternalOpen;
   const [order, setOrder] = useState(category.order);
+  const [profit, setProfit] = useState(String(category.profit ?? 0));
 
   const nameRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -51,6 +52,7 @@ export default function EditCategoryForm({
           order: Number(order),
           name: nameRef.current?.value as string,
           image: imageRef.current?.files ? imageRef.current.files[0] : undefined,
+          profit: Number(profit),
         }
       );
 
@@ -139,6 +141,22 @@ export default function EditCategoryForm({
               onChange={(e) => setOrder(e.target.value)}
               className="col-span-3"
             />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="profit" className="text-right">
+              {t("cat_margin_percent")}
+            </Label>
+            <Input
+              id="profit"
+              type="number"
+              step="0.01"
+              value={profit}
+              onChange={(e) => setProfit(e.target.value)}
+              className="col-span-3"
+            />
+            <p className="col-span-4 text-xs text-muted-foreground text-start">
+              {t("cat_margin_hint")}
+            </p>
           </div>
         </div>
         <DialogFooter>

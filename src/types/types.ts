@@ -64,6 +64,7 @@ export type Category = {
   external_id?: number | null
   sub_count?: number
   product_count?: number
+  profit?: number
   // visible: boolean
 }
 

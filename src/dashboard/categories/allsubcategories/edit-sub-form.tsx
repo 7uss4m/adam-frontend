@@ -45,6 +45,7 @@ export default function EditSubForm({
   const [categoryType, setCategoryType] = useState(sub.type);
   const [order, setOrder] = useState(String(sub.order ?? ""));
   const [parentId, setParentId] = useState<string | undefined>(undefined);
+  const [profit, setProfit] = useState(String(sub.profit ?? 0));
 
   const nameRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -79,7 +80,7 @@ export default function EditSubForm({
         bonus: Number(bonusRef.current?.value),
         image: imageRef.current?.files?.[0],
         order: Number(order),
-        
+        profit: Number(profit),
       });
       return response;
     },
@@ -194,6 +195,23 @@ export default function EditSubForm({
               onChange={(e) => setOrder(e.target.value)}
               className="col-span-3"
             />
+          </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="profit" className="text-right">
+              {t("cat_margin_percent")}
+            </Label>
+            <Input
+              id="profit"
+              type="number"
+              step="0.01"
+              value={profit}
+              onChange={(e) => setProfit(e.target.value)}
+              className="col-span-3"
+            />
+            <p className="col-span-4 text-xs text-muted-foreground text-start">
+              {t("cat_margin_hint")}
+            </p>
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">

@@ -60,6 +60,7 @@ export default function EditSubForm({
   const [categoryType, setCategoryType] = useState(sub.type);
   const [order, setOrder] = useState(String(sub.order ?? ""));
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [profit, setProfit] = useState(String(sub.profit ?? 0));
 
   const nameRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -121,7 +122,8 @@ export default function EditSubForm({
 
     setCategoryType(sub.type);
     setOrder(String(sub.order ?? ""));
-  }, [open, sub.type, sub.order]);
+    setProfit(String(sub.profit ?? 0));
+  }, [open, sub.type, sub.order, sub.profit]);
 
   useEffect(() => {
     if (open && inferredParentCategoryId && !selectedCategoryId) {
@@ -148,6 +150,7 @@ export default function EditSubForm({
         image: imageRef.current?.files?.[0],
         order: Number(order),
         parent_id: Number(selectedCategoryId),
+        profit: Number(profit),
       });
       return response;
     },
@@ -374,6 +377,24 @@ export default function EditSubForm({
               className="col-span-3 w-full"
               onChange={(e) => setOrder(e.currentTarget.value)}
             />
+          </div>
+
+          {/* Margin */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="profit" className="text-right col-span-1">
+              {t("cat_margin_percent")}
+            </Label>
+            <Input
+              id="profit"
+              type="number"
+              step="0.01"
+              value={profit}
+              className="col-span-3 w-full"
+              onChange={(e) => setProfit(e.currentTarget.value)}
+            />
+            <p className="col-span-4 text-xs text-muted-foreground text-start">
+              {t("cat_margin_hint")}
+            </p>
           </div>
         </div>
 
