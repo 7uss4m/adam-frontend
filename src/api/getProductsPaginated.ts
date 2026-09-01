@@ -10,6 +10,9 @@ export type ProductsPaginatedParams = {
   offer?: "all" | "offer" | "no_offer";
   source?: string;
   sort?: string;
+  /** Set by the admin dashboard's product table to get raw cost instead of
+   * customer pricing. Never set this from storefront-facing code. */
+  view?: "admin";
 };
 
 export type ProductsPaginatedResponse = {

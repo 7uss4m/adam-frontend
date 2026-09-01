@@ -332,6 +332,7 @@ export default function DashboardProducts() {
         categoryId: categoryFilter !== "all" ? categoryFilter : undefined,
         source: sourceFilter !== "all" ? sourceFilter : undefined,
         sort: "order_asc",
+        view: "admin",
       });
       return response.data;
     },
