@@ -94,9 +94,10 @@ import ReferralPage from "./referral/page";
 import TermsPage from "./terms/page";
 import PrivacyPage from "./privacy/page";
 import FaqPage from "./faqs/page";
+import { NOTIFICATION_PROVIDER } from "./notifications/config";
 
 // firebase
-if ("serviceWorker" in navigator) {
+if (NOTIFICATION_PROVIDER === "firebase" && "serviceWorker" in navigator) {
   navigator.serviceWorker
     .register("/firebase-messaging-sw.js")
     .then(function (registration) {
