@@ -3,14 +3,13 @@ import Header from "../components/Header";
 import { Toaster } from "../components/ui/toaster";
 import "../main.css";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import getAds from "../api/getAds";
 import { Ad, User } from "../types/types";
 import { useEffect, useState } from "react";
 import getUser from "../api/getUser";
 import { useTranslation } from "react-i18next";
-import useFCMToken from "../hooks/useFcmToken";
-import postFcmToken from "../api/postFcmToken";
+import useNotifications from "../notifications/useNotifications";
 // import {
 //   Dialog,
 //   DialogClose,
@@ -77,19 +76,6 @@ export default function MainLayout() {
     refetchOnWindowFocus: false,
   });
 
-  // mutation
-  const postFcmTokenMutation = useMutation({
-    mutationFn: async () => {
-      const response = await postFcmToken(
-        localStorage.getItem("token") as string,
-        fcmToken as string
-      );
-      return response.data;
-    },
-  });
-  // firebase
-  const { fcmToken } = useFCMToken();
-
   // effect
   useEffect(() => {
     const interval = setInterval(() => {
@@ -131,11 +117,10 @@ export default function MainLayout() {
     }
   }, [getUserQuery.isError, getUserQuery.isLoading, navigate, pathname]);
 
-  useEffect(() => {
-    if (getUserQuery.isFetched && getUserQuery.isSuccess) {
-      postFcmTokenMutation.mutate();
-    }
-  }, [getUserQuery.isFetched, getUserQuery.isSuccess]);
+  useNotifications(
+    localStorage.getItem("token") ?? undefined,
+    getUserQuery.isFetched && getUserQuery.isSuccess
+  );
 
   // useEffect(() => {
   //   if (params.get("purchase")) {
