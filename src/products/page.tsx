@@ -20,6 +20,14 @@ import { Input } from "../components/ui/input";
 import { cn } from "../lib/utils";
 import { useCurrency } from "../context/CurrencyContext";
 
+/** Format with just enough decimals so a positive value never rounds to 0. */
+function smartNumber(v: number, baseDecimals: number) {
+  if (!Number.isFinite(v) || v === 0) return "0";
+  let d = baseDecimals;
+  while (d < 6 && Number(v.toFixed(d)) === 0) d++;
+  return v.toFixed(d);
+}
+
 export default function Products() {
   const { id, subId } = useParams();
   const [t] = useTranslation("global");
@@ -175,13 +183,13 @@ export default function Products() {
                   : null;
                 const priceText =
                   currency === "dollar"
-                    ? `$${price.toFixed(2)}`
-                    : `SYP ${(price * dollar).toFixed(0)}`;
+                    ? `$${smartNumber(price, 2)}`
+                    : `SYP ${smartNumber(price * dollar, 0)}`;
                 const originalPriceText =
                   originalPrice && product.hasOffer
                     ? currency === "dollar"
-                      ? `$${originalPrice.toFixed(2)}`
-                      : `SYP ${(originalPrice * dollar).toFixed(0)}`
+                      ? `$${smartNumber(originalPrice, 2)}`
+                      : `SYP ${smartNumber(originalPrice * dollar, 0)}`
                     : null;
 
                 return (
