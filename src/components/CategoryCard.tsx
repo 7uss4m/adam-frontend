@@ -3,17 +3,11 @@ import { Link } from "react-router-dom";
 import type { Category } from "../types/types";
 import logo from "../assets/logo.webp";
 
-export default function CategoryCard({
-  cat,
-  index,
-}: {
-  cat: Category;
-  index: number;
-}) {
+export default function CategoryCard({ cat }: { cat: Category }) {
   const [imgSrc, setImgSrc] = useState(cat.image || logo);
 
   return (
-    <Link to={`/categories/${cat.id}/subs`} data-index={index}>
+    <Link to={`/categories/${cat.id}/subs`}>
       <div className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-200 hover:border-primary/40 cursor-pointer">
         <div className="relative aspect-square overflow-hidden">
           <img

@@ -84,8 +84,8 @@ export default function CategoriesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            {categories.map((cat, i) => (
-              <CategoryCard key={cat.id} cat={cat} index={i} />
+            {categories.map((cat) => (
+              <CategoryCard key={cat.id} cat={cat} />
             ))}
           </div>
         )}

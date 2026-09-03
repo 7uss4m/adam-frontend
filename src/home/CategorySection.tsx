@@ -35,7 +35,7 @@ export default function CategorySection() {
       />
 
       {categoriesQuery.isLoading ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
@@ -49,9 +49,9 @@ export default function CategorySection() {
           ))}
         </div>
       ) : categories.length ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {categories.map((cat, i) => (
-            <CategoryCard key={cat.id} cat={cat} index={i} />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          {categories.map((cat) => (
+            <CategoryCard key={cat.id} cat={cat} />
           ))}
         </div>
       ) : (
