@@ -25,7 +25,7 @@ export default function CategorySection() {
   }, [mainCategoriesQuery.data]);
 
   return (
-    <section className="py-4">
+    <section id="categories" className="py-4">
       <SectionHeader
         icon={Sparkles}
         title="الأقسام"

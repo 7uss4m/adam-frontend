@@ -7,11 +7,7 @@ import getMainCategories from "../api/getMainCategories";
 import getCategoriesByMainCategory from "../api/getCategoriesByMainCategory";
 import type { Category, MainCategory } from "../types/types";
 import CategoryCard from "../components/CategoryCard";
-
-function safeOrder(v: unknown) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : 999999;
-}
+import { safeOrder } from "../home/home-utils";
 
 export default function MainCategoryCategoriesPage() {
   const { id } = useParams<{ id: string }>();
@@ -59,7 +55,7 @@ export default function MainCategoryCategoriesPage() {
           </Link>
           <div className="w-1 h-7 rounded-full bg-gradient-to-b from-primary to-accent" />
           <h1 className="text-2xl font-black text-foreground">
-            {currentMainCategory?.name ?? ""}
+            {currentMainCategory?.name ?? "الأقسام"}
           </h1>
           {categories.length > 0 && (
             <span className="text-xs font-bold text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">

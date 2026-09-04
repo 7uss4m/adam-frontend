@@ -25,7 +25,7 @@ export default function ProductCarousel({
   title,
   subtitle,
   icon,
-  viewAllHref = "/categories",
+  viewAllHref = "#categories",
   accent = "text-cyan-400",
   params = { status: "active", sort: "order_asc" },
   limit = 12,

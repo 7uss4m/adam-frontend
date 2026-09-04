@@ -76,7 +76,7 @@ const HeroBanner = () => {
             آلاف المنتجات الرقمية — تسليم فوري — أسعار تنافسية
           </p>
           <Link
-            to="/categories"
+            to="#categories"
             className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-500/25"
           >
             <ShoppingBag className="h-4 w-4" />
@@ -140,7 +140,7 @@ const HeroBanner = () => {
             </p>
           )}
           <Link
-            to="/categories"
+            to="#categories"
             className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white/10 px-5 py-2.5 text-sm font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20"
           >
             <ShoppingBag className="h-4 w-4" />

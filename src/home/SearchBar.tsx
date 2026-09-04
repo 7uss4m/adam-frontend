@@ -1,30 +1,19 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Search,
-  LayoutGrid,
-  Coins,
-  Percent,
-  Gamepad2,
-  CreditCard,
-  Loader2,
-  ArrowLeft,
-} from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { Search, LayoutGrid, Loader2, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import getCategories from "../api/getCategories";
+import getMainCategories from "../api/getMainCategories";
 import getProductsPaginated from "../api/getProductsPaginated";
-import type { Category, Product } from "../types/types";
+import type { MainCategory, Product } from "../types/types";
 import { safeOrder, getProductPath, formatUsd, getProductImageUrl } from "./home-utils";
-
-const TAB_ICONS = [Coins, Gamepad2, CreditCard, Percent, LayoutGrid];
+import logo from "../assets/logo.webp";
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [focused, setFocused] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const token = localStorage.getItem("token") || "";
 
   useEffect(() => {
@@ -42,11 +31,11 @@ export default function SearchBar() {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  const categoriesQuery = useQuery({
-    queryKey: ["categories"],
+  const mainCategoriesQuery = useQuery({
+    queryKey: ["main-categories"],
     queryFn: async () => {
-      const res = await getCategories();
-      return (res.data?.result ?? res.data) as Category[];
+      const res = await getMainCategories();
+      return (res.data?.result ?? []) as MainCategory[];
     },
     staleTime: 120_000,
     refetchOnWindowFocus: false,
@@ -67,17 +56,19 @@ export default function SearchBar() {
     refetchOnWindowFocus: false,
   });
 
-  const topCategories = useMemo(() => {
-    const list = categoriesQuery.data || [];
+  const topMainCategories = useMemo(() => {
+    const list = mainCategoriesQuery.data || [];
     return list
-      .filter((c) => c?.available !== false)
+      .filter((mc) => mc?.active !== false)
       .sort((a, b) => safeOrder(a.order) - safeOrder(b.order))
       .slice(0, 5);
-  }, [categoriesQuery.data]);
+  }, [mainCategoriesQuery.data]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) navigate(`/categories`);
+    if (query.trim()) {
+      document.getElementById("categories")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   const showDropdown =
@@ -104,7 +95,7 @@ export default function SearchBar() {
 
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           <Link
-            to="/categories"
+            to="#categories"
             className="flex shrink-0 items-center gap-2 rounded-2xl border border-cyan-500/50 bg-cyan-500/10 px-4 py-3 text-cyan-400 transition-all hover:bg-cyan-500/20"
           >
             <div className="rounded-lg bg-cyan-500 p-1.5">
@@ -116,23 +107,27 @@ export default function SearchBar() {
             </div>
           </Link>
 
-          {topCategories.map((cat, i) => {
-            const Icon = TAB_ICONS[i % TAB_ICONS.length];
-            return (
-              <Link
-                key={cat.id}
-                to={`/categories/${cat.id}/subs`}
-                className="flex shrink-0 items-center gap-2 rounded-2xl border border-border bg-card/80 px-4 py-3 text-muted-foreground transition-all hover:border-cyan-500/40 hover:text-gray-200"
-              >
-                <div className="rounded-lg bg-muted p-1.5">
-                  <Icon className="h-4 w-4 text-amber-400" />
-                </div>
-                <p className="max-w-[80px] truncate text-xs font-bold text-foreground">
-                  {cat.name}
-                </p>
-              </Link>
-            );
-          })}
+          {topMainCategories.map((mc) => (
+            <Link
+              key={mc.id}
+              to={`/main-categories/${mc.id}`}
+              className="flex shrink-0 items-center gap-2 rounded-2xl border border-border bg-card/80 px-4 py-3 text-muted-foreground transition-all hover:border-cyan-500/40 hover:text-gray-200"
+            >
+              <div className="h-6 w-6 shrink-0 overflow-hidden rounded-lg bg-muted">
+                <img
+                  src={mc.image || logo}
+                  alt=""
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = logo;
+                  }}
+                />
+              </div>
+              <p className="max-w-[80px] truncate text-xs font-bold text-foreground">
+                {mc.name}
+              </p>
+            </Link>
+          ))}
         </div>
       </div>
 
@@ -178,7 +173,7 @@ export default function SearchBar() {
               ))}
             </ul>
             <Link
-              to="/categories"
+              to="#categories"
               onClick={() => setFocused(false)}
               className="flex items-center justify-center gap-1 border-t border-border py-3 text-xs font-semibold text-cyan-400 hover:bg-cyan-500/5"
             >
