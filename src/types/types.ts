@@ -60,12 +60,21 @@ export type Category = {
   active?: boolean
   order: string
   parent_id?: number | null
+  main_category_id?: number | null
   source?: string | null
   external_id?: number | null
   sub_count?: number
   product_count?: number
   profit?: number
   // visible: boolean
+}
+
+export type MainCategory = {
+  id: number,
+  name: string,
+  image: string,
+  active: boolean,
+  order: number,
 }
 
 export type SubCategory = {
