@@ -35,7 +35,7 @@ export default function EditMainCategoryForm({
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen ?? internalOpen;
   const setOpen = onOpenChange ?? setInternalOpen;
-  const [order, setOrder] = useState(mainCategory.order);
+  const [order, setOrder] = useState(String(mainCategory.order));
 
   const nameRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
