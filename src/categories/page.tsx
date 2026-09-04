@@ -5,37 +5,11 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Search } from "lucide-react";
 import getCategories from "../api/getCategories";
 import type { Category } from "../types/types";
-import logo from "../assets/logo.webp";
+import CategoryCard from "../components/CategoryCard";
 
 function safeOrder(v: unknown) {
   const n = Number(v);
   return Number.isFinite(n) ? n : 999999;
-}
-
-function CategoryCard({ cat, index }: { cat: Category; index: number }) {
-  const [imgSrc, setImgSrc] = useState(cat.image || logo);
-
-  return (
-    <Link to={`/categories/${cat.id}/subs`}>
-      <div className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-200 hover:border-primary/40 cursor-pointer">
-        <div className="relative aspect-square overflow-hidden">
-          <img
-            src={imgSrc}
-            alt={cat.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-            onError={() => setImgSrc(logo)}
-          />
-        </div>
-
-        <div className="px-3 py-2.5">
-          <p className="text-sm font-bold text-foreground line-clamp-1 text-center">
-            {cat.name}
-          </p>
-        </div>
-      </div>
-    </Link>
-  );
 }
 
 export default function CategoriesPage() {
@@ -110,8 +84,8 @@ export default function CategoriesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            {categories.map((cat, i) => (
-              <CategoryCard key={cat.id} cat={cat} index={i} />
+            {categories.map((cat) => (
+              <CategoryCard key={cat.id} cat={cat} />
             ))}
           </div>
         )}
