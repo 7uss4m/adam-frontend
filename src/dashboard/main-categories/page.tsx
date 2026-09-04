@@ -4,7 +4,7 @@ import getMainCategories from "../../api/getMainCategories";
 import type { MainCategory } from "../../types/types";
 import { AddMainCategoryForm } from "./add-main-category-form";
 import { createColumns } from "./columns";
-import { DataTable } from "./data-table";
+import { DataTable } from "../categories/data-table";
 
 export default function DashboardMainCategories() {
   const [t] = useTranslation("global");

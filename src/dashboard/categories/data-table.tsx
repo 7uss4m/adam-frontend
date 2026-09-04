@@ -17,14 +17,13 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import type { DashboardCategory } from "./category-utils";
 
-interface DataTableProps {
-  columns: ColumnDef<DashboardCategory>[];
-  data: DashboardCategory[];
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData>[];
+  data: TData[];
 }
 
-export function DataTable({ columns, data }: DataTableProps) {
+export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
   const [t] = useTranslation("global");
   const [sorting, setSorting] = useState<SortingState>([{ id: "order", desc: false }]);
 
