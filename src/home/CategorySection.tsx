@@ -1,28 +1,28 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles } from "lucide-react";
-import getCategories from "../api/getCategories";
-import type { Category } from "../types/types";
-import CategoryCard from "../components/CategoryCard";
+import getMainCategories from "../api/getMainCategories";
+import type { MainCategory } from "../types/types";
+import MainCategoryCard from "../components/MainCategoryCard";
 import SectionHeader from "./SectionHeader";
 import { safeOrder } from "./home-utils";
 
 export default function CategorySection() {
-  const categoriesQuery = useQuery({
-    queryKey: ["categories"],
+  const mainCategoriesQuery = useQuery({
+    queryKey: ["main-categories"],
     queryFn: async () => {
-      const res = await getCategories();
-      return (res.data?.result ?? res.data) as Category[];
+      const res = await getMainCategories();
+      return (res.data?.result ?? []) as MainCategory[];
     },
     refetchOnWindowFocus: false,
   });
 
-  const categories = useMemo(() => {
-    const list = categoriesQuery.data || [];
+  const mainCategories = useMemo(() => {
+    const list = mainCategoriesQuery.data || [];
     return list
-      .filter((c) => c?.available !== false)
+      .filter((mc) => mc?.active !== false)
       .sort((a, b) => safeOrder(a.order) - safeOrder(b.order));
-  }, [categoriesQuery.data]);
+  }, [mainCategoriesQuery.data]);
 
   return (
     <section className="py-4">
@@ -30,11 +30,10 @@ export default function CategorySection() {
         icon={Sparkles}
         title="الأقسام"
         subtitle="تصفّح حسب نوع المنتج"
-        viewAllHref="/categories"
         accent="text-cyan-400"
       />
 
-      {categoriesQuery.isLoading ? (
+      {mainCategoriesQuery.isLoading ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
@@ -48,10 +47,10 @@ export default function CategorySection() {
             </div>
           ))}
         </div>
-      ) : categories.length ? (
+      ) : mainCategories.length ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          {categories.map((cat) => (
-            <CategoryCard key={cat.id} cat={cat} />
+          {mainCategories.map((mc) => (
+            <MainCategoryCard key={mc.id} mc={mc} />
           ))}
         </div>
       ) : (
