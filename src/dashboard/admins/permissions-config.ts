@@ -1,6 +1,6 @@
 export const ALL_PERMISSIONS = [
   "dashboard", "users", "admins", "clients", "activity_logs",
-  "categories", "products",
+  "categories", "main_categories", "products",
   "orders", "charges", "debts", "reconciliation",
   "ads", "levels", "currencies",
   "inventory", "reports", "boxes", "notes", "notifications", "info",
@@ -15,7 +15,7 @@ export const PERMISSION_GROUPS = [
   },
   {
     labelKey: "catalog_group",
-    permissions: ["categories", "products"] as Permission[],
+    permissions: ["categories", "main_categories", "products"] as Permission[],
   },
   {
     labelKey: "sales_group",
@@ -38,6 +38,7 @@ export const PERMISSION_LABEL_KEYS: Record<string, string> = {
   clients: "perm_clients",
   activity_logs: "perm_activity_logs",
   categories: "perm_categories",
+  main_categories: "perm_main_categories",
   products: "perm_products",
   orders: "perm_orders",
   charges: "perm_charges",

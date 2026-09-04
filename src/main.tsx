@@ -39,6 +39,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import DashboardCategories from "./dashboard/categories/page";
 import CategorySubs from "./dashboard/categories/subcategories/page";
 import DashboardAllSub from "./dashboard/categories/allsubcategories/page";
+import DashboardMainCategories from "./dashboard/main-categories/page";
 // import DashboardProducts from "./dashboard/products/page";
 import DashboardAds from "./dashboard/ads/page";
 import DashboardUsers from "./dashboard/users/page";
@@ -269,6 +270,10 @@ const router = createBrowserRouter([
       {
         path: "categories/sub/:id/products",
         element: <DashboardSubProducts />,
+      },
+      {
+        path: "main-categories",
+        element: <DashboardMainCategories />,
       },
       {
         path: "products",
