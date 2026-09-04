@@ -11,10 +11,19 @@ import {
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../../components/ui/use-toast";
 import postCategory from "../../api/postCategory";
+import getMainCategories from "../../api/getMainCategories";
+import type { MainCategory } from "../../types/types";
 import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 
@@ -22,6 +31,7 @@ export function AddCategoryForm() {
   // state
   const [open, setOpen] = useState(false);
   const [order, setOrder] = useState("");
+  const [mainCategoryId, setMainCategoryId] = useState("none");
   // refs
   const nameRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -30,6 +40,16 @@ export function AddCategoryForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const mainCategoriesQuery = useQuery({
+    queryKey: ["main-categories"],
+    queryFn: async () => {
+      const res = await getMainCategories({
+        token: localStorage.getItem("token") as string,
+      });
+      return (res.data?.result ?? []) as MainCategory[];
+    },
+  });
+
   // mutation
   const postCategoryMutation = useMutation({
     mutationFn: async () => {
@@ -37,7 +57,8 @@ export function AddCategoryForm() {
         localStorage.getItem("token") as string,
         nameRef.current?.value as string,
         Number(order),
-        imageRef.current?.files ? imageRef.current?.files[0] : undefined
+        imageRef.current?.files ? imageRef.current?.files[0] : undefined,
+        mainCategoryId === "none" ? null : Number(mainCategoryId)
       );
       return response;
     },
@@ -106,6 +127,24 @@ export function AddCategoryForm() {
               onChange={(e) => setOrder(e.target.value)}
               className="col-span-3"
             />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="main_category" className="text-right">
+              {t("main_categories")}
+            </Label>
+            <Select onValueChange={setMainCategoryId} value={mainCategoryId}>
+              <SelectTrigger id="main_category" className="col-span-3">
+                <SelectValue placeholder={t("main_categories")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">{t("no_main_category")}</SelectItem>
+                {mainCategoriesQuery.data?.map((mc) => (
+                  <SelectItem key={mc.id} value={String(mc.id)}>
+                    {mc.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>

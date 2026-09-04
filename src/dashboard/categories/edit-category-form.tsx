@@ -11,9 +11,17 @@ import {
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
-import { Category } from "../../types/types";
-import { UseQueryResult, useMutation } from "@tanstack/react-query";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import { Category, MainCategory } from "../../types/types";
+import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
 import putCategory from "../../api/putCategory";
+import getMainCategories from "../../api/getMainCategories";
 import { useToast } from "../../components/ui/use-toast";
 import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
@@ -37,11 +45,24 @@ export default function EditCategoryForm({
   const setOpen = onOpenChange ?? setInternalOpen;
   const [order, setOrder] = useState(category.order);
   const [profit, setProfit] = useState(String(category.profit ?? 0));
+  const [mainCategoryId, setMainCategoryId] = useState(
+    category.main_category_id ? String(category.main_category_id) : "none"
+  );
 
   const nameRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
+
+  const mainCategoriesQuery = useQuery({
+    queryKey: ["main-categories"],
+    queryFn: async () => {
+      const res = await getMainCategories({
+        token: localStorage.getItem("token") as string,
+      });
+      return (res.data?.result ?? []) as MainCategory[];
+    },
+  });
 
   const editCategoryMutation = useMutation({
     mutationFn: async () => {
@@ -53,6 +74,7 @@ export default function EditCategoryForm({
           name: nameRef.current?.value as string,
           image: imageRef.current?.files ? imageRef.current.files[0] : undefined,
           profit: Number(profit),
+          main_category_id: mainCategoryId === "none" ? null : Number(mainCategoryId),
         }
       );
 
@@ -157,6 +179,24 @@ export default function EditCategoryForm({
             <p className="col-span-4 text-xs text-muted-foreground text-start">
               {t("cat_margin_hint")}
             </p>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="main_category" className="text-right">
+              {t("main_categories")}
+            </Label>
+            <Select onValueChange={setMainCategoryId} value={mainCategoryId}>
+              <SelectTrigger id="main_category" className="col-span-3">
+                <SelectValue placeholder={t("main_categories")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">{t("no_main_category")}</SelectItem>
+                {mainCategoriesQuery.data?.map((mc) => (
+                  <SelectItem key={mc.id} value={String(mc.id)}>
+                    {mc.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>
