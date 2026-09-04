@@ -81,6 +81,7 @@ import DashboardInfo from "./dashboard/info/page";
 import Products from "./products/page";
 import Purchase from "./purchase/page";
 import CategoriesPage from "./categories/page";
+import MainCategoryCategoriesPage from "./main-categories/page";
 import LoginPage from "./login/page";
 import RegisterPage from "./register/page";
 import VerifyEmailPage from "./verify/page";
@@ -150,6 +151,10 @@ const router = createBrowserRouter([
       {
         path: "categories",
         element: <CategoriesPage />,
+      },
+      {
+        path: "main-categories/:id",
+        element: <MainCategoryCategoriesPage />,
       },
       {
         path: "notifications",
