@@ -260,6 +260,9 @@ export type ChargeBox = {
   currencies: Currency[]
   box_name: string | undefined
   wallet_address: string | undefined
+  provider: "syriatel" | "shamcash" | "kazawallet" | null
+  gsm: string | null
+  account_address: string | null
 }
 
 export type Currency = {
@@ -295,6 +298,10 @@ export type Note = {
   boxName: string
   username: string
   email: string
+  tx_id?: string | null
+  provider?: string | null
+  verified_at?: string | null
+  verification_error?: string | null
 }
 
 export type Notification = {

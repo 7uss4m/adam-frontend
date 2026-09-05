@@ -9,6 +9,9 @@ type data = {
   currencies: { name: string }[]
   box_name: string | undefined
   wallet_address: string | undefined
+  provider?: string
+  gsm?: string
+  account_address?: string
 }
 export default function postBox(token: string, data: data) {
 
