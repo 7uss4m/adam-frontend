@@ -216,16 +216,10 @@ export default function BoxPage() {
   });
 
   const isAuto =
-    (getBoxQuery.data?.account_name || "").trim() === "syriatel" ||
-    (getBoxQuery.data?.account_name || "").trim() === "syriate" ||
-    (getBoxQuery.data?.name || "").trim() === "سيريتل كاش" ||
-    (getBoxQuery.data?.account_name || "").trim() === "shamcash";
+    getBoxQuery.data?.provider === "syriatel" ||
+    getBoxQuery.data?.provider === "shamcash";
 
-  const isTxIdRequired =
-    (getBoxQuery.data?.account_name || "").trim() === "syriatel" ||
-    (getBoxQuery.data?.account_name || "").trim() === "syriate" ||
-    (getBoxQuery.data?.name || "").trim() === "سيريتل كاش" ||
-    (getBoxQuery.data?.account_name || "").trim() === "shamcash";
+  const isTxIdRequired = isAuto;
 
   const postNoteMutation = useMutation({
     mutationFn: async () => {
@@ -241,8 +235,12 @@ export default function BoxPage() {
       });
       return response;
     },
-    onSuccess: () => {
-      toast({ title: t("done"), description: t("note_done") });
+    onSuccess: (response) => {
+      const status = (response.data.result as { status?: string })?.status;
+      toast({
+        title: t("done"),
+        description: status === "success" ? t("note_credited_instantly") : t("note_done"),
+      });
       navigate("/payments", { replace: true });
       window.scrollTo({ top: 0, behavior: "smooth" });
     },

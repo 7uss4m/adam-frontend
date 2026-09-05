@@ -79,6 +79,7 @@
   "note": "Note",
   "done": "Done",
   "note_done": "Your order sent successfully",
+  "note_credited_instantly": "Your balance was credited instantly after verification",
   "tx_id": "Transaction ID",
   "provider": "Verification provider",
   "image_is_required_for_note": "image is required for note",

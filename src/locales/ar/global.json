@@ -78,6 +78,7 @@
   "note": "اشعار",
   "done": "تم!",
   "note_done": "تم ارسال طلبك بنجاح",
+  "note_credited_instantly": "تم شحن رصيدك فوراً بعد التحقق من العملية",
   "tx_id": "رقم العملية",
   "provider": "مزود التحقق",
   "image_is_required_for_note": "يجب ارفاق صورة الاشعار",
