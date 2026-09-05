@@ -43,7 +43,8 @@ import logo from "../assets/logo.webp";
 export default function Header() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [t] = useTranslation("global");
+  const [t, i18n] = useTranslation("global");
+  const isRtl = i18n.language === "ar";
 
   const token = localStorage.getItem("token");
   const { resolvedTheme, setTheme } = useTheme();
@@ -243,8 +244,8 @@ export default function Header() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
 
         <div className="container mx-auto flex items-center justify-between px-4 py-2.5">
-          {/* Left */}
-          <div className="flex items-center gap-2">
+          {/* Account controls stay on the opposite side of the menu. */}
+          <div className={`flex items-center gap-2 ${isRtl ? "order-2" : "order-1"}`}>
             {isAuthed ? (
               <>
                 <button
@@ -287,8 +288,8 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Right */}
-          <div className="flex items-center gap-1.5">
+          {/* In Arabic, this group is first in the RTL flex row, i.e. the right side. */}
+          <div className={`flex items-center gap-1.5 ${isRtl ? "order-1" : "order-2"}`}>
             <motion.button
               type="button"
               whileTap={{ scale: 0.9 }}
