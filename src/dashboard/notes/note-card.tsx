@@ -88,6 +88,28 @@ export default function NoteCard({ note, query }: NoteCardProps) {
           </div>
         </div>
 
+        {(note.tx_id || note.verification_error) && (
+          <div className="mt-3 rounded-xl border border-border/40 bg-background/50 px-3 py-2.5 text-xs">
+            {note.tx_id && (
+              <p className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">{t("tx_id") || "رقم العملية"}</span>
+                <span className="font-mono font-bold text-foreground">{note.tx_id}</span>
+              </p>
+            )}
+            {note.provider && (
+              <p className="mt-1 flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">{t("provider") || "مزود التحقق"}</span>
+                <span className="font-bold text-foreground">{note.provider}</span>
+              </p>
+            )}
+            {note.verification_error && (
+              <p className="mt-1 text-amber-600 dark:text-amber-400">
+                {note.verification_error}
+              </p>
+            )}
+          </div>
+        )}
+
         <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
