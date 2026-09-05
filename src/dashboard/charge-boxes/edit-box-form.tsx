@@ -248,6 +248,10 @@ export default function EditBoxForm({
     refetchOnWindowFocus: false,
   });
 
+  const missingRequiredProviderField =
+    (provider === "syriatel" && !gsm.trim()) ||
+    (provider === "shamcash" && !accountAddress.trim());
+
   const toggleCurrency = (id: string) =>
     setSelectedCurrencyIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -347,7 +351,6 @@ export default function EditBoxForm({
           <option value="">بدون</option>
           <option value="syriatel">سيريتل كاش (API Syria)</option>
           <option value="shamcash">شام كاش (API Syria)</option>
-          <option value="kazawallet">Kazawallet</option>
         </select>
       </Field>
       {provider === "syriatel" && (
@@ -524,7 +527,7 @@ export default function EditBoxForm({
             {step > 0 && (
               <button
                 type="button"
-                disabled={mutation.isPending || !name.trim()}
+                disabled={mutation.isPending || !name.trim() || missingRequiredProviderField}
                 onClick={() => mutation.mutate()}
                 className="flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-all hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
               >
@@ -550,7 +553,7 @@ export default function EditBoxForm({
             ) : (
               <button
                 type="button"
-                disabled={mutation.isPending || !name.trim()}
+                disabled={mutation.isPending || !name.trim() || missingRequiredProviderField}
                 onClick={() => mutation.mutate()}
                 className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               >

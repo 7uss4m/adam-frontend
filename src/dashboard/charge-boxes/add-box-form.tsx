@@ -121,6 +121,10 @@ export function AddBoxForm({ query }: { query: UseQueryResult }) {
     refetchOnWindowFocus: false,
   });
 
+  const missingRequiredProviderField =
+    (provider === "syriatel" && !gsm.trim()) ||
+    (provider === "shamcash" && !accountAddress.trim());
+
   const toggleCurrency = (id: string) =>
     setSelectedCurrencyIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -222,7 +226,6 @@ export function AddBoxForm({ query }: { query: UseQueryResult }) {
           <option value="">بدون</option>
           <option value="syriatel">سيريتل كاش (API Syria)</option>
           <option value="shamcash">شام كاش (API Syria)</option>
-          <option value="kazawallet">Kazawallet</option>
         </select>
       </Field>
       {provider === "syriatel" && (
@@ -411,7 +414,7 @@ export function AddBoxForm({ query }: { query: UseQueryResult }) {
           ) : (
             <button
               type="button"
-              disabled={mutation.isPending || !name.trim()}
+              disabled={mutation.isPending || !name.trim() || missingRequiredProviderField}
               onClick={() => mutation.mutate()}
               className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
