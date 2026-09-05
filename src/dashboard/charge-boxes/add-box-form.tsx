@@ -28,6 +28,7 @@ import {
   ImageIcon,
   Tag,
   ChevronRight,
+  CreditCard,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -103,6 +104,9 @@ export function AddBoxForm({ query }: { query: UseQueryResult }) {
   const [walletAddress, setWalletAddress] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | undefined>(undefined);
+  const [provider, setProvider] = useState<string>("");
+  const [gsm, setGsm] = useState("");
+  const [accountAddress, setAccountAddress] = useState("");
 
   const imageRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -127,6 +131,7 @@ export function AddBoxForm({ query }: { query: UseQueryResult }) {
     setBoxName(""); setWalletAddress(""); setDescription("");
     setImage(undefined); setImagePreview(null);
     setSelectedCurrencyIds([]); setStep(0);
+    setProvider(""); setGsm(""); setAccountAddress("");
   };
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,6 +150,9 @@ export function AddBoxForm({ query }: { query: UseQueryResult }) {
         box_name: boxName, wallet_address: walletAddress,
         description, image,
         currencyIds: selectedCurrencyIds.map(Number),
+        provider: provider || undefined,
+        gsm: provider === "syriatel" ? gsm : undefined,
+        account_address: provider === "shamcash" ? accountAddress : undefined,
       });
       return response;
     },
@@ -205,6 +213,28 @@ export function AddBoxForm({ query }: { query: UseQueryResult }) {
       <Field label={t("wallet_address")} icon={<Wallet className="h-3.5 w-3.5" />} hint="اختياري">
         <DInput placeholder="عنوان المحفظة (للكريبتو)" value={walletAddress} onChange={(e) => setWalletAddress(e.target.value)} />
       </Field>
+      <Field label="مزود التحقق التلقائي" icon={<CreditCard className="h-3.5 w-3.5" />} hint="اختياري">
+        <select
+          value={provider}
+          onChange={(e) => setProvider(e.target.value)}
+          className="w-full rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/10"
+        >
+          <option value="">بدون</option>
+          <option value="syriatel">سيريتل كاش (API Syria)</option>
+          <option value="shamcash">شام كاش (API Syria)</option>
+          <option value="kazawallet">Kazawallet</option>
+        </select>
+      </Field>
+      {provider === "syriatel" && (
+        <Field label="رقم/كود سيريتل كاش (GSM)" icon={<Hash className="h-3.5 w-3.5" />}>
+          <DInput placeholder="0999xxxxxx" value={gsm} onChange={(e) => setGsm(e.target.value)} />
+        </Field>
+      )}
+      {provider === "shamcash" && (
+        <Field label="عنوان حساب شام كاش" icon={<Hash className="h-3.5 w-3.5" />}>
+          <DInput placeholder="عنوان الحساب" value={accountAddress} onChange={(e) => setAccountAddress(e.target.value)} />
+        </Field>
+      )}
     </div>,
 
     /* ── Step 2: Currencies ── */

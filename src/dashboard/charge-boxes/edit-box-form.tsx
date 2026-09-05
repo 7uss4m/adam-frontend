@@ -225,6 +225,9 @@ export default function EditBoxForm({
   const [accountCode, setAccountCode] = useState(box.account_code);
   const [boxName, setBoxName] = useState(box.box_name ?? "");
   const [walletAddress, setWalletAddress] = useState(box.wallet_address ?? "");
+  const [provider, setProvider] = useState<string>(box.provider ?? "");
+  const [gsm, setGsm] = useState(box.gsm ?? "");
+  const [accountAddress, setAccountAddress] = useState(box.account_address ?? "");
   const [description, setDescription] = useState(box.description);
   const [imagePreview, setImagePreview] = useState<string | null>(box.image ?? null);
   const [newImage, setNewImage] = useState<File | undefined>(undefined);
@@ -270,6 +273,9 @@ export default function EditBoxForm({
         description,
         image: newImage ?? box.image,
         currencyIds: selectedCurrencyIds.map(Number),
+        provider: provider || undefined,
+        gsm: provider === "syriatel" ? gsm : undefined,
+        account_address: provider === "shamcash" ? accountAddress : undefined,
       });
       return response;
     },
@@ -332,6 +338,28 @@ export default function EditBoxForm({
       <Field label={t("wallet_address")} icon={<Wallet className="h-3.5 w-3.5" />} hint="اختياري">
         <DInput placeholder="عنوان المحفظة (للكريبتو)" value={walletAddress} onChange={(e) => setWalletAddress(e.target.value)} />
       </Field>
+      <Field label="مزود التحقق التلقائي" icon={<CreditCard className="h-3.5 w-3.5" />} hint="اختياري">
+        <select
+          value={provider}
+          onChange={(e) => setProvider(e.target.value)}
+          className="w-full rounded-xl border border-border bg-background/60 px-3.5 py-2.5 text-sm text-foreground outline-none transition-all focus:border-primary/50 focus:bg-background focus:ring-2 focus:ring-primary/10"
+        >
+          <option value="">بدون</option>
+          <option value="syriatel">سيريتل كاش (API Syria)</option>
+          <option value="shamcash">شام كاش (API Syria)</option>
+          <option value="kazawallet">Kazawallet</option>
+        </select>
+      </Field>
+      {provider === "syriatel" && (
+        <Field label="رقم/كود سيريتل كاش (GSM)" icon={<Hash className="h-3.5 w-3.5" />}>
+          <DInput placeholder="0999xxxxxx" value={gsm} onChange={(e) => setGsm(e.target.value)} />
+        </Field>
+      )}
+      {provider === "shamcash" && (
+        <Field label="عنوان حساب شام كاش" icon={<Hash className="h-3.5 w-3.5" />}>
+          <DInput placeholder="عنوان الحساب" value={accountAddress} onChange={(e) => setAccountAddress(e.target.value)} />
+        </Field>
+      )}
     </div>,
 
     /* Step 2 */

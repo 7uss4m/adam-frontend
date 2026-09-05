@@ -144,6 +144,16 @@ export default function BoxCard({ box, query }: BoxCardProps) {
           emptyLabel={t("not_available")}
         />
 
+        {box.provider && (
+          <span className="inline-flex w-fit items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary">
+            {box.provider === "syriatel"
+              ? "سيريتل كاش (تحقق تلقائي)"
+              : box.provider === "shamcash"
+              ? "شام كاش (تحقق تلقائي)"
+              : "Kazawallet"}
+          </span>
+        )}
+
         {box.description?.trim() && (
           <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
             {box.description}
